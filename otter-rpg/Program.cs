@@ -75,6 +75,7 @@ namespace OtterRPG
 				Tracking = 1,
 				Font    = CurrentFont,
 				Text = "Hello world! {alpha:50}OoOoOoO, sPoOoOoKy GhOoOoOsT tEeEeExT",
+				TextDelay = 50,
 			};
 
 			var window = new Window(ratioX * mult, ratioY * mult, "Test");

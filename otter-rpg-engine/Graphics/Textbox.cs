@@ -322,12 +322,16 @@ namespace Shellblade.Graphics
 			if (Done) return;
 
 			_timer += (ulong)ms;
-			if (_timer < TextDelay) return;
+			while (_timer >= TextDelay)
+			{
+				_timer -= TextDelay;
+				_currentIndex++;
 
-			_timer -= TextDelay;
-			_currentIndex++;
+				if (_currentIndex < _characters.Count) continue;
 
-			if (_currentIndex >= _characters.Count) Done = true;
+				Done = true;
+				return;
+			}
 		}
 	}
 }
