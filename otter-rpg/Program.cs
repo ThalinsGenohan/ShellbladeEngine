@@ -28,8 +28,9 @@ namespace OtterRPG
 			var fontWM = new Font(@"fonts\vWM")
 			{
 				Size          = new Vector2i(8, 8),
-				SpaceSize     = 4,
+				SpaceSize     = 3,
 				VariableWidth = true,
+				TrackingOffset = -1,
 			};
 
 			var playerName = "Sei";
@@ -40,7 +41,7 @@ namespace OtterRPG
 
 			var tb = new Textbox(new Vector2i(8, 8), new Vector2i(256, 64))
 			{
-				Kerning = 1,
+				Tracking = 1,
 				Font    = fontWM,
 				Text = "Hello world! This text should print my name right here -> {color:yellow}{playername}",
 			};

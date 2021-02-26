@@ -10,19 +10,25 @@ namespace Shellblade.Graphics
 		private readonly RectangleShape _background;
 		private          bool           _parsed;
 		private          List<Sprite>   _characters;
-		private          List<Action>   _commandQueue;
+		private readonly List<Action>   _commandQueue;
 		private          int            _currentCommand;
 		private          int            _currentIndex;
+		private          int            _tracking;
 
 		private Color _color;
 
 		public Vector2f     Position      { get; set; }
 		public Vector2f     Size          { get; set; }
-		public int          Kerning       { get; set; }
 		public Font         Font          { get; set; }
 		public string       Text          { get; set; }
 		public List<string> FormattedText { get; set; }
 		public int          CurrentBox    { get; private set; }
+
+		public int Tracking
+		{
+			get => _tracking + Font.TrackingOffset;
+			set => _tracking = value;
+		}
 
 		public static Dictionary<string, Func<string>> Strings { get; set; } = new Dictionary<string, Func<string>>();
 
@@ -46,7 +52,7 @@ namespace Shellblade.Graphics
 				TextureRect      = new IntRect(0, 0, size.X, size.Y),
 				OutlineColor     = Color.White,
 				OutlineThickness = -6f,
-				FillColor = new Color(0xffffff55),
+				FillColor        = new Color(0xffffff55),
 			};
 
 			_commandQueue = new List<Action>();
@@ -93,6 +99,7 @@ namespace Shellblade.Graphics
 							_commandQueue.Add(() => DoColor(0xffff00));
 							break;
 					}
+
 					return "\ufffc";
 
 				case "player":
@@ -210,7 +217,7 @@ namespace Shellblade.Graphics
 				}
 
 				wordBuf   += c;
-				wordWidth += Font.VariableWidth ? Font.Characters[c].Width + Kerning : Font.Size.X;
+				wordWidth += Font.VariableWidth ? Font.Characters[c].Width + Tracking : Font.Size.X;
 			}
 		}
 
@@ -224,6 +231,7 @@ namespace Shellblade.Graphics
 				if (c == '\ufffc')
 				{
 					_commandQueue[_currentCommand]();
+					_currentCommand++;
 					continue;
 				}
 
@@ -238,7 +246,7 @@ namespace Shellblade.Graphics
 				s.Position = Position + pos;
 				s.Color    = _color;
 
-				pos.X += Font.VariableWidth ? c == ' ' ? Font.SpaceSize : Font.Characters[c].Width + Kerning : Font.Size.X;
+				pos.X += Font.VariableWidth ? c == ' ' ? Font.SpaceSize : Font.Characters[c].Width + Tracking : Font.Size.X;
 
 				sprites.Add(s);
 				_currentIndex++;
