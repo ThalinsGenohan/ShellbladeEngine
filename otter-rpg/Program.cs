@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SFML.System;
 using SFML.Window;
 using Shellblade.Graphics;
@@ -8,30 +9,53 @@ namespace OtterRPG
 {
 	internal class Program
 	{
-		private static void Main(string[] args)
-		{
-			const uint ratioX = 4, ratioY = 3;
-			const uint mult   = 80;
+		private static int _font = 0;
 
-			var font5 = new Font(@"fonts\v5")
+		public static List<Font> Fonts = new List<Font>
+		{
+			/*new Font(@"fonts\v5")
 			{
 				Size          = new Vector2i(8, 8),
 				SpaceSize     = 3,
 				VariableWidth = true,
-			};
-			var fontCT = new Font(@"fonts\vCT")
+			},*/
+			new Font(@"fonts\vCT")
 			{
 				Size          = new Vector2i(8, 8),
 				SpaceSize     = 4,
 				VariableWidth = true,
-			};
-			var fontWM = new Font(@"fonts\vWM")
+			},
+			new Font(@"fonts\vWM")
 			{
-				Size          = new Vector2i(8, 8),
-				SpaceSize     = 3,
-				VariableWidth = true,
+				Size           = new Vector2i(8, 8),
+				SpaceSize      = 3,
+				VariableWidth  = true,
 				TrackingOffset = -1,
-			};
+			},
+		};
+
+		public static Font CurrentFont => Fonts[_font];
+
+		public static Font ChangeFont(bool forward)
+		{
+			if (forward)
+			{
+				_font++;
+				if (_font >= Fonts.Count) _font = 0;
+			}
+			else
+			{
+				if (_font <= 0) _font = Fonts.Count;
+				_font--;
+			}
+
+			return CurrentFont;
+		}
+
+		private static void Main(string[] args)
+		{
+			const uint ratioX = 4, ratioY = 3;
+			const uint mult   = 80;
 
 			var playerName = "Sei";
 
@@ -42,14 +66,24 @@ namespace OtterRPG
 			var tb = new Textbox(new Vector2i(8, 8), new Vector2i(256, 64))
 			{
 				Tracking = 1,
-				Font    = fontWM,
-				Text = "Hello world! This text should print my name right here -> {color:yellow}{playername}",
+				Font    = CurrentFont,
+				Text = "Hello world! This text should print my name right here -> {color:yellow}{playername}" +
+					   "\f{c:white}Hey, I wonder, does \\f count as whitespace?" +
+					   "\nThe answer is {c:red}no{c:white}, but I made it deal with it anyway.",
 			};
 
 			var window = new Window(ratioX * mult, ratioY * mult, "Test");
 
 			window.Drawables.Add(tb);
 			window.KeyboardEvents.Add(Keyboard.Key.Enter, tb.Next);
+			window.KeyboardEvents.Add(Keyboard.Key.Left, () =>
+			{
+				tb.ChangeFont(ChangeFont(false));
+			});
+			window.KeyboardEvents.Add(Keyboard.Key.Right, () =>
+			{
+				tb.ChangeFont(ChangeFont(true));
+			});
 
 			window.MainLoop();
 

@@ -7,13 +7,13 @@ namespace Shellblade.Graphics
 {
 	public class Textbox : Drawable
 	{
-		private readonly RectangleShape _background;
-		private          bool           _parsed;
-		private          List<Sprite>   _characters;
-		private readonly List<Action>   _commandQueue;
-		private          int            _currentCommand;
-		private          int            _currentIndex;
-		private          int            _tracking;
+		private readonly RectangleShape     _background;
+		private          bool               _parsed;
+		private          List<Sprite>       _characters;
+		private          List<List<Action>> _commandQueue;
+		private          int                _currentCommand;
+		private          int                _currentIndex;
+		private          int                _tracking;
 
 		private Color _color;
 
@@ -22,7 +22,7 @@ namespace Shellblade.Graphics
 		public Font         Font          { get; set; }
 		public string       Text          { get; set; }
 		public List<string> FormattedText { get; set; }
-		public int          CurrentBox    { get; private set; }
+		public int          CurrentPage    { get; private set; }
 
 		public int Tracking
 		{
@@ -34,6 +34,11 @@ namespace Shellblade.Graphics
 
 		private Vector2i _inside => (Vector2i)Size - new Vector2i(16, 16);
 		private int      _lines  => (int)Math.Floor(_inside.Y / (float)Font.Size.Y);
+		private List<Action> _currentQueue
+		{
+			get => _commandQueue[CurrentPage];
+			set => _commandQueue[CurrentPage] = value;
+		}
 
 
 		public Textbox(Vector2i pos, Vector2i size)
@@ -55,11 +60,11 @@ namespace Shellblade.Graphics
 				FillColor        = new Color(0xffffff55),
 			};
 
-			_commandQueue = new List<Action>();
+			_commandQueue = new List<List<Action>>();
 
 			_color = Color.White;
 
-			CurrentBox = 0;
+			CurrentPage = 0;
 		}
 
 		public void Draw(RenderTarget target, RenderStates states)
@@ -76,12 +81,12 @@ namespace Shellblade.Graphics
 			foreach (Sprite c in _characters) target.Draw(c, states);
 		}
 
-		private void DoColor(uint color)
+		private void DoColor(byte r, byte g, byte b)
 		{
-			_color = new Color((color << 8) | _color.A);
+			_color = new Color(r, g, b, _color.A);
 		}
 
-		private string ParseCommand(string command)
+		private string ParseCommand(string command, int page)
 		{
 			int    splitIndex = command.IndexOf(':');
 			string comm       = splitIndex > 0 ? command.Remove(splitIndex) : command;
@@ -89,14 +94,24 @@ namespace Shellblade.Graphics
 
 			switch (comm)
 			{
+				case "c":
 				case "color":
 					switch (args)
 					{
+						case "white":
+							_commandQueue[page].Add(() => DoColor(0xff, 0xff, 0xff));
+							break;
 						case "red":
-							_commandQueue.Add(() => DoColor(0xff0000));
+							_commandQueue[page].Add(() => DoColor(0xff, 0x00, 0x00));
+							break;
+						case "green":
+							_commandQueue[page].Add(() => DoColor(0x00, 0xff, 0x00));
 							break;
 						case "yellow":
-							_commandQueue.Add(() => DoColor(0xffff00));
+							_commandQueue[page].Add(() => DoColor(0xff, 0xff, 0x00));
+							break;
+						default:
+							Console.WriteLine("ERROR: [Text Command] Unrecognized color!");
 							break;
 					}
 
@@ -115,10 +130,11 @@ namespace Shellblade.Graphics
 			string text = Text + " ";
 
 			FormattedText = new List<string> { "" };
+			_commandQueue = new List<List<Action>>() { new List<Action>() };
 
 			var xPos = 0;
 			var line = 0;
-			var box  = 0;
+			var page  = 0;
 
 			var command      = false;
 			var commandBuf   = "";
@@ -135,7 +151,9 @@ namespace Shellblade.Graphics
 				{
 					if (c == '}')
 					{
-						text = text.Remove(commandEnter, i - commandEnter + 1).Insert(commandEnter, ParseCommand(commandBuf));
+						string parsed = ParseCommand(commandBuf, page);
+
+						text = text.Remove(commandEnter, i - commandEnter + 1).Insert(commandEnter, parsed);
 
 						command    = false;
 						i          = commandEnter - 1;
@@ -147,13 +165,7 @@ namespace Shellblade.Graphics
 					continue;
 				}
 
-				if (c == '\ufffc')
-				{
-					FormattedText[box] += c;
-					continue;
-				}
-
-				if (char.IsWhiteSpace(c))
+				if (char.IsWhiteSpace(c) || c == '\f')
 				{
 					if (xPos + Font.SpaceSize + wordWidth >= _inside.X)
 					{
@@ -163,26 +175,27 @@ namespace Shellblade.Graphics
 						xPos = wordWidth;
 						if (line >= _lines)
 						{
-							box++;
+							page++;
 							line = 0;
 							FormattedText.Add(wordBuf);
+							_commandQueue.Add(new List<Action>());
 						}
 						else
 						{
-							FormattedText[box] += "\n" + wordBuf;
+							FormattedText[page] += "\n" + wordBuf;
 						}
 					}
 					else
 					{
 						if (xPos > 0)
 						{
-							FormattedText[box] += " " + wordBuf;
+							FormattedText[page] += " " + wordBuf;
 
 							xPos += Font.SpaceSize + wordWidth;
 						}
 						else
 						{
-							FormattedText[box] += wordBuf;
+							FormattedText[page] += wordBuf;
 
 							xPos += wordWidth;
 						}
@@ -191,19 +204,33 @@ namespace Shellblade.Graphics
 					wordBuf   = "";
 					wordWidth = 0;
 
-					if (c == '\n')
+					switch (c)
 					{
-						line++;
-						if (line >= _lines)
+						case '\n':
 						{
-							box++;
-							line = 0;
-							FormattedText.Add("");
+							line++;
+							xPos = 0;
+							if (line >= _lines)
+							{
+								page++;
+								line = 0;
+								FormattedText.Add("");
+								_commandQueue.Add(new List<Action>());
+							}
+							else
+							{
+								FormattedText[page] += "\n";
+							}
+
+							break;
 						}
-
-						xPos = 0;
-
-						FormattedText[box] += "\n";
+						case '\f':
+							page++;
+							line = 0;
+							xPos = 0;
+							FormattedText.Add("");
+							_commandQueue.Add(new List<Action>());
+							break;
 					}
 
 					continue;
@@ -216,30 +243,36 @@ namespace Shellblade.Graphics
 					continue;
 				}
 
+				if (c == '\ufffc')
+				{
+					wordBuf += c;
+					continue;
+				}
+
 				wordBuf   += c;
 				wordWidth += Font.VariableWidth ? Font.Characters[c].Width + Tracking : Font.Size.X;
 			}
 		}
 
-		public List<Sprite> PrintText()
+		public void PrintText()
 		{
-			var sprites = new List<Sprite>();
-			var pos     = new Vector2f(8f, 8f);
+			_characters   = new List<Sprite>();
+			_currentIndex = 0;
 
-			foreach (char c in FormattedText[CurrentBox])
+			var pos = new Vector2f(8f, 8f);
+
+			foreach (char c in FormattedText[CurrentPage])
 			{
-				if (c == '\ufffc')
+				switch (c)
 				{
-					_commandQueue[_currentCommand]();
-					_currentCommand++;
-					continue;
-				}
-
-				if (c == '\n')
-				{
-					pos.X =  8;
-					pos.Y += Font.Size.Y;
-					continue;
+					case '\ufffc':
+						_currentQueue[_currentCommand]();
+						_currentCommand++;
+						continue;
+					case '\n':
+						pos.X =  8;
+						pos.Y += Font.Size.Y;
+						continue;
 				}
 
 				Sprite s = Font.Characters[c].Sprite;
@@ -248,20 +281,28 @@ namespace Shellblade.Graphics
 
 				pos.X += Font.VariableWidth ? c == ' ' ? Font.SpaceSize : Font.Characters[c].Width + Tracking : Font.Size.X;
 
-				sprites.Add(s);
+				_characters.Add(s);
 				_currentIndex++;
 			}
+		}
 
-			_characters = sprites;
+		public void ChangeFont(Font font)
+		{
+			Font = font;
 
-			return sprites;
+			_color          = Color.White;
+			_currentCommand = 0;
+
+			ParseText();
+			PrintText();
 		}
 
 		public void Next()
 		{
-			if (CurrentBox >= FormattedText.Count - 1) return;
+			if (CurrentPage >= FormattedText.Count - 1) return;
 
-			CurrentBox++;
+			CurrentPage++;
+			_currentCommand = 0;
 			PrintText();
 		}
 	}
