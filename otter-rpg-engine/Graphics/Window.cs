@@ -44,19 +44,6 @@ namespace Shellblade.Graphics
 
 		public void MainLoop()
 		{
-			var texture = new Texture(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\smw.png")
-			{
-				Smooth   = false,
-				Repeated = true,
-			};
-			var sprite = new Sprite(texture)
-			{
-				TextureRect = new IntRect(0, 0, (int)(texture.Size.X * 3), (int)(texture.Size.Y * 2)),
-			};
-
-			var font = new SFML.Graphics.Font(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\PAPYRUS.TTF");
-			var text = new Text("Test", font);
-
 			while (_window.IsOpen)
 			{
 				_window.DispatchEvents();
