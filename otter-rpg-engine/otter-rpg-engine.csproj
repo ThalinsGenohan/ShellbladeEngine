@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Engine</RootNamespace>
+    <RootNamespace>Shellblade</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="SFML.Net" Version="2.5.0" />
+    <PackageReference Include="YamlDotNet" Version="9.1.4" />
   </ItemGroup>
 
 </Project>

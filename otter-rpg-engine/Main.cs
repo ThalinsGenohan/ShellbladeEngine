@@ -1,9 +1,6 @@
-﻿using System;
-
-namespace Engine
+﻿namespace Shellblade
 {
 	public class Main
 	{
-
 	}
 }

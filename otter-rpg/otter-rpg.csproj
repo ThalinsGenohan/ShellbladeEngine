@@ -10,4 +10,22 @@
     <ProjectReference Include="..\otter-rpg-engine\otter-rpg-engine.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="jobs\template.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="lang\" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="node $(ProjectDir)tools\fontsize.js $(ProjectDir)fonts" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /e /i /y $(ProjectDir)fonts\ $(TargetDir)fonts\" />
+  </Target>
+
 </Project>
