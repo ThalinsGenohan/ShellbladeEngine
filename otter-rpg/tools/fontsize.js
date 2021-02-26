@@ -20,6 +20,7 @@ function index(x, y) {
         if (!file.match(/.*\.png$/)) continue;
 
         let fontImage = await loadImage(path + "/" + file);
+        ctx.clearRect(0, 0, totalSize.x, totalSize.y);
         ctx.drawImage(fontImage, 0, 0, totalSize.x, totalSize.y);
         let imageData = ctx.getImageData(0, 0, totalSize.x, totalSize.y);
         let data = imageData.data;
