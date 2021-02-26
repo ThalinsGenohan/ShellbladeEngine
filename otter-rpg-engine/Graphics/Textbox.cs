@@ -109,10 +109,13 @@ namespace Shellblade.Graphics
 						_         => () => Console.WriteLine("ERROR: [Text Command] Unrecognized color!"),
 					});
 					return "\ufffc";
+				case "alpha":
+					_commandQueue[page].Add(() => _color.A = (byte)(255f / 100f * Convert.ToSingle(args)));
+					return "\ufffc";
 				case "reset":
 					_commandQueue[page].Add(() =>
 					{
-						DoColor(0xff, 0xff, 0xff);
+						_color = Color.White;
 					});
 					return "\ufffc";
 

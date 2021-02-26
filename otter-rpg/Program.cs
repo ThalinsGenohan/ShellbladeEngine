@@ -67,9 +67,7 @@ namespace OtterRPG
 			{
 				Tracking = 1,
 				Font    = CurrentFont,
-				Text = "Hello world! This text should print my name right here -> {color:yellow}{playername}" +
-					   "\f{reset}Hey, I wonder, does {c:blue}\\f{reset} count as {c:cyan}whitespace{reset}?" +
-					   "\nThe answer is {c:red}no{reset}, {c:green}but I made it deal with it anyway{reset}.",
+				Text = "Hello world! {alpha:50}OoOoOoO, sPoOoOoKy GhOoOoOsT tEeEeExT",
 			};
 
 			var window = new Window(ratioX * mult, ratioY * mult, "Test");
