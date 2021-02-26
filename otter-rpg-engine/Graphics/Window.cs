@@ -42,11 +42,19 @@ namespace Shellblade.Graphics
 			_window.SetView(view);
 		}
 
+		public Action<Time> LoopFunction { get; set; }
+
 		public void MainLoop()
 		{
+			var  clock = new Clock();
+
 			while (_window.IsOpen)
 			{
+				Time dt = clock.Restart();
+
 				_window.DispatchEvents();
+
+				LoopFunction(dt);
 
 				_window.Clear();
 
