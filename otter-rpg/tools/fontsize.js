@@ -13,12 +13,13 @@ function index(x, y) {
 }
 
 (async function () {
-    const files = await fs.promises.readdir(process.argv[2]);
+    const path = process.argv[2];
+    const files = await fs.promises.readdir(path);
 
     for (const file of files) {
         if (!file.match(/.*\.png$/)) continue;
 
-        let fontImage = await loadImage(file);
+        let fontImage = await loadImage(path + "/" + file);
         ctx.drawImage(fontImage, 0, 0, totalSize.x, totalSize.y);
         let imageData = ctx.getImageData(0, 0, totalSize.x, totalSize.y);
         let data = imageData.data;
@@ -45,6 +46,6 @@ function index(x, y) {
         }
 
         let name = file.replace(/\.png$/, "");
-        fs.writeFileSync(`${process.argv[2]}/${name}.size`, widths.map(r => r.join(",")).join(",\n"));
+        fs.writeFileSync(`${path}/${name}.size`, widths.map(r => r.join(",")).join(",\n"));
     }
 })();
