@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using SFML.System;
+﻿using SFML.System;
 using SFML.Window;
 using Shellblade.Graphics;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 using Window = Shellblade.Graphics.Window;
 
 namespace OtterRPG
@@ -24,8 +19,8 @@ namespace OtterRPG
 			};
 			var fontCT = new Font(@"fonts\vCT")
 			{
-				Size = new Vector2i(8, 8),
-				SpaceSize = 2,
+				Size          = new Vector2i(8, 8),
+				SpaceSize     = 2,
 				VariableWidth = true,
 			};
 

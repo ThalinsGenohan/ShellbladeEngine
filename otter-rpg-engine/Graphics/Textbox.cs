@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using SFML.Graphics;
 using SFML.System;
 
@@ -9,15 +7,14 @@ namespace Shellblade.Graphics
 {
 	public class Textbox : Drawable
 	{
-		private bool _parsed;
-
 		private readonly RectangleShape _background;
+		private          bool           _parsed;
 		private          List<Sprite>   _characters;
-		public           Vector2f       Position { get; set; }
-		public           Vector2f       Size     { get; set; }
-		public           int            Kerning  { get; set; }
-		public           Font           Font     { get; set; }
 
+		public Vector2f     Position      { get; set; }
+		public Vector2f     Size          { get; set; }
+		public int          Kerning       { get; set; }
+		public Font         Font          { get; set; }
 		public string       Text          { get; set; }
 		public List<string> FormattedText { get; set; }
 		public int          CurrentBox    { get; private set; }
@@ -51,6 +48,7 @@ namespace Shellblade.Graphics
 		{
 			if (!_parsed)
 			{
+				_parsed = true;
 				ParseText();
 				PrintText();
 			}
@@ -64,7 +62,7 @@ namespace Shellblade.Graphics
 		{
 			Text += " ";
 
-			FormattedText =  new List<string> { "" };
+			FormattedText = new List<string> { "" };
 
 			var xPos = 0;
 			var line = 0;
@@ -73,8 +71,8 @@ namespace Shellblade.Graphics
 			var control    = false;
 			var controlBuf = "";
 
-			var wordBuf    = "";
-			var wordWidth  = 0;
+			var wordBuf   = "";
+			var wordWidth = 0;
 
 			foreach (char c in Text)
 			{
@@ -104,7 +102,10 @@ namespace Shellblade.Graphics
 							line = 0;
 							FormattedText.Add(wordBuf);
 						}
-						else FormattedText[box] += "\n" + wordBuf;
+						else
+						{
+							FormattedText[box] += "\n" + wordBuf;
+						}
 					}
 					else
 					{

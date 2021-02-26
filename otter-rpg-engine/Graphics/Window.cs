@@ -26,7 +26,7 @@ namespace Shellblade.Graphics
 			_window = new RenderWindow(new VideoMode(width * windowScale, height * windowScale), title, Styles.Close | Styles.Titlebar);
 			_window.SetFramerateLimit(60);
 
-			_window.Closed                += (sender, args) => _window.Close();
+			_window.Closed += (sender, args) => _window.Close();
 			_window.JoystickButtonPressed += (sender, args) =>
 			{
 				if (JoystickEvents.ContainsKey(args.Button)) JoystickEvents[args.Button]();
@@ -63,10 +63,7 @@ namespace Shellblade.Graphics
 
 				_window.Clear();
 
-				foreach (var drawable in Drawables)
-				{
-					_window.Draw(drawable);
-				}
+				foreach (Drawable drawable in Drawables) _window.Draw(drawable);
 
 				_window.Display();
 			}
