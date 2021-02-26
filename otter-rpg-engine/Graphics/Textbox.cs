@@ -96,25 +96,24 @@ namespace Shellblade.Graphics
 			{
 				case "c":
 				case "color":
-					switch (args)
+					_commandQueue[page].Add(args switch
 					{
-						case "white":
-							_commandQueue[page].Add(() => DoColor(0xff, 0xff, 0xff));
-							break;
-						case "red":
-							_commandQueue[page].Add(() => DoColor(0xff, 0x00, 0x00));
-							break;
-						case "green":
-							_commandQueue[page].Add(() => DoColor(0x00, 0xff, 0x00));
-							break;
-						case "yellow":
-							_commandQueue[page].Add(() => DoColor(0xff, 0xff, 0x00));
-							break;
-						default:
-							Console.WriteLine("ERROR: [Text Command] Unrecognized color!");
-							break;
-					}
-
+						"black"   => () => DoColor(0x00, 0x00, 0x00),
+						"red"     => () => DoColor(0xff, 0x00, 0x00),
+						"green"   => () => DoColor(0x00, 0xff, 0x00),
+						"blue"    => () => DoColor(0x00, 0x00, 0xff),
+						"yellow"  => () => DoColor(0xff, 0xff, 0x00),
+						"magenta" => () => DoColor(0xff, 0x00, 0xff),
+						"cyan"    => () => DoColor(0x00, 0xff, 0xff),
+						"white"   => () => DoColor(0xff, 0xff, 0xff),
+						_         => () => Console.WriteLine("ERROR: [Text Command] Unrecognized color!"),
+					});
+					return "\ufffc";
+				case "reset":
+					_commandQueue[page].Add(() =>
+					{
+						DoColor(0xff, 0xff, 0xff);
+					});
 					return "\ufffc";
 
 				case "player":

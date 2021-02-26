@@ -68,8 +68,8 @@ namespace OtterRPG
 				Tracking = 1,
 				Font    = CurrentFont,
 				Text = "Hello world! This text should print my name right here -> {color:yellow}{playername}" +
-					   "\f{c:white}Hey, I wonder, does \\f count as whitespace?" +
-					   "\nThe answer is {c:red}no{c:white}, but I made it deal with it anyway.",
+					   "\f{reset}Hey, I wonder, does {c:blue}\\f{reset} count as {c:cyan}whitespace{reset}?" +
+					   "\nThe answer is {c:red}no{reset}, {c:green}but I made it deal with it anyway{reset}.",
 			};
 
 			var window = new Window(ratioX * mult, ratioY * mult, "Test");
