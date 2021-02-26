@@ -65,6 +65,10 @@ namespace Shellblade.Graphics
 			_color = Color.White;
 
 			CurrentPage = 0;
+
+			_currentIndex = 0;
+
+			TextDelay = 50;
 		}
 
 		public void Draw(RenderTarget target, RenderStates states)
@@ -78,7 +82,10 @@ namespace Shellblade.Graphics
 
 			target.Draw(_background, states);
 
-			foreach (Sprite c in _characters) target.Draw(c, states);
+			for (var i = 0; i <= Math.Min(_characters.Count - 1, _currentIndex); i++)
+			{
+				target.Draw(_characters[i], states);
+			}
 		}
 
 		private void DoColor(byte r, byte g, byte b)
@@ -258,8 +265,7 @@ namespace Shellblade.Graphics
 
 		public void PrintText()
 		{
-			_characters   = new List<Sprite>();
-			_currentIndex = 0;
+			_characters = new List<Sprite>();
 
 			var pos = new Vector2f(8f, 8f);
 
@@ -284,7 +290,6 @@ namespace Shellblade.Graphics
 				pos.X += Font.VariableWidth ? c == ' ' ? Font.SpaceSize : Font.Characters[c].Width + Tracking : Font.Size.X;
 
 				_characters.Add(s);
-				_currentIndex++;
 			}
 		}
 
@@ -306,6 +311,23 @@ namespace Shellblade.Graphics
 			CurrentPage++;
 			_currentCommand = 0;
 			PrintText();
+		}
+
+		private ulong _timer;
+		public  bool  Done      { get; private set; }
+		public  uint TextDelay { get; set; }
+
+		public void UpdateScroll(int ms)
+		{
+			if (Done) return;
+
+			_timer += (ulong)ms;
+			if (_timer < TextDelay) return;
+
+			_timer -= TextDelay;
+			_currentIndex++;
+
+			if (_currentIndex >= _characters.Count) Done = true;
 		}
 	}
 }

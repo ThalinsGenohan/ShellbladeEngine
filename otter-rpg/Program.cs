@@ -32,6 +32,13 @@ namespace OtterRPG
 				VariableWidth  = true,
 				TrackingOffset = -1,
 			},
+			new Font(@"fonts\vLA")
+			{
+				Size          = new Vector2i(8, 8),
+				SpaceSize     = 3,
+				VariableWidth = true,
+				TrackingOffset = -1,
+			}
 		};
 
 		public static Font CurrentFont => Fonts[_font];
@@ -83,6 +90,12 @@ namespace OtterRPG
 				tb.ChangeFont(ChangeFont(true));
 			});
 
+
+
+			window.LoopFunction = dt =>
+			{
+				tb.UpdateScroll(dt.AsMilliseconds());
+			};
 			window.MainLoop();
 
 			/*var p1 = new Player("Thalins", 1, 1, 1, 1, 1, 1);
