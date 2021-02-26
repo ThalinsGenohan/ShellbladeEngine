@@ -15,21 +15,34 @@ namespace OtterRPG
 
 			var font5 = new Font(@"fonts\v5")
 			{
+				Size          = new Vector2i(8, 8),
 				SpaceSize     = 3,
 				VariableWidth = true,
 			};
 			var fontCT = new Font(@"fonts\vCT")
 			{
 				Size          = new Vector2i(8, 8),
-				SpaceSize     = 3,
+				SpaceSize     = 4,
 				VariableWidth = true,
 			};
+			var fontWM = new Font(@"fonts\vWM")
+			{
+				Size          = new Vector2i(8, 8),
+				SpaceSize     = 4,
+				VariableWidth = true,
+			};
+
+			var playerName = "Sei";
+
+			Textbox.Strings["player.name"] = () => playerName;
+
+			playerName = "Thalins";
 
 			var tb = new Textbox(new Vector2i(8, 8), new Vector2i(256, 64))
 			{
 				Kerning = 1,
-				Font    = fontCT,
-				Text = "Hello world! This text should print my name right here -> {text:player.name}",
+				Font    = fontWM,
+				Text = "Hello world! This text should print my name right here -> {color:yellow}{playername}",
 			};
 
 			var window = new Window(ratioX * mult, ratioY * mult, "Test");
