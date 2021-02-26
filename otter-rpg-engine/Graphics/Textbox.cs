@@ -58,9 +58,14 @@ namespace Shellblade.Graphics
 			foreach (Sprite c in _characters) target.Draw(c, states);
 		}
 
+		private string ParseCommand(string command)
+		{
+			return "lol not really get trolled";
+		}
+
 		private void ParseText()
 		{
-			Text += " ";
+			string text = Text + " ";
 
 			FormattedText = new List<string> { "" };
 
@@ -68,31 +73,37 @@ namespace Shellblade.Graphics
 			var line = 0;
 			var box  = 0;
 
-			var control    = false;
-			var controlBuf = "";
+			var command      = false;
+			var commandBuf   = "";
+			var commandEnter = 0;
 
 			var wordBuf   = "";
 			var wordWidth = 0;
 
-			foreach (char c in Text)
+			for (var i = 0; i < text.Length; i++)
 			{
-				if (control)
+				char c = text[i];
+
+				if (command)
 				{
 					if (c == '}')
 					{
-						control = false;
+						text = text.Remove(commandEnter, i - commandEnter + 1).Insert(commandEnter, ParseCommand(commandBuf));
+
+						command = false;
+						i       = commandEnter - 1;
 						continue;
 					}
 
-					controlBuf += c;
+					commandBuf += c;
 					continue;
 				}
 
 				if (char.IsWhiteSpace(c))
 				{
-					if (xPos + Font.SpaceSize + wordWidth > _inside.X)
+					if (xPos + Font.SpaceSize + wordWidth >= _inside.X)
 					{
-						if (wordWidth > _inside.X) throw new Exception($"\"{wordBuf}\" is too long for the textbox!");
+						if (wordWidth >= _inside.X) throw new Exception($"\"{wordBuf}\" is too long for the textbox!");
 
 						line++;
 						xPos = wordWidth;
@@ -146,7 +157,8 @@ namespace Shellblade.Graphics
 
 				if (c == '{')
 				{
-					control = true;
+					command      = true;
+					commandEnter = i;
 					continue;
 				}
 
@@ -171,7 +183,7 @@ namespace Shellblade.Graphics
 
 				Sprite s = Font.Characters[c].Sprite;
 				s.Position =  Position + pos;
-				pos.X      += Font.VariableWidth ? Font.Characters[c].Width + Kerning : Font.Size.X;
+				pos.X      += Font.VariableWidth ? c == ' ' ? Font.SpaceSize : Font.Characters[c].Width + Kerning : Font.Size.X;
 
 				sprites.Add(s);
 			}

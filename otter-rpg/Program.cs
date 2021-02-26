@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using System;
+using SFML.System;
 using SFML.Window;
 using Shellblade.Graphics;
 using Window = Shellblade.Graphics.Window;
@@ -14,13 +15,13 @@ namespace OtterRPG
 
 			var font5 = new Font(@"fonts\v5")
 			{
-				SpaceSize     = 2,
+				SpaceSize     = 3,
 				VariableWidth = true,
 			};
 			var fontCT = new Font(@"fonts\vCT")
 			{
 				Size          = new Vector2i(8, 8),
-				SpaceSize     = 2,
+				SpaceSize     = 3,
 				VariableWidth = true,
 			};
 
@@ -28,8 +29,7 @@ namespace OtterRPG
 			{
 				Kerning = 1,
 				Font    = fontCT,
-				Text = "Testing   testing, hello world! This should bleed onto the next two lines, I hope it works." +
-				       "\nNow if I write a lot it should hopefully bleed all the way into another box, wow, so much text, I sure hope it does what it's supposed to do.",
+				Text = "Hello world! This text should print my name right here -> {text:player.name}",
 			};
 
 			var window = new Window(ratioX * mult, ratioY * mult, "Test");
