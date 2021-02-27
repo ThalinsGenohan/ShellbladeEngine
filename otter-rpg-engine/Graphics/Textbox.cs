@@ -7,22 +7,27 @@ namespace Shellblade.Graphics
 {
 	public class Textbox : Drawable
 	{
-		private readonly RectangleShape     _background;
-		private          bool               _parsed;
-		private          List<Sprite>       _characters;
-		private          List<List<Action>> _commandQueue;
-		private          int                _currentCommand;
-		private          int                _currentIndex;
-		private          int                _tracking;
+		public static Dictionary<string, Func<string>> Strings { get; set; } = new Dictionary<string, Func<string>>();
 
-		private Color _color;
+		private readonly RectangleShape _background;
 
-		public Vector2f     Position      { get; set; }
-		public Vector2f     Size          { get; set; }
-		public Font         Font          { get; set; }
-		public string       Text          { get; set; }
-		public List<string> FormattedText { get; set; }
-		public int          CurrentPage    { get; private set; }
+		private bool               _parsed         = false;
+		private List<Sprite>       _characters     = new List<Sprite>();
+		private List<List<Action>> _commandQueue   = new List<List<Action>>();
+		private int                _currentCommand = 0;
+		private int                _currentIndex   = 0;
+		private int                _tracking       = 0;
+		private Color              _color          = Color.White;
+		private ulong              _timer          = 0;
+		private List<string>       _formattedText  = new List<string>();
+		private int                _currentPage    = 0;
+
+		public Vector2f Position  { get; set; }
+		public Vector2f Size      { get; set; }
+		public Font     Font      { get; set; }
+		public string   Text      { get; set; }
+		public uint     TextDelay { get; set; }         = 50;
+		public bool     PageDone  { get; private set; } = false;
 
 		public int Tracking
 		{
@@ -30,16 +35,8 @@ namespace Shellblade.Graphics
 			set => _tracking = value;
 		}
 
-		public static Dictionary<string, Func<string>> Strings { get; set; } = new Dictionary<string, Func<string>>();
-
-		private Vector2i _inside => (Vector2i)Size - new Vector2i(16, 16);
-		private int      _lines  => (int)Math.Floor(_inside.Y / (float)Font.Size.Y);
-		private List<Action> _currentQueue
-		{
-			get => _commandQueue[CurrentPage];
-			set => _commandQueue[CurrentPage] = value;
-		}
-
+		private Vector2i Inside => (Vector2i)Size - new Vector2i(16, 16);
+		private int      Lines  => (int)Math.Floor(Inside.Y / (float)Font.Size.Y);
 
 		public Textbox(Vector2i pos, Vector2i size)
 		{
@@ -59,16 +56,6 @@ namespace Shellblade.Graphics
 				OutlineThickness = -6f,
 				FillColor        = new Color(0xffffff55),
 			};
-
-			_commandQueue = new List<List<Action>>();
-
-			_color = Color.White;
-
-			CurrentPage = 0;
-
-			_currentIndex = 0;
-
-			TextDelay = 50;
 		}
 
 		public void Draw(RenderTarget target, RenderStates states)
@@ -82,9 +69,73 @@ namespace Shellblade.Graphics
 
 			target.Draw(_background, states);
 
-			for (var i = 0; i <= Math.Min(_characters.Count - 1, _currentIndex); i++)
+			for (var i = 0; i <= Math.Min(_characters.Count - 1, _currentIndex); i++) target.Draw(_characters[i], states);
+		}
+
+		public void PrintText()
+		{
+			_characters = new List<Sprite>();
+
+			var pos = new Vector2f(8f, 8f);
+
+			foreach (char c in _formattedText[_currentPage])
 			{
-				target.Draw(_characters[i], states);
+				switch (c)
+				{
+					case '\ufffc':
+						_commandQueue[_currentPage][_currentCommand]();
+						_currentCommand++;
+						continue;
+					case '\n':
+						pos.X =  8;
+						pos.Y += Font.Size.Y;
+						continue;
+				}
+
+				Sprite s = Font.Characters[c].Sprite;
+				s.Position = Position + pos;
+				s.Color    = _color;
+
+				pos.X += Font.VariableWidth ? c == ' ' ? Font.SpaceSize : Font.Characters[c].Width + Tracking : Font.Size.X;
+
+				_characters.Add(s);
+			}
+		}
+
+		public void ChangeFont(Font font)
+		{
+			Font = font;
+
+			_color          = Color.White;
+			_currentCommand = 0;
+
+			ParseText();
+			PrintText();
+		}
+
+		public void Next()
+		{
+			if (_currentPage >= _formattedText.Count - 1) return;
+
+			_currentPage++;
+			_currentCommand = 0;
+			PrintText();
+		}
+
+		public void UpdateScroll(int ms)
+		{
+			if (PageDone) return;
+
+			_timer += (ulong)ms;
+			while (_timer >= TextDelay)
+			{
+				_timer -= TextDelay;
+				_currentIndex++;
+
+				if (_currentIndex < _characters.Count) continue;
+
+				PageDone = true;
+				return;
 			}
 		}
 
@@ -120,10 +171,7 @@ namespace Shellblade.Graphics
 					_commandQueue[page].Add(() => _color.A = (byte)(255f / 100f * Convert.ToSingle(args)));
 					return "\ufffc";
 				case "reset":
-					_commandQueue[page].Add(() =>
-					{
-						_color = Color.White;
-					});
+					_commandQueue[page].Add(() => { _color = Color.White; });
 					return "\ufffc";
 
 				case "player":
@@ -138,12 +186,12 @@ namespace Shellblade.Graphics
 		{
 			string text = Text + " ";
 
-			FormattedText = new List<string> { "" };
-			_commandQueue = new List<List<Action>>() { new List<Action>() };
+			_formattedText = new List<string> { "" };
+			_commandQueue  = new List<List<Action>> { new List<Action>() };
 
 			var xPos = 0;
 			var line = 0;
-			var page  = 0;
+			var page = 0;
 
 			var command      = false;
 			var commandBuf   = "";
@@ -176,35 +224,35 @@ namespace Shellblade.Graphics
 
 				if (char.IsWhiteSpace(c) || c == '\f')
 				{
-					if (xPos + Font.SpaceSize + wordWidth >= _inside.X)
+					if (xPos + Font.SpaceSize + wordWidth >= Inside.X)
 					{
-						if (wordWidth >= _inside.X) throw new Exception($"\"{wordBuf}\" is too long for the textbox!");
+						if (wordWidth >= Inside.X) throw new Exception($"\"{wordBuf}\" is too long for the textbox!");
 
 						line++;
 						xPos = wordWidth;
-						if (line >= _lines)
+						if (line >= Lines)
 						{
 							page++;
 							line = 0;
-							FormattedText.Add(wordBuf);
+							_formattedText.Add(wordBuf);
 							_commandQueue.Add(new List<Action>());
 						}
 						else
 						{
-							FormattedText[page] += "\n" + wordBuf;
+							_formattedText[page] += "\n" + wordBuf;
 						}
 					}
 					else
 					{
 						if (xPos > 0)
 						{
-							FormattedText[page] += " " + wordBuf;
+							_formattedText[page] += " " + wordBuf;
 
 							xPos += Font.SpaceSize + wordWidth;
 						}
 						else
 						{
-							FormattedText[page] += wordBuf;
+							_formattedText[page] += wordBuf;
 
 							xPos += wordWidth;
 						}
@@ -219,16 +267,16 @@ namespace Shellblade.Graphics
 						{
 							line++;
 							xPos = 0;
-							if (line >= _lines)
+							if (line >= Lines)
 							{
 								page++;
 								line = 0;
-								FormattedText.Add("");
+								_formattedText.Add("");
 								_commandQueue.Add(new List<Action>());
 							}
 							else
 							{
-								FormattedText[page] += "\n";
+								_formattedText[page] += "\n";
 							}
 
 							break;
@@ -237,7 +285,7 @@ namespace Shellblade.Graphics
 							page++;
 							line = 0;
 							xPos = 0;
-							FormattedText.Add("");
+							_formattedText.Add("");
 							_commandQueue.Add(new List<Action>());
 							break;
 					}
@@ -260,77 +308,6 @@ namespace Shellblade.Graphics
 
 				wordBuf   += c;
 				wordWidth += Font.VariableWidth ? Font.Characters[c].Width + Tracking : Font.Size.X;
-			}
-		}
-
-		public void PrintText()
-		{
-			_characters = new List<Sprite>();
-
-			var pos = new Vector2f(8f, 8f);
-
-			foreach (char c in FormattedText[CurrentPage])
-			{
-				switch (c)
-				{
-					case '\ufffc':
-						_currentQueue[_currentCommand]();
-						_currentCommand++;
-						continue;
-					case '\n':
-						pos.X =  8;
-						pos.Y += Font.Size.Y;
-						continue;
-				}
-
-				Sprite s = Font.Characters[c].Sprite;
-				s.Position = Position + pos;
-				s.Color    = _color;
-
-				pos.X += Font.VariableWidth ? c == ' ' ? Font.SpaceSize : Font.Characters[c].Width + Tracking : Font.Size.X;
-
-				_characters.Add(s);
-			}
-		}
-
-		public void ChangeFont(Font font)
-		{
-			Font = font;
-
-			_color          = Color.White;
-			_currentCommand = 0;
-
-			ParseText();
-			PrintText();
-		}
-
-		public void Next()
-		{
-			if (CurrentPage >= FormattedText.Count - 1) return;
-
-			CurrentPage++;
-			_currentCommand = 0;
-			PrintText();
-		}
-
-		private ulong _timer;
-		public  bool  Done      { get; private set; }
-		public  uint TextDelay { get; set; }
-
-		public void UpdateScroll(int ms)
-		{
-			if (Done) return;
-
-			_timer += (ulong)ms;
-			while (_timer >= TextDelay)
-			{
-				_timer -= TextDelay;
-				_currentIndex++;
-
-				if (_currentIndex < _characters.Count) continue;
-
-				Done = true;
-				return;
 			}
 		}
 	}

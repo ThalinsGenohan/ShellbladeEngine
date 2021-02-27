@@ -11,7 +11,10 @@ namespace Shellblade.Graphics
 	public class Font
 	{
 		private readonly Texture _texture;
-		private          int     _spaceSize;
+
+		private int _spaceSize;
+
+		public Dictionary<char, Character> Characters { get; }
 
 		public bool     VariableWidth  { get; set; }
 		public int      TrackingOffset { get; set; }
@@ -27,13 +30,7 @@ namespace Shellblade.Graphics
 			}
 		}
 
-		public Dictionary<char, Character> Characters { get; }
-
-
-
-		public Font(string name) : this(name, new Vector2i(8, 8))
-		{
-		}
+		public Font(string name) : this(name, new Vector2i(8, 8)) { }
 
 		public Font(string name, Vector2i size)
 		{
@@ -65,9 +62,7 @@ namespace Shellblade.Graphics
 
 			public Sprite Sprite => new Sprite(_texture, _rect);
 
-			public Character(Texture texture, IntRect rect) : this(texture, rect, rect.Width)
-			{
-			}
+			public Character(Texture texture, IntRect rect) : this(texture, rect, rect.Width) { }
 
 			public Character(Texture texture, IntRect rect, int width)
 			{
