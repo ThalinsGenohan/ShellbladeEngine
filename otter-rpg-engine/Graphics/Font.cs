@@ -62,8 +62,6 @@ namespace Shellblade.Graphics
 
 			public Sprite Sprite => new Sprite(_texture, _rect);
 
-			public Character(Texture texture, IntRect rect) : this(texture, rect, rect.Width) { }
-
 			public Character(Texture texture, IntRect rect, int width)
 			{
 				_texture = texture;

@@ -9,7 +9,7 @@ const canvas = createCanvas(totalSize.x, totalSize.y);
 const ctx = canvas.getContext('2d');
 
 function index(x, y) {
-    return (x + (y * totalSize.x)) * 4 // 4 bytes per pixel
+    return (x + (y * totalSize.x)) * 4; // 4 bytes per pixel
 }
 
 (async function () {
@@ -27,14 +27,14 @@ function index(x, y) {
 
         let widths = [];
         for (let y = 0; y < sheetSize.y; y++) {
-            widths[y] = []
+            widths[y] = [];
             char: for (let x = 0; x < sheetSize.x; x++) {
                 col: for (let u = 0; u < charSize.x; u++) {
                     for (let v = 0; v < charSize.y; v++) {
                         let i = index(
                             x * charSize.x + u,
                             y * charSize.y + v,
-                        )
+                        );
                         if (data[i + 3] > 0) {
                             continue col; // not the end of the char
                         }

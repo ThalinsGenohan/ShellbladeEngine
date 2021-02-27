@@ -8,9 +8,9 @@ namespace OtterRPG
 {
 	internal class Program
 	{
-		private const uint _resWidth    = 320;
-		private const uint _resHeight   = 240;
-		private const uint _windowScale = 4;
+		private const uint ResWidth    = 320;
+		private const uint ResHeight   = 240;
+		private const uint WindowScale = 4;
 
 		public static List<Font> Fonts = new List<Font>
 		{
@@ -58,9 +58,6 @@ namespace OtterRPG
 
 		private static void Main(string[] args)
 		{
-			const uint ratioX = 4, ratioY = 3;
-			const uint mult   = 80;
-
 			var playerName = "Sei";
 
 			Textbox.Strings["player.name"] = () => playerName;
@@ -75,7 +72,7 @@ namespace OtterRPG
 				TextDelay = 50,
 			};
 
-			var window = new Window(new Vector2u(_resWidth * _windowScale, _resHeight * _windowScale), new Vector2u(_resWidth, _resHeight), "Test");
+			var window = new Window(new Vector2u(ResWidth * WindowScale, ResHeight * WindowScale), new Vector2u(ResWidth, ResHeight), "Test");
 
 			window.Drawables.Add(tb);
 			window.KeyboardEvents.Add(Keyboard.Key.Enter, tb.Next);
