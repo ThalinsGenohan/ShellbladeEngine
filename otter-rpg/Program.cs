@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using SFML.System;
 using SFML.Window;
 using Shellblade.Graphics;
@@ -9,16 +8,12 @@ namespace OtterRPG
 {
 	internal class Program
 	{
-		private static int _font = 0;
+		private const uint _resWidth    = 320;
+		private const uint _resHeight   = 240;
+		private const uint _windowScale = 4;
 
 		public static List<Font> Fonts = new List<Font>
 		{
-			/*new Font(@"fonts\v5")
-			{
-				Size          = new Vector2i(8, 8),
-				SpaceSize     = 3,
-				VariableWidth = true,
-			},*/
 			new Font(@"fonts\vCT")
 			{
 				Size          = new Vector2i(8, 8),
@@ -34,12 +29,14 @@ namespace OtterRPG
 			},
 			new Font(@"fonts\vLA")
 			{
-				Size          = new Vector2i(8, 8),
-				SpaceSize     = 3,
-				VariableWidth = true,
+				Size           = new Vector2i(8, 8),
+				SpaceSize      = 3,
+				VariableWidth  = true,
 				TrackingOffset = -1,
-			}
+			},
 		};
+
+		private static int _font = 0;
 
 		public static Font CurrentFont => Fonts[_font];
 
@@ -72,31 +69,20 @@ namespace OtterRPG
 
 			var tb = new Textbox(new Vector2i(8, 8), new Vector2i(256, 64))
 			{
-				Tracking = 1,
-				Font    = CurrentFont,
-				Text = "Hello world! {alpha:50}OoOoOoO, sPoOoOoKy GhOoOoOsT tEeEeExT",
+				Tracking  = 1,
+				Font      = CurrentFont,
+				Text      = "Hello world! {alpha:50}OoOoOoO, sPoOoOoKy GhOoOoOsT tEeEeExT",
 				TextDelay = 50,
 			};
 
-			var window = new Window(ratioX * mult, ratioY * mult, "Test");
+			var window = new Window(new Vector2u(_resWidth * _windowScale, _resHeight * _windowScale), new Vector2u(_resWidth, _resHeight), "Test");
 
 			window.Drawables.Add(tb);
 			window.KeyboardEvents.Add(Keyboard.Key.Enter, tb.Next);
-			window.KeyboardEvents.Add(Keyboard.Key.Left, () =>
-			{
-				tb.ChangeFont(ChangeFont(false));
-			});
-			window.KeyboardEvents.Add(Keyboard.Key.Right, () =>
-			{
-				tb.ChangeFont(ChangeFont(true));
-			});
+			window.KeyboardEvents.Add(Keyboard.Key.Left,  () => { tb.ChangeFont(ChangeFont(false)); });
+			window.KeyboardEvents.Add(Keyboard.Key.Right, () => { tb.ChangeFont(ChangeFont(true)); });
 
-
-
-			window.LoopFunction = dt =>
-			{
-				tb.UpdateScroll(dt.AsMilliseconds());
-			};
+			window.LoopFunction = dt => { tb.UpdateScroll(dt.AsMilliseconds()); };
 			window.MainLoop();
 
 			/*var p1 = new Player("Thalins", 1, 1, 1, 1, 1, 1);

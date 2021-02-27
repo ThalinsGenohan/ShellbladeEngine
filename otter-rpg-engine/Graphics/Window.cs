@@ -10,20 +10,15 @@ namespace Shellblade.Graphics
 	{
 		private readonly RenderWindow _window;
 
-		public List<Drawable> Drawables { get; }
+		public List<Drawable>                   Drawables      { get; } = new List<Drawable>();
+		public Dictionary<uint, Action>         JoystickEvents { get; } = new Dictionary<uint, Action>();
+		public Dictionary<Keyboard.Key, Action> KeyboardEvents { get; } = new Dictionary<Keyboard.Key, Action>();
 
-		public Dictionary<uint, Action>         JoystickEvents { get; }
-		public Dictionary<Keyboard.Key, Action> KeyboardEvents { get; }
+		public Action<Time> LoopFunction { get; set; }
 
-		public Window(uint width, uint height, string title)
+		public Window(Vector2u windowSize, Vector2u resolution, string title)
 		{
-			Drawables      = new List<Drawable>();
-			JoystickEvents = new Dictionary<uint, Action>();
-			KeyboardEvents = new Dictionary<Keyboard.Key, Action>();
-
-			const uint windowScale = 4;
-
-			_window = new RenderWindow(new VideoMode(width * windowScale, height * windowScale), title, Styles.Close | Styles.Titlebar);
+			_window = new RenderWindow(new VideoMode(windowSize.X, windowSize.Y), title, Styles.Close | Styles.Titlebar);
 			_window.SetFramerateLimit(60);
 
 			_window.Closed += (sender, args) => _window.Close();
@@ -36,17 +31,17 @@ namespace Shellblade.Graphics
 				if (KeyboardEvents.ContainsKey(args.Code)) KeyboardEvents[args.Code]();
 			};
 
-			var view = new View(_window.GetView());
-			view.Zoom(1f / windowScale);
-			view.Center = new Vector2f(width / 2f, height / 2f);
+			var view = new View(_window.GetView())
+			{
+				Size   = (Vector2f)resolution,
+				Center = (Vector2f)resolution / 2f,
+			};
 			_window.SetView(view);
 		}
 
-		public Action<Time> LoopFunction { get; set; }
-
 		public void MainLoop()
 		{
-			var  clock = new Clock();
+			var clock = new Clock();
 
 			while (_window.IsOpen)
 			{
