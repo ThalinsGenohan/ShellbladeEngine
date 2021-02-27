@@ -4,18 +4,18 @@ namespace OtterRPG
 {
 	internal class Battle
 	{
-		public Player[]    Players { get; set; }
-		public Character[] Enemies { get; set; }
+		public Player[]    Players       { get; set; }
+		public Character[] Enemies       { get; set; }
+		public Character   CurrentTurn   { get; set; }
+		public Attack      CurrentAttack { get; set; }
 
-		private uint      TurnCounter   { get; set; }
-		public  Character CurrentTurn   { get; set; }
-		public  Attack    CurrentAttack { get; set; }
+		private uint TurnCounter { get; set; }
 
 		public void Start(Player[] players)
 		{
 			Players = players;
 
-			foreach (var player in Players)
+			foreach (Player player in Players)
 			{
 				player.Actions         = 0;
 				player.Strength.Buffs  = 1f;
@@ -25,7 +25,7 @@ namespace OtterRPG
 				player.Fortitude.Buffs = 1f;
 			}
 
-			foreach (var character in Enemies)
+			foreach (Character character in Enemies)
 			{
 				character.Actions         = 0;
 				character.Strength.Buffs  = 1f;

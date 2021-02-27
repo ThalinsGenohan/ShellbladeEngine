@@ -15,6 +15,12 @@ namespace OtterRPG
 			Fortitude,
 		}
 
+		public Stat Strength  { get; } // STR Physical attack power
+		public Stat Intellect { get; } // INT Magical attack power
+		public Stat Agility   { get; } // AGI Actions per turn
+		public Stat Vitality  { get; } // VIT Physical defense
+		public Stat Fortitude { get; } // FOR Magical defense
+
 		// Job
 		// Skills
 		// Passives
@@ -26,6 +32,16 @@ namespace OtterRPG
 		public Equip  Feet       { get; set; }
 		public Equip  AccessoryA { get; set; }
 		public Equip  AccessoryB { get; set; }
+
+		public string Name         { get; set; }
+		public uint   Level        { get; set; }
+		public uint   Health       { get; set; }
+		public uint   MaxHealth    { get; set; }
+		public uint   Defense      { get; set; }
+		public uint   MagicDefense { get; set; }
+		public uint   Actions      { get; set; }
+
+		public Dictionary<Element, float> Resistances { get; set; }
 
 		public Character()
 		{
@@ -61,28 +77,14 @@ namespace OtterRPG
 			Fortitude = new Stat(fort);
 		}
 
-		public string Name         { get; set; }
-		public uint   Level        { get; set; }
-		public uint   Health       { get; set; }
-		public uint   MaxHealth    { get; set; }
-		public uint   Defense      { get; set; }
-		public uint   MagicDefense { get; set; }
-		public uint   Actions      { get; set; }
-
-		public Stat Strength  { get; } // STR Physical attack power
-		public Stat Intellect { get; } // INT Magical attack power
-		public Stat Agility   { get; } // AGI Actions per turn
-		public Stat Vitality  { get; } // VIT Physical defense
-		public Stat Fortitude { get; } // FOR Magical defense
-
-		public Dictionary<Element, float> Resistances { get; set; }
-
 		public class Stat
 		{
 			public uint  Base;
 			public float Buffs;
 			public float EquipBonus;
 			public float JobBonus;
+
+			public uint Total => (uint)MathF.Round(Base * JobBonus * EquipBonus * Buffs);
 
 			public Stat(uint value)
 			{
@@ -91,8 +93,6 @@ namespace OtterRPG
 				EquipBonus = 1f;
 				Buffs      = 1f;
 			}
-
-			public uint Total => (uint)MathF.Round(Base * JobBonus * EquipBonus * Buffs);
 		}
 	}
 }

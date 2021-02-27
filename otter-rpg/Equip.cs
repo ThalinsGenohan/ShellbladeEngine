@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OtterRPG
+﻿namespace OtterRPG
 {
 	public class Equip : BaseItem
 	{
-		public EquipCategory Category { get; set; }
-
 		public enum EquipCategory
 		{
 			Head,
@@ -17,5 +11,7 @@ namespace OtterRPG
 
 			Weapon, // Split this later maybe?
 		}
+
+		public EquipCategory Category { get; set; }
 	}
 }
