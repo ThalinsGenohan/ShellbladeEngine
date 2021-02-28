@@ -10,7 +10,7 @@ namespace Shellblade.Graphics
 	{
 		private readonly RenderWindow _window;
 
-		public List<Drawable>                   Drawables      { get; } = new List<Drawable>();
+		public DrawableList                     Drawables      { get; } = new DrawableList();
 		public Dictionary<uint, Action>         JoystickEvents { get; } = new Dictionary<uint, Action>();
 		public Dictionary<Keyboard.Key, Action> KeyboardEvents { get; } = new Dictionary<Keyboard.Key, Action>();
 
@@ -53,7 +53,7 @@ namespace Shellblade.Graphics
 
 				_window.Clear();
 
-				foreach (Drawable drawable in Drawables) _window.Draw(drawable);
+				for (var i = 0; i < Drawables.Count; i++) _window.Draw(Drawables[i].Drawable);
 
 				_window.Display();
 			}

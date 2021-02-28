@@ -74,7 +74,7 @@ namespace OtterRPG
 
 			var window = new Window(new Vector2u(ResWidth * WindowScale, ResHeight * WindowScale), new Vector2u(ResWidth, ResHeight), "Test");
 
-			window.Drawables.Add(tb);
+			window.Drawables.Add("textbox", tb, 10);
 			window.KeyboardEvents.Add(Keyboard.Key.Enter, tb.Next);
 			window.KeyboardEvents.Add(Keyboard.Key.Left,  () => { tb.ChangeFont(ChangeFont(false)); });
 			window.KeyboardEvents.Add(Keyboard.Key.Right, () => { tb.ChangeFont(ChangeFont(true)); });
