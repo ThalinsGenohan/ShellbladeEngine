@@ -16,18 +16,18 @@ namespace OtterRPG
 
 		public static List<Font> Fonts = new List<Font>
 		{
-			new Font(@"fonts\vCT")
-			{
-				Size          = new Vector2i(8, 8),
-				SpaceSize     = 4,
-				VariableWidth = true,
-			},
 			new Font(@"fonts\vWM")
 			{
 				Size           = new Vector2i(8, 8),
 				SpaceSize      = 3,
 				VariableWidth  = true,
 				TrackingOffset = -1,
+			},
+			new Font(@"fonts\vCT")
+			{
+				Size          = new Vector2i(8, 8),
+				SpaceSize     = 4,
+				VariableWidth = true,
 			},
 			new Font(@"fonts\vLA")
 			{
@@ -70,20 +70,21 @@ namespace OtterRPG
 			{
 				Tracking  = 1,
 				Font      = CurrentFont,
-				Text      = "WOAH! Look at these fancy {c:yellow}g r a p h i c s{reset}~",
+				Text      = "WOAH! Look at these fancy {c:yellow}graphics{reset}~",
 				TextDelay = 50,
 			};
 
 			var m7 = new Mode7
 			{
-				Resolution = new Vector2u(ResWidth,     ResHeight),
-				Scroll     = new Vector2u(0,            0),
+				Resolution = new Vector2u(ResWidth, ResHeight),
+				/*Scroll     = new Vector2u(0,            0),
 				Center     = new Vector2u(ResWidth / 2, ResHeight / 2),
 				Scale      = new Vector2f(1f, 1f),
 				Rotation   = 0.0,
-				Skew       = new Vector2f(5f, 0f),
-				FromImage  = new Image(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\alttp.png"),
+				Skew       = new Vector2f(5f, 0f),*/
+				FromImage = new Image(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\alttp.png"),
 			};
+			m7.Translate(0, 1);
 
 			var window = new Window(new Vector2u(ResWidth * WindowScale, ResHeight * WindowScale), new Vector2u(ResWidth, ResHeight), "Test");
 
@@ -91,17 +92,13 @@ namespace OtterRPG
 
 			window.Drawables.Add("textbox", tb, 10);
 			window.Drawables.Add("mode7",   m7, 0, true);
-			window.KeyboardEvents.Add(Keyboard.Key.Enter, tb.Next);
-			window.KeyboardEvents.Add(Keyboard.Key.Left,  () => { tb.ChangeFont(ChangeFont(false)); });
-			window.KeyboardEvents.Add(Keyboard.Key.Right, () => { tb.ChangeFont(ChangeFont(true)); });
-			window.KeyboardEvents.Add(Keyboard.Key.W,     () => { m7.Scroll   =  new Vector2u(m7.Scroll.X,     m7.Scroll.Y - 1); });
-			window.KeyboardEvents.Add(Keyboard.Key.A,     () => { m7.Scroll   =  new Vector2u(m7.Scroll.X - 1, m7.Scroll.Y); });
-			window.KeyboardEvents.Add(Keyboard.Key.S,     () => { m7.Scroll   =  new Vector2u(m7.Scroll.X,     m7.Scroll.Y + 1); });
-			window.KeyboardEvents.Add(Keyboard.Key.D,     () => { m7.Scroll   =  new Vector2u(m7.Scroll.X + 1, m7.Scroll.Y); });
-			window.KeyboardEvents.Add(Keyboard.Key.Q,     () => { m7.Rotation -= rotSpeed; });
-			window.KeyboardEvents.Add(Keyboard.Key.E,     () => { m7.Rotation += rotSpeed; });
-			window.KeyboardEvents.Add(Keyboard.Key.Z,     () => { m7.Scale    += new Vector2f(0.1f, 0.1f); });
-			window.KeyboardEvents.Add(Keyboard.Key.X,     () => { m7.Scale    -= new Vector2f(0.1f, 0.1f); });
+			window.KeyboardEvents.Add(Keyboard.Key.Enter, new Window.InputFunction(tb.Next,                                     false));
+			window.KeyboardEvents.Add(Keyboard.Key.Left,  new Window.InputFunction(() => { tb.ChangeFont(ChangeFont(false)); }, false));
+			window.KeyboardEvents.Add(Keyboard.Key.Right, new Window.InputFunction(() => { tb.ChangeFont(ChangeFont(true)); },  false));
+			window.KeyboardEvents.Add(Keyboard.Key.W,     new Window.InputFunction(() => { m7.Translate(0,  -2); }));
+			window.KeyboardEvents.Add(Keyboard.Key.A,     new Window.InputFunction(() => { m7.Translate(-2, 0); }));
+			window.KeyboardEvents.Add(Keyboard.Key.S,     new Window.InputFunction(() => { m7.Translate(0,  2); }));
+			window.KeyboardEvents.Add(Keyboard.Key.D,     new Window.InputFunction(() => { m7.Translate(2,  0); }));
 
 			window.LoopFunction = dt => { tb.UpdateScroll(dt.AsMilliseconds()); };
 			window.MainLoop();
