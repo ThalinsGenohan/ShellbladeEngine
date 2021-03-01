@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using Shellblade.Graphics;
+using Font = Shellblade.Graphics.Font;
 using Window = Shellblade.Graphics.Window;
 
 namespace OtterRPG
@@ -68,16 +70,33 @@ namespace OtterRPG
 			{
 				Tracking  = 1,
 				Font      = CurrentFont,
-				Text      = "Hello world! {alpha:50}OoOoOoO, sPoOoOoKy GhOoOoOsT tEeEeExT",
+				Text      = "WOAH! Look at these fancy {c:yellow}g r a p h i c s{reset}~",
 				TextDelay = 50,
+			};
+
+			var m7 = new Mode7
+			{
+				Resolution = new Vector2u(ResWidth, ResHeight),
+				Scroll     = new Vector2u(0,        0),
+				Center     = new Vector2u(ResWidth / 2,  ResHeight / 2),
+				Scale      = new Vector2f(1f, 1f),
+				Rotation   = 45.0,
+				FromImage  = new Image(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\smw.png"),
 			};
 
 			var window = new Window(new Vector2u(ResWidth * WindowScale, ResHeight * WindowScale), new Vector2u(ResWidth, ResHeight), "Test");
 
 			window.Drawables.Add("textbox", tb, 10);
+			window.Drawables.Add("mode7", m7, 0, true);
 			window.KeyboardEvents.Add(Keyboard.Key.Enter, tb.Next);
 			window.KeyboardEvents.Add(Keyboard.Key.Left,  () => { tb.ChangeFont(ChangeFont(false)); });
 			window.KeyboardEvents.Add(Keyboard.Key.Right, () => { tb.ChangeFont(ChangeFont(true)); });
+			window.KeyboardEvents.Add(Keyboard.Key.W,     () => { m7.Center = new Vector2u(m7.Center.X, m7.Center.Y - 1); });
+			window.KeyboardEvents.Add(Keyboard.Key.A,     () => { m7.Center = new Vector2u(m7.Center.X, m7.Center.X - 1); });
+			window.KeyboardEvents.Add(Keyboard.Key.S,     () => { m7.Center = new Vector2u(m7.Center.X, m7.Center.Y + 1); });
+			window.KeyboardEvents.Add(Keyboard.Key.D,     () => { m7.Center = new Vector2u(m7.Center.X, m7.Center.X + 1); });
+			window.KeyboardEvents.Add(Keyboard.Key.Q,     () => { m7.Rotation++; });
+			window.KeyboardEvents.Add(Keyboard.Key.E,     () => { m7.Rotation--; });
 
 			window.LoopFunction = dt => { tb.UpdateScroll(dt.AsMilliseconds()); };
 			window.MainLoop();

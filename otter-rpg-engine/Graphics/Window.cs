@@ -16,6 +16,8 @@ namespace Shellblade.Graphics
 
 		public Action<Time> LoopFunction { get; set; }
 
+		private View _view;
+
 		public Window(Vector2u windowSize, Vector2u resolution, string title)
 		{
 			_window = new RenderWindow(new VideoMode(windowSize.X, windowSize.Y), title, Styles.Close | Styles.Titlebar);
@@ -31,12 +33,13 @@ namespace Shellblade.Graphics
 				if (KeyboardEvents.ContainsKey(args.Code)) KeyboardEvents[args.Code]();
 			};
 
-			var view = new View(_window.GetView())
+			_view = new View(_window.GetView())
 			{
 				Size   = (Vector2f)resolution,
 				Center = (Vector2f)resolution / 2f,
+				Rotation = 0f,
 			};
-			_window.SetView(view);
+			_window.SetView(_view);
 		}
 
 		public void MainLoop()
