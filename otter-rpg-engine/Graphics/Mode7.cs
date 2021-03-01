@@ -88,7 +88,7 @@ namespace Shellblade.Graphics
 			}
 		}
 
-		private double _h   => Scroll.X / 256.0;
+		/*private double _h   => Scroll.X / 256.0;
 		private double _v   => Scroll.Y / 256.0;
 		private double _x   => Center.X / 256.0;
 		private double _y   => Center.Y / 256.0;
@@ -96,7 +96,7 @@ namespace Shellblade.Graphics
 		private double _b   => Math.Sin(rads) * (Scale.X + Skew.X * Scale.Y);
 		private double _c   => -Math.Sin(rads) * (Scale.Y + Skew.Y * Scale.X);
 		private double _d   => Math.Cos(rads) * Scale.Y;
-		private double rads => Rotation * Math.PI / 180.0;
+		private double rads => Rotation * Math.PI / 180.0;*/
 
 		public void Draw(RenderTarget target, RenderStates states)
 		{
@@ -113,8 +113,12 @@ namespace Shellblade.Graphics
 			for (uint yy = 0; yy < size.Y; yy++)
 			for (uint xx = 0; xx < size.X; xx++)
 			{
-				Vector2u vect  = GetVect(xx, yy);
-				Color    pixel = FromImage.GetPixel(vect.X, vect.Y);
+				Vector2i vect = GetVect(xx, yy);
+
+				Color pixel;
+				if (vect.X == -1 || vect.Y == -1)
+					pixel  = new Color(0, 0, 0, 0);
+				else pixel = FromImage.GetPixel((uint)vect.X, (uint)vect.Y);
 				_toImage.SetPixel(xx, yy, pixel);
 			}
 
@@ -122,19 +126,29 @@ namespace Shellblade.Graphics
 			else _sprite.Texture.Update(_toImage);
 		}
 
-		private Vector2u GetVect(uint x, uint y)
+		private Vector2i GetVect(uint x, uint y)
 		{
-			double xi   = x / 256.0 + _h - _x;
+			var v = Trans.Matrix * new Vector2f(x, y);
+
+			/*double xi   = x / 256.0 + _h - _x;
 			double yi   = y / 256.0 + _v - _y;
 			double getX = _a * xi + _b * yi + _x;
 			double getY = _c * xi + _d * yi + _y;
 
 			var uX = (int)(getX * 256.0);
-			var uY = (int)(getY * 256.0);
+			var uY = (int)(getY * 256.0);*/
 
-			if (uX < 0 || uY < 0 || uX > FromImage.Size.X || uY > FromImage.Size.Y) uX = uY = 0;
+			if (v.X < 0 || v.Y < 0 || v.X > FromImage.Size.X || v.Y > FromImage.Size.Y) v.X = v.Y = -1;
 
-			return new Vector2u((uint)uX, (uint)uY);
+			return new Vector2i((int)v.X, (int)v.Y);
+		}
+
+		public Transform Trans { get; set; } = new Transform();
+
+		public void Translate(int x, int y)
+		{
+			_rendered = false;
+			Trans.Translate(x, y);
 		}
 
 		public class Matrix
@@ -210,7 +224,12 @@ namespace Shellblade.Graphics
 
 			public Matrix()
 			{
-				_numbers = new double[3][];
+				_numbers = new[]
+				{
+					new[] { 0.0, 0.0, 0.0 },
+					new[] { 0.0, 0.0, 0.0 },
+					new[] { 0.0, 0.0, 0.0 },
+				};
 			}
 
 			public static Matrix operator *(Matrix a, Matrix b)
@@ -234,6 +253,11 @@ namespace Shellblade.Graphics
 				};
 			}
 
+			public Matrix(Matrix copy)
+			{
+				_numbers = copy._numbers.Clone() as double[][];
+			}
+
 			public static Vector2f operator *(Matrix a, Vector2f b)
 			{
 				double[] c = a * new[] { b.X, b.Y, 1.0 };
@@ -245,13 +269,15 @@ namespace Shellblade.Graphics
 				double[] c = a * new double[] { b.X, b.Y, b.Z };
 				return new Vector3f((float)c[0], (float)c[1], (float)c[2]);
 			}
+
+			public string ToString() => $"{this[0][0]},{this[0][1]},{this[0][2]}\n{this[1][0]},{this[1][1]},{this[1][2]}\n{this[2][0]},{this[2][1]},{this[2][2]}";
 		}
 
 		public class Transform
 		{
 			public static readonly Matrix Identity = new Matrix(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
 
-			public Matrix Matrix { get; set; }
+			public Matrix Matrix { get; set; } = new Matrix(Identity);
 
 			private double _rotation;
 
@@ -259,8 +285,10 @@ namespace Shellblade.Graphics
 
 			public void Translate(int x, int y)
 			{
+				//Console.WriteLine(Matrix.ToString() + "\n");
 				var t = new Matrix(1.0, 0.0, x, 0.0, 1.0, y, 0.0, 0.0, 1.0);
 				Matrix = t * Matrix;
+				//Console.WriteLine(Matrix.ToString() + "\n");
 			}
 
 			public void Rotate(double angle)
