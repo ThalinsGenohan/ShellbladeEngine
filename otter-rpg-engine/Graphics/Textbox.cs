@@ -21,13 +21,15 @@ namespace Shellblade.Graphics
 		private ulong              _timer          = 0;
 		private List<string>       _formattedText  = new List<string>();
 		private int                _currentPage    = 0;
+		private string             _fontId         = "regular";
 
-		public Vector2f Position  { get; set; }
-		public Vector2f Size      { get; set; }
-		public Font     Font      { get; set; }
-		public string   Text      { get; set; }
-		public uint     TextDelay { get; set; }         = 50;
-		public bool     PageDone  { get; private set; } = false;
+		public  Dictionary<string, Font> Fonts     { get; set; }
+		public  Vector2f                 Position  { get; set; }
+		public  Vector2f                 Size      { get; set; }
+		private Font                     Font      => Fonts[_fontId];
+		public  string                   Text      { get; set; }
+		public  uint                     TextDelay { get; set; }         = 50;
+		public  bool                     PageDone  { get; private set; } = false;
 
 		public int Tracking
 		{
@@ -69,7 +71,8 @@ namespace Shellblade.Graphics
 
 			target.Draw(_background, states);
 
-			for (var i = 0; i <= Math.Min(_characters.Count - 1, _currentIndex); i++) target.Draw(_characters[i], states);
+			for (var i = 0; i <= Math.Min(_characters.Count - 1, _currentIndex); i++)
+				target.Draw(_characters[i], states);
 		}
 
 		public void PrintText()
@@ -102,23 +105,14 @@ namespace Shellblade.Graphics
 			}
 		}
 
-		public void ChangeFont(Font font)
-		{
-			Font = font;
-
-			_color          = Color.White;
-			_currentCommand = 0;
-
-			ParseText();
-			PrintText();
-		}
-
 		public void Next()
 		{
 			if (_currentPage >= _formattedText.Count - 1) return;
 
-			_currentPage++;
+			_currentIndex   = 0;
 			_currentCommand = 0;
+			_currentPage++;
+			PageDone = false;
 			PrintText();
 		}
 
@@ -152,18 +146,23 @@ namespace Shellblade.Graphics
 
 			switch (comm)
 			{
+				case "f":
+				case "font":
+					_fontId = args;
+					_commandQueue[page].Add(() => _fontId = args);
+					return "\ufffc";
 				case "c":
 				case "color":
 					_commandQueue[page].Add(args switch
 					{
-						"black"   => () => DoColor(0x00, 0x00, 0x00),
-						"red"     => () => DoColor(0xff, 0x00, 0x00),
-						"green"   => () => DoColor(0x00, 0xff, 0x00),
-						"blue"    => () => DoColor(0x00, 0x00, 0xff),
-						"yellow"  => () => DoColor(0xff, 0xff, 0x00),
-						"magenta" => () => DoColor(0xff, 0x00, 0xff),
-						"cyan"    => () => DoColor(0x00, 0xff, 0xff),
-						"white"   => () => DoColor(0xff, 0xff, 0xff),
+						"black"   => () => _color = new Color(0x00, 0x00, 0x00, _color.A),
+						"red"     => () => _color = new Color(0xff, 0x00, 0x00, _color.A),
+						"green"   => () => _color = new Color(0x00, 0xff, 0x00, _color.A),
+						"blue"    => () => _color = new Color(0x00, 0x00, 0xff, _color.A),
+						"yellow"  => () => _color = new Color(0xff, 0xff, 0x00, _color.A),
+						"magenta" => () => _color = new Color(0xff, 0x00, 0xff, _color.A),
+						"cyan"    => () => _color = new Color(0x00, 0xff, 0xff, _color.A),
+						"white"   => () => _color = new Color(0xff, 0xff, 0xff, _color.A),
 						_         => () => Console.WriteLine("ERROR: [Text Command] Unrecognized color!"),
 					});
 					return "\ufffc";
@@ -309,6 +308,8 @@ namespace Shellblade.Graphics
 				wordBuf   += c;
 				wordWidth += Font.VariableWidth ? Font.Characters[c].Width + Tracking : Font.Size.X;
 			}
+
+			_fontId = "regular";
 		}
 	}
 }

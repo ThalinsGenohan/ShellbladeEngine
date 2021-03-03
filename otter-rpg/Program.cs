@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -58,6 +60,11 @@ namespace OtterRPG
 			return CurrentFont;
 		}
 
+		public static void M7Translate(Mode7 m7, int x, int y)
+		{
+			m7.Translate(x, y);
+		}
+
 		private static void Main(string[] args)
 		{
 			var playerName = "Sei";
@@ -66,12 +73,18 @@ namespace OtterRPG
 
 			playerName = "Thalins";
 
-			var tb = new Textbox(new Vector2i(8, 8), new Vector2i(256, 64))
+			var tb = new Textbox(new Vector2i(8, (int)(ResHeight - 8 - 64)), new Vector2i((int)(ResWidth - 16), 64))
 			{
-				Tracking  = 1,
-				Font      = CurrentFont,
-				Text      = "WOAH! Look at these fancy {c:yellow}graphics{reset}~",
-				TextDelay = 50,
+				Tracking = 1,
+				Fonts = new Dictionary<string, Font>
+				{
+					{ "regular", Fonts[0] },
+					{ "bold", Fonts[1] },
+					{ "italic", Fonts[2] },
+				},
+				Text = "Hello! Look at my textboxes! They can do neat things. Like automatically go to the next line! Or even the next textbox! Wow! That's kinda cool! They can also do {c:red}f{c:yellow}a{c:green}n{c:blue}c{c:magenta}y {reset}colors! Neat!\f" +
+					   "Oh and did I mention multiple font options? Right now I have PMD (normal), {f:bold}Chrono Trigger (bold){f:regular}, and {f:italic}Link's Awakening (italics){f:regular}. And I just added the ability to switch between those mid-textbox! It's not much, but I think they're neat and I'm proud of them.",
+				TextDelay = 25,
 			};
 
 			var m7 = new Mode7
@@ -88,17 +101,18 @@ namespace OtterRPG
 
 			var window = new Window(new Vector2u(ResWidth * WindowScale, ResHeight * WindowScale), new Vector2u(ResWidth, ResHeight), "Test");
 
-			const float rotSpeed = 5f;
+			const float rotSpeed  = 5f;
+			const int   moveSpeed = 2;
 
-			window.Drawables.Add("textbox", tb, 10);
+			window.Drawables.Add("textbox", tb, 10, false);
 			window.Drawables.Add("mode7",   m7, 0, true);
-			window.KeyboardEvents.Add(Keyboard.Key.Enter, new Window.InputFunction(tb.Next,                                     false));
-			window.KeyboardEvents.Add(Keyboard.Key.Left,  new Window.InputFunction(() => { tb.ChangeFont(ChangeFont(false)); }, false));
-			window.KeyboardEvents.Add(Keyboard.Key.Right, new Window.InputFunction(() => { tb.ChangeFont(ChangeFont(true)); },  false));
-			window.KeyboardEvents.Add(Keyboard.Key.W,     new Window.InputFunction(() => { m7.Translate(0,  -2); }));
-			window.KeyboardEvents.Add(Keyboard.Key.A,     new Window.InputFunction(() => { m7.Translate(-2, 0); }));
-			window.KeyboardEvents.Add(Keyboard.Key.S,     new Window.InputFunction(() => { m7.Translate(0,  2); }));
-			window.KeyboardEvents.Add(Keyboard.Key.D,     new Window.InputFunction(() => { m7.Translate(2,  0); }));
+			window.KeyboardEvents.Add(Keyboard.Key.Enter, new Window.InputFunction(tb.Next));
+			window.KeyboardEvents.Add(Keyboard.Key.W,     new Window.InputFunction(onHold: () => { M7Translate(m7, 0, -moveSpeed); }));
+			window.KeyboardEvents.Add(Keyboard.Key.A,     new Window.InputFunction(onHold: () => { M7Translate(m7, -moveSpeed, 0); }));
+			window.KeyboardEvents.Add(Keyboard.Key.S,     new Window.InputFunction(onHold: () => { M7Translate(m7, 0, moveSpeed); }));
+			window.KeyboardEvents.Add(Keyboard.Key.D,     new Window.InputFunction(onHold: () => { M7Translate(m7, moveSpeed, 0); }));
+
+			window.JoystickEvents.Add(0, new Window.InputFunction(tb.Next));
 
 			window.LoopFunction = dt => { tb.UpdateScroll(dt.AsMilliseconds()); };
 			window.MainLoop();

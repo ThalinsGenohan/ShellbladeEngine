@@ -128,7 +128,7 @@ namespace Shellblade.Graphics
 
 		private Vector2i GetVect(uint x, uint y)
 		{
-			var v = Trans.Matrix * new Vector2f(x, y);
+			var v = _trans.Matrix * new Vector2f(x, y);
 
 			/*double xi   = x / 256.0 + _h - _x;
 			double yi   = y / 256.0 + _v - _y;
@@ -143,12 +143,12 @@ namespace Shellblade.Graphics
 			return new Vector2i((int)v.X, (int)v.Y);
 		}
 
-		public Transform Trans { get; set; } = new Transform();
+		private Transform _trans = new Transform();
 
 		public void Translate(int x, int y)
 		{
 			_rendered = false;
-			Trans.Translate(x, y);
+			_trans.Translate(x, y);
 		}
 
 		public class Matrix
@@ -285,10 +285,7 @@ namespace Shellblade.Graphics
 
 			public void Translate(int x, int y)
 			{
-				//Console.WriteLine(Matrix.ToString() + "\n");
-				var t = new Matrix(1.0, 0.0, x, 0.0, 1.0, y, 0.0, 0.0, 1.0);
-				Matrix = t * Matrix;
-				//Console.WriteLine(Matrix.ToString() + "\n");
+				Matrix = new Matrix(1.0, 0.0, x, 0.0, 1.0, y, 0.0, 0.0, 1.0) * Matrix;
 			}
 
 			public void Rotate(double angle)

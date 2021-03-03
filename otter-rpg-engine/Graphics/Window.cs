@@ -9,7 +9,7 @@ namespace Shellblade.Graphics
 {
 	public class Window
 	{
-		private readonly RenderWindow _window;
+		internal RenderWindow RenderWindow { get; set; }
 
 		public DrawableList                            Drawables      { get; } = new DrawableList();
 		public Dictionary<uint, InputFunction>         JoystickEvents { get; } = new Dictionary<uint, InputFunction>();
@@ -19,93 +19,156 @@ namespace Shellblade.Graphics
 
 		public class InputFunction
 		{
-			public Action Action  { get; set; }
-			public bool   Active  { get; set; } = false;
-			public bool   Pressed { get; set; } = false;
-			public bool   Hold    { get; }
+			public Action OnPress   { get; set; }
+			public Action OnHold    { get; set; }
+			public Action OnRelease { get; set; }
 
-			public InputFunction(Action action, bool hold = true)
+			public bool IsPressed  { get; set; } = false;
+			public bool WasPressed { get; set; } = false;
+
+			public InputFunction(Action onPress = null, Action onHold = null, Action onRelease = null)
 			{
-				Action = action;
-				Hold   = hold;
+				OnPress   = onPress ?? (() => { });
+				OnHold    = onHold ?? (() => { });
+				OnRelease = onRelease ?? (() => { });
 			}
 		}
 
+		private RenderTexture _backgroundTexture;
+
 		private View _view;
+
+		internal Input Input { get; set; }
 
 		public Window(Vector2u windowSize, Vector2u resolution, string title)
 		{
-			_window = new RenderWindow(new VideoMode(windowSize.X, windowSize.Y), title, Styles.Close | Styles.Titlebar);
-			_window.SetFramerateLimit(60);
+			RenderWindow = new RenderWindow(new VideoMode(windowSize.X, windowSize.Y), title, Styles.Close | Styles.Titlebar);
+			RenderWindow.SetFramerateLimit(60);
+			RenderWindow.SetKeyRepeatEnabled(false);
 
-			_window.Closed += (sender, args) => _window.Close();
-			_window.JoystickButtonPressed += (sender, args) =>
+			RenderWindow.Closed += (sender, args) => RenderWindow.Close();
+
+			RenderWindow.JoystickButtonPressed += (sender, args) =>
 			{
 				if (!JoystickEvents.ContainsKey(args.Button)) return;
 
 				InputFunction e = JoystickEvents[args.Button];
-				if (e.Pressed) return;
+				if (e.WasPressed) return;
 
-				e.Pressed = e.Active = true;
+				e.WasPressed = e.IsPressed = true;
+				e.OnPress();
 			};
-			_window.KeyPressed += (sender, args) =>
+			RenderWindow.KeyPressed += (sender, args) =>
 			{
 				if (!KeyboardEvents.ContainsKey(args.Code)) return;
 
 				InputFunction e = KeyboardEvents[args.Code];
-				if (e.Pressed) return;
+				if (e.WasPressed) return;
 
-				e.Pressed = e.Active = true;
+				e.WasPressed = e.IsPressed = true;
+				e.OnPress();
 			};
-			_window.JoystickButtonReleased += (sender, args) =>
+			RenderWindow.JoystickButtonReleased += (sender, args) =>
 			{
-				if (JoystickEvents.ContainsKey(args.Button))
-					JoystickEvents[args.Button].Pressed = JoystickEvents[args.Button].Active = false;
+				if (!JoystickEvents.ContainsKey(args.Button)) return;
+
+				InputFunction e = JoystickEvents[args.Button];
+				if (!e.WasPressed) return;
+
+				e.WasPressed = e.IsPressed = false;
+				e.OnRelease();
 			};
-			_window.KeyReleased += (sender, args) =>
+			RenderWindow.KeyReleased += (sender, args) =>
 			{
-				if (KeyboardEvents.ContainsKey(args.Code))
-					KeyboardEvents[args.Code].Pressed = KeyboardEvents[args.Code].Active = false;
+				if (!KeyboardEvents.ContainsKey(args.Code)) return;
+
+				InputFunction e = KeyboardEvents[args.Code];
+				if (!e.WasPressed) return;
+
+				e.WasPressed = e.IsPressed = false;
+				e.OnRelease();
 			};
 
-			_view = new View(_window.GetView())
+			_view = new View(RenderWindow.GetView())
 			{
 				Size   = (Vector2f)resolution,
 				Center = (Vector2f)resolution / 2f,
 				Rotation = 0f,
 			};
-			_window.SetView(_view);
+			RenderWindow.SetView(_view);
+
+			_backgroundTexture = new RenderTexture(RenderWindow.Size.X, RenderWindow.Size.Y);
+			_background = new Mode7
+			{
+				Resolution = windowSize,
+			};
+
+			Joystick.Update();
 		}
+
+		private Mode7 _background;
 
 		public void MainLoop()
 		{
-			var clock = new Clock();
+			var deltaClock = new Clock();
+			var runClock   = new Clock();
 
-			while (_window.IsOpen)
+			float lastTime = 0f;
+
+			var debugFont = new SFML.Graphics.Font(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\CONSOLA.TTF");
+			var debugText = new Text("", debugFont, 7)
 			{
-				Time dt = clock.Restart();
+				OutlineColor = Color.Black,
+				OutlineThickness = 1f,
+			};
 
-				_window.DispatchEvents();
+			var frameCounter = 0;
 
-				foreach (InputFunction jsEvent in JoystickEvents.Values.Where(jsEvent => jsEvent.Active))
+			while (RenderWindow.IsOpen)
+			{
+				Time dt  = deltaClock.Restart();
+				float  fps = 1f / dt.AsSeconds();
+
+				frameCounter++;
+				float secs = runClock.ElapsedTime.AsSeconds();
+				if (secs - lastTime >= 1f)
 				{
-					if (!jsEvent.Hold) jsEvent.Active = false;
-					jsEvent.Action();
+					lastTime                  = secs;
+					debugText.DisplayedString = $"FPS: {frameCounter} ({fps:F2})\nObjects: {Drawables.Count}";
+					frameCounter              = 0;
 				}
 
-				foreach (InputFunction kbEvent in KeyboardEvents.Values.Where(e => e.Active))
-				{
-					if (!kbEvent.Hold) kbEvent.Active = false;
-					kbEvent.Action();
-				}
+				RenderWindow.DispatchEvents();
+
+				foreach (InputFunction jsEvent in JoystickEvents.Values.Where(jsEvent => jsEvent.IsPressed))
+					jsEvent.OnHold();
+
+				foreach (InputFunction kbEvent in KeyboardEvents.Values.Where(e => e.IsPressed))
+					kbEvent.OnHold();
 
 				LoopFunction(dt);
 
-				_window.Clear();
+				RenderWindow.Clear();
 
-				for (var i = 0; i < Drawables.Count; i++) _window.Draw(Drawables[i].Drawable);
+				_backgroundTexture.Clear();
+				foreach (DrawableList.DrawableItem drawable in Drawables.List.Where(d => d.Background))
+				{
+					_backgroundTexture.Draw(drawable);
+				}
+				_backgroundTexture.Display();
 
-				_window.Display();
+				//_background.FromImage = _backgroundTexture.Texture.CopyToImage();
+
+				//RenderWindow.Draw(_background);
+
+				foreach (DrawableList.DrawableItem drawable in Drawables.List.Where(d => !d.Background))
+				{
+					RenderWindow.Draw(drawable);
+				}
+
+				RenderWindow.Draw(debugText);
+
+				RenderWindow.Display();
 			}
 		}
 	}
