@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using SFML.Graphics;
 using SFML.System;
+using YamlDotNet.Serialization;
 
 namespace Shellblade.Graphics
 {
@@ -14,11 +15,11 @@ namespace Shellblade.Graphics
 
 		private int _spaceSize;
 
-		public Dictionary<char, Character> Characters { get; }
+		public Dictionary<char, Character> Characters { get; } = new Dictionary<char, Character>();
 
-		public bool     VariableWidth  { get; set; }
-		public int      TrackingOffset { get; set; }
-		public Vector2i Size           { get; set; }
+		public bool     VariableWidth  { get; set; } = true;
+		public int      TrackingOffset { get; set; } = 1;
+		public Vector2i Size           { get; set; } = new Vector2i(8, 8);
 
 		public int SpaceSize
 		{
@@ -26,31 +27,92 @@ namespace Shellblade.Graphics
 			set
 			{
 				_spaceSize            = value;
-				Characters[' '].Width = value;
+				//Characters[' '].Width = value;
 			}
 		}
 
-		public Font(string name) : this(name, new Vector2i(8, 8)) { }
+		private struct FontConfig
+		{
+			public int                   TrackingOffset;
+			public Dictionary<char, int> WidthOverrides;
+		}
 
-		public Font(string name, Vector2i size)
+		public Font(string name)
 		{
 			_texture = new Texture($"{name}.png");
-			Size     = size;
 
-			int[] widths =
-				(from line in File.ReadAllLines($"{name}.size")
-				 from value in Regex.Split(line, @",\s*").Where(s => !string.IsNullOrEmpty(s))
-				 select Convert.ToInt32(value)).ToArray();
-
-			Characters = new Dictionary<char, Character>
+			if (!File.Exists($"{name}.yaml"))
 			{
-				{ ' ', new Character(_texture, new IntRect(0, 0, Size.X, Size.Y), SpaceSize) },
-			};
+				Console.WriteLine($"Configuration file not detected for '{name}' font! Generating...");
 
-			TrackingOffset = 0;
+				var fc = new FontConfig
+				{
+					TrackingOffset = 1,
+					WidthOverrides = new Dictionary<char, int>
+					{
+						{ ' ', 3 },
+					},
+				};
+				ISerializer serializer = new SerializerBuilder().Build();
+				string      yaml       = serializer.Serialize(fc);
 
-			for (var c = '!'; c <= '~'; c++)
-				Characters.Add(c, new Character(_texture, new IntRect(Size.X * ((c - ' ') % 16), Size.Y * ((c - ' ') / 16), Size.X, Size.Y), widths[c - ' ']));
+				File.WriteAllText($"{name}.yaml", yaml);
+			}
+
+			IDeserializer deserializer = new DeserializerBuilder().Build();
+			var           config       = deserializer.Deserialize<FontConfig>(File.ReadAllText($"{name}.yaml"));
+
+			TrackingOffset = config.TrackingOffset;
+
+			int[] widths = GetSizes(name);
+			for (var c = ' '; c <= '~'; c++)
+			{
+				int w = config.WidthOverrides.ContainsKey(c)
+					        ? config.WidthOverrides[c]
+					        : widths[c - ' '];
+				Characters.Add(c, new Character(_texture, new IntRect(Size.X * ((c - ' ') % 16), Size.Y * ((c - ' ') / 16), Size.X, Size.Y), w));
+			}
+
+			SpaceSize = Characters[' '].Width;
+
+			Console.WriteLine("Font loaded:\n" +
+			                  $"\tName: {name}\n" +
+			                  $"\tTracking Offset: {TrackingOffset}\n" +
+			                  $"\tSpace Size: {SpaceSize}\n" +
+			                  $"\tOverrides");
+		}
+
+		private static int[] GetSizes(string name)
+		{
+			const int charSize = 8;
+			const int cols     = 16;
+			const int rows     = 6;
+
+			var fontImage = new Image($"{name}.png");
+			var widths    = new int[rows][];
+
+			for (var y = 0; y < rows; y++)
+			{
+				widths[y] = new int[cols];
+				for (var x = 0; x < cols; x++)
+				{
+					var w = 0;
+					for (var u = 0; u < charSize; u++)
+					for (var v = 0; v < charSize; v++)
+						if (fontImage.GetPixel((uint)(x * charSize + u), (uint)(y * charSize + v)).A > 0)
+							w = u + 1;
+
+					widths[y][x] = w;
+				}
+			}
+
+			widths[0][0] = 3;
+
+			var ret = new int[cols * rows];
+			for (var i = 0; i < ret.Length; i++)
+				ret[i] = widths[i / cols][i % cols];
+
+			return ret;
 		}
 
 		public class Character

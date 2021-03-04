@@ -46,7 +46,9 @@ function index(x, y) {
             }
         }
 
+        widths[0][0] = 3;
+
         let name = file.replace(/\.png$/, "");
-        fs.writeFileSync(`${path}/${name}.size`, widths.map(r => r.join(",")).join(",\n"));
+        fs.writeFileSync(`${path}/${name}.size`, "0\n" + widths.map(r => r.join(",")).join(",\n"));
     }
 })();

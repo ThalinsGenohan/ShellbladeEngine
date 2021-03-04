@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using SFML.Graphics;
 using SFML.System;
 
@@ -23,7 +25,7 @@ namespace Shellblade.Graphics
 		private int                _currentPage    = 0;
 		private string             _fontId         = "regular";
 
-		public  Dictionary<string, Font> Fonts     { get; set; }
+		public  Dictionary<string, Font> Fonts     { get; set; } = new Dictionary<string, Font>();
 		public  Vector2f                 Position  { get; set; }
 		public  Vector2f                 Size      { get; set; }
 		private Font                     Font      => Fonts[_fontId];
@@ -58,6 +60,14 @@ namespace Shellblade.Graphics
 				OutlineThickness = -6f,
 				FillColor        = new Color(0xffffff55),
 			};
+
+			const string fontsDir  = "fonts/";
+			string[]     fontFiles = Directory.GetFiles(fontsDir, "*.png");
+			foreach (string file in fontFiles)
+			{
+				string nameDir = file.Replace(".png", "");
+				Fonts.Add(nameDir.Replace(fontsDir, ""), new Font(nameDir));
+			}
 		}
 
 		public void Draw(RenderTarget target, RenderStates states)
