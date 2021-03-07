@@ -1,21 +1,23 @@
-﻿using System;
-using SFML.Graphics;
+﻿using SFML.Graphics;
 using SFML.System;
 
 namespace Shellblade.Graphics
 {
 	public class Mode7 : Drawable
 	{
-		private readonly Sprite   _sprite = new Sprite();
-		private          Image    _toImage;
-		private          Image    _fromImage;
-		private          Vector2u _scroll;
-		private          Vector2u _center;
-		private          double   _rotation;
-		private          Vector2f _scale;
-		private          Vector2u _resolution;
-		private          bool     _rendered = false;
-		private          Vector2f _skew;
+		private readonly Sprite _sprite = new Sprite();
+
+		private readonly Transform _trans = new Transform();
+
+		private Image    _toImage;
+		private Image    _fromImage;
+		private Vector2u _scroll;
+		private Vector2u _center;
+		private double   _rotation;
+		private Vector2f _scale;
+		private Vector2u _resolution;
+		private bool     _rendered = false;
+		private Vector2f _skew;
 
 		public Image FromImage
 		{
@@ -104,6 +106,12 @@ namespace Shellblade.Graphics
 			target.Draw(_sprite, states);
 		}
 
+		public void Translate(int x, int y)
+		{
+			_rendered = false;
+			_trans.Translate(x, y);
+		}
+
 		private void DrawTexture()
 		{
 			_rendered = true;
@@ -128,7 +136,7 @@ namespace Shellblade.Graphics
 
 		private Vector2i GetVect(uint x, uint y)
 		{
-			var v = _trans.Matrix * new Vector2f(x, y);
+			Vector2f v = _trans.Matrix * new Vector2f(x, y);
 
 			/*double xi   = x / 256.0 + _h - _x;
 			double yi   = y / 256.0 + _v - _y;
@@ -141,14 +149,6 @@ namespace Shellblade.Graphics
 			if (v.X < 0 || v.Y < 0 || v.X > FromImage.Size.X || v.Y > FromImage.Size.Y) v.X = v.Y = -1;
 
 			return new Vector2i((int)v.X, (int)v.Y);
-		}
-
-		private Transform _trans = new Transform();
-
-		public void Translate(int x, int y)
-		{
-			_rendered = false;
-			_trans.Translate(x, y);
 		}
 
 		public class Matrix
@@ -232,6 +232,11 @@ namespace Shellblade.Graphics
 				};
 			}
 
+			public Matrix(Matrix copy)
+			{
+				_numbers = copy._numbers.Clone() as double[][];
+			}
+
 			public static Matrix operator *(Matrix a, Matrix b)
 			{
 				var m = new Matrix();
@@ -253,11 +258,6 @@ namespace Shellblade.Graphics
 				};
 			}
 
-			public Matrix(Matrix copy)
-			{
-				_numbers = copy._numbers.Clone() as double[][];
-			}
-
 			public static Vector2f operator *(Matrix a, Vector2f b)
 			{
 				double[] c = a * new[] { b.X, b.Y, 1.0 };
@@ -270,7 +270,7 @@ namespace Shellblade.Graphics
 				return new Vector3f((float)c[0], (float)c[1], (float)c[2]);
 			}
 
-			public string ToString() => $"{this[0][0]},{this[0][1]},{this[0][2]}\n{this[1][0]},{this[1][1]},{this[1][2]}\n{this[2][0]},{this[2][1]},{this[2][2]}";
+			public override string ToString() => $"{this[0][0]},{this[0][1]},{this[0][2]}\n{this[1][0]},{this[1][1]},{this[1][2]}\n{this[2][0]},{this[2][1]},{this[2][2]}";
 		}
 
 		public class Transform
@@ -279,18 +279,9 @@ namespace Shellblade.Graphics
 
 			public Matrix Matrix { get; set; } = new Matrix(Identity);
 
-			private double _rotation;
-
-			private double Radians => _rotation * Math.PI / 180.0;
-
 			public void Translate(int x, int y)
 			{
 				Matrix = new Matrix(1.0, 0.0, x, 0.0, 1.0, y, 0.0, 0.0, 1.0) * Matrix;
-			}
-
-			public void Rotate(double angle)
-			{
-
 			}
 		}
 	}

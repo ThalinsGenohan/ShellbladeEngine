@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
 using SFML.Graphics;
 using SFML.System;
 
@@ -13,34 +11,27 @@ namespace Shellblade.Graphics
 
 		private readonly RectangleShape _background;
 
-		private bool               _parsed         = false;
-		private List<Sprite>       _characters     = new List<Sprite>();
-		private List<List<Action>> _commandQueue   = new List<List<Action>>();
+		private bool               _parsed     = false;
+		private List<Sprite>       _characters = new List<Sprite>();
+		private List<List<Action>> CommandQueue => _parser.CommandQueue;
 		private int                _currentCommand = 0;
 		private int                _currentIndex   = 0;
-		private int                _tracking       = 0;
 		private Color              _color          = Color.White;
 		private ulong              _timer          = 0;
 		private List<string>       _formattedText  = new List<string>();
 		private int                _currentPage    = 0;
-		private string             _fontId         = "regular";
 
-		public  Dictionary<string, Font> Fonts     { get; set; } = new Dictionary<string, Font>();
-		public  Vector2f                 Position  { get; set; }
-		public  Vector2f                 Size      { get; set; }
-		private Font                     Font      => Fonts[_fontId];
-		public  string                   Text      { get; set; }
-		public  uint                     TextDelay { get; set; }         = 50;
-		public  bool                     PageDone  { get; private set; } = false;
+		public Vector2f                 Position  { get; set; }
+		public Vector2f                 Size      { get; set; }
+		public string                   Text      { get; set; }
+		public uint                     TextDelay { get; set; }         = 50;
+		public bool                     PageDone  { get; private set; } = false;
 
-		public int Tracking
-		{
-			get => _tracking + Font.TrackingOffset;
-			set => _tracking = value;
-		}
+		private readonly TextParser _parser;
+
+		private Font CurrentFont => _parser.CurrentFont;
 
 		private Vector2i Inside => (Vector2i)Size - new Vector2i(16, 16);
-		private int      Lines  => (int)Math.Floor(Inside.Y / (float)Font.Size.Y);
 
 		public Textbox(Vector2i pos, Vector2i size)
 		{
@@ -61,13 +52,11 @@ namespace Shellblade.Graphics
 				FillColor        = new Color(0xffffff55),
 			};
 
-			const string fontsDir  = "fonts/";
-			string[]     fontFiles = Directory.GetFiles(fontsDir, "*.png");
-			foreach (string file in fontFiles)
+			_parser = new TextParser
 			{
-				string nameDir = file.Replace(".png", "");
-				Fonts.Add(nameDir.Replace(fontsDir, ""), new Font(nameDir));
-			}
+				LineSpacing = 1,
+				Size        = Inside,
+			};
 		}
 
 		public void Draw(RenderTarget target, RenderStates states)
@@ -75,7 +64,7 @@ namespace Shellblade.Graphics
 			if (!_parsed)
 			{
 				_parsed = true;
-				ParseText();
+				_formattedText = _parser.ParseText(Text);
 				PrintText();
 			}
 
@@ -89,27 +78,30 @@ namespace Shellblade.Graphics
 		{
 			_characters = new List<Sprite>();
 
-			var pos = new Vector2f(8f, 8f);
+			var pos        = new Vector2i(8, 8);
+			int lineHeight = CurrentFont.Size.Y;
 
 			foreach (char c in _formattedText[_currentPage])
 			{
 				switch (c)
 				{
 					case '\ufffc':
-						_commandQueue[_currentPage][_currentCommand]();
+						CommandQueue[_currentPage][_currentCommand]();
 						_currentCommand++;
+						if (CurrentFont.Size.Y > lineHeight || pos.X == 8) lineHeight = CurrentFont.Size.Y;
 						continue;
 					case '\n':
-						pos.X =  8;
-						pos.Y += Font.Size.Y;
+						pos.X      =  8;
+						pos.Y      += lineHeight + _parser.LineSpacing;
+						lineHeight =  CurrentFont.Size.Y;
 						continue;
 				}
 
-				Sprite s = Font.Characters[c].Sprite;
-				s.Position = Position + pos;
-				s.Color    = _color;
+				Sprite s = CurrentFont.Characters[c].Sprite;
+				s.Position = Position + (Vector2f)pos;
+				s.Color    = _parser.Color;
 
-				pos.X += Font.VariableWidth ? c == ' ' ? Font.SpaceSize : Font.Characters[c].Width + Tracking : Font.Size.X;
+				pos.X += CurrentFont.Characters[c].Width + _parser.Tracking;
 
 				_characters.Add(s);
 			}
@@ -148,6 +140,7 @@ namespace Shellblade.Graphics
 			_color = new Color(r, g, b, _color.A);
 		}
 
+		/*
 		private string ParseCommand(string command, int page)
 		{
 			int    splitIndex = command.IndexOf(':');
@@ -233,7 +226,7 @@ namespace Shellblade.Graphics
 
 				if (char.IsWhiteSpace(c) || c == '\f')
 				{
-					if (xPos + Font.SpaceSize + wordWidth >= Inside.X)
+					if (xPos + CurrentFont.SpaceSize + wordWidth >= Inside.X)
 					{
 						if (wordWidth >= Inside.X) throw new Exception($"\"{wordBuf}\" is too long for the textbox!");
 
@@ -257,7 +250,7 @@ namespace Shellblade.Graphics
 						{
 							_formattedText[page] += " " + wordBuf;
 
-							xPos += Font.SpaceSize + wordWidth;
+							xPos += CurrentFont.SpaceSize + wordWidth;
 						}
 						else
 						{
@@ -316,10 +309,11 @@ namespace Shellblade.Graphics
 				}
 
 				wordBuf   += c;
-				wordWidth += Font.VariableWidth ? Font.Characters[c].Width + Tracking : Font.Size.X;
+				wordWidth += CurrentFont.VariableWidth ? CurrentFont.Characters[c].Width + Tracking : CurrentFont.Size.X;
 			}
 
 			_fontId = "regular";
 		}
+		*/
 	}
 }

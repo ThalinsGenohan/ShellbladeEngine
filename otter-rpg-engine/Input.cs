@@ -3,36 +3,55 @@ using System.Collections.Generic;
 using System.Linq;
 using SFML.Graphics;
 using SFML.Window;
+using Shellblade.Graphics;
+using Shellblade.Graphics.UI;
 
 namespace Shellblade
 {
 	public class Input
 	{
-		private Graphics.Window _window;
+		private Game _game;
 
-		public uint JoystickId { get; set; } = 0;
+		public uint              JoystickId { get; set; } = 0;
+		public UIContainer       UI         { get; set; } = new UIContainer();
+		public List<ButtonInput> Buttons    { get; set; } = new List<ButtonInput>();
 
-		internal void Install(Graphics.Window window)
+		public void DoHoldInputs()
 		{
-			_window = window;
-			RenderWindow rw = _window.RenderWindow;
+			foreach (ButtonInput jsEvent in Buttons.Where(b => b.IsPressed))
+				jsEvent.OnHold();
+
+			foreach (ButtonInput kbEvent in Buttons.Where(b => b.IsPressed))
+				kbEvent.OnHold();
+		}
+
+		internal void Install(Game game)
+		{
+			_game = game;
+			RenderWindow rw = _game.Window;
 
 			rw.KeyPressed  += OnKeyPressed;
 			rw.KeyReleased += OnKeyReleased;
 
 			rw.JoystickButtonPressed  += OnJoystickButtonPressed;
 			rw.JoystickButtonReleased += OnJoystickButtonReleased;
+
+			rw.MouseButtonPressed += UI.OnMouseButtonPressed;
+			rw.MouseMoved         += UI.OnMouseMoved;
 		}
 
 		internal void Uninstall()
 		{
-			RenderWindow rw = _window.RenderWindow;
+			RenderWindow rw = _game.Window;
 
 			rw.KeyPressed  -= OnKeyPressed;
 			rw.KeyReleased -= OnKeyReleased;
 
 			rw.JoystickButtonPressed  -= OnJoystickButtonPressed;
 			rw.JoystickButtonReleased -= OnJoystickButtonReleased;
+
+			rw.MouseButtonPressed -= UI.OnMouseButtonPressed;
+			rw.MouseMoved         -= UI.OnMouseMoved;
 		}
 
 		private void OnKeyPressed(object sender, KeyEventArgs args)
@@ -75,8 +94,6 @@ namespace Shellblade
 			button.OnRelease();
 		}
 
-		public List<ButtonInput> Buttons { get; set; }
-
 		public class ButtonInput
 		{
 			public Keyboard.Key Key            { get; set; }
@@ -86,7 +103,7 @@ namespace Shellblade
 			public Action OnHold    { get; set; } = () => { };
 			public Action OnRelease { get; set; } = () => { };
 
-			public bool IsPressed  { get; set; } = false;
+			public bool IsPressed { get; set; } = false;
 
 			public ButtonInput(Keyboard.Key key, uint? button = null)
 			{

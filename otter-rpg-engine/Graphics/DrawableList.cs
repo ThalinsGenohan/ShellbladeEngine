@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using SFML.Graphics;
 
@@ -8,6 +7,8 @@ namespace Shellblade.Graphics
 	public class DrawableList
 	{
 		internal List<DrawableItem> List { get; } = new List<DrawableItem>();
+
+		public int Count => List.Count;
 
 		public DrawableItem this[string id]
 		{
@@ -32,8 +33,6 @@ namespace Shellblade.Graphics
 		}
 
 		public void Add(string id, Drawable item, int priority = 0, bool background = false) => Add(new DrawableItem(id, item, priority, background));
-
-		public int Count => List.Count;
 
 		public void Remove(string id)
 		{
