@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using OtterRPG.Screens;
 using Shellblade.Graphics;
 
@@ -7,14 +6,13 @@ namespace OtterRPG
 {
 	internal class Program
 	{
-		private const uint ResWidth    = 320;
-		private const uint ResHeight   = 240;
-		private const uint WindowScale = 4;
+		private const uint   ResWidth    = 320;
+		private const uint   ResHeight   = 240;
+		private const uint   WindowScale = 4;
+		private const string fontsDir    = "fonts/";
 
-		private static uint   WindowWidth  => ResWidth * WindowScale;
-		private static uint   WindowHeight => ResHeight * WindowScale;
-
-		private const string fontsDir = "fonts/";
+		private static uint WindowWidth  => ResWidth * WindowScale;
+		private static uint WindowHeight => ResHeight * WindowScale;
 
 		private static void Main(string[] args)
 		{

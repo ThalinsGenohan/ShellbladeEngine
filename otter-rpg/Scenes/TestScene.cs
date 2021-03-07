@@ -27,7 +27,7 @@ namespace OtterRPG.Screens
 
 			var button = new Button(new Vector2i(8, 8), new Vector2i(16, 16), @"P:\CS\otter-rpg\otter-rpg-engine\Graphics\testbox.png")
 			{
-				Color = new Color(0xff, 0xff, 0xff, 0xff / 2),
+				Color   = new Color(0xff, 0xff, 0xff, 0xff / 2),
 				OnClick = () => { Console.WriteLine("Boop! The test button has been pressed!"); },
 			};
 			button.OnMouseOver = () => { button.Color = new Color(0xff, 0xff, 0xff, 0xff); };

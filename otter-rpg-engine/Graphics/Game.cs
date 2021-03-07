@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Dynamic;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -10,13 +9,14 @@ namespace Shellblade.Graphics
 	{
 		private readonly View _view;
 
+		public Vector2u Resolution { get; }
+
 		public   Scene        Scene        { get; set; }
 		public   Action<Time> LoopFunction { get; set; }
 		public   Color        ClearColor   { get; set; } = Color.Black;
 		internal RenderWindow Window       { get; set; }
 
-		public Vector2u Size       => Window.Size;
-		public Vector2u Resolution { get; }
+		public Vector2u Size => Window.Size;
 
 		private DrawableList Drawables => Scene.Drawables;
 		private Input        Input     => Scene.Input;

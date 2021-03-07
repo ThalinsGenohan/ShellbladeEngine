@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using SFML.Graphics;
 using SFML.System;
-using YamlDotNet.Serialization;
 
 namespace Shellblade.Graphics
 {
@@ -27,24 +25,6 @@ namespace Shellblade.Graphics
 			{
 				_spaceSize            = value;
 				Characters[' '].Width = value;
-			}
-		}
-
-		private class FontConfig : Config
-		{
-			public int                   TrackingOffset;
-			public Dictionary<char, int> WidthOverrides;
-
-			public override void Load(string filename)
-			{
-				var config = _deserializer.Deserialize<FontConfig>(File.ReadAllText(filename));
-				TrackingOffset = config.TrackingOffset;
-				WidthOverrides = config.WidthOverrides;
-			}
-
-			public override void Save(string filename)
-			{
-				File.WriteAllText(filename, _serializer.Serialize(this));
 			}
 		}
 
@@ -80,7 +60,7 @@ namespace Shellblade.Graphics
 					        : widths[c - ' '];
 
 				int left = Size.X * ((c - ' ') % 16);
-				int top = Size.Y * ((c - ' ') / 16);
+				int top  = Size.Y * ((c - ' ') / 16);
 
 				Characters.Add(c, new Character(_texture, new IntRect(left, top, Size.X, Size.Y), w));
 			}
@@ -96,11 +76,11 @@ namespace Shellblade.Graphics
 
 		private int[] GetSizes(string name)
 		{
-			const int cols     = 16;
-			const int rows     = 6;
+			const int cols = 16;
+			const int rows = 6;
 
 			var fontImage = new Image($"{name}.png");
-			Size  = new Vector2i((int)fontImage.Size.X / cols, (int)fontImage.Size.Y / rows);
+			Size = new Vector2i((int)fontImage.Size.X / cols, (int)fontImage.Size.Y / rows);
 
 			var widths = new int[rows][];
 			for (var y = 0; y < rows; y++)
@@ -111,11 +91,12 @@ namespace Shellblade.Graphics
 					var w = 0;
 					for (var u = 0; u < Size.X; u++)
 					for (var v = 0; v < Size.Y; v++)
-						if (fontImage.GetPixel((uint)(x * Size.X + u), (uint)(y * Size.Y + v)).A > 0)
-						{
-							w = u + 1;
-							break;
-						}
+					{
+						if (fontImage.GetPixel((uint)(x * Size.X + u), (uint)(y * Size.Y + v)).A <= 0) continue;
+
+						w = u + 1;
+						break;
+					}
 
 					widths[y][x] = w;
 				}
@@ -144,6 +125,24 @@ namespace Shellblade.Graphics
 				_texture = texture;
 				_rect    = rect;
 				Width    = width;
+			}
+		}
+
+		private class FontConfig : Config
+		{
+			public int                   TrackingOffset;
+			public Dictionary<char, int> WidthOverrides;
+
+			public override void Load(string filename)
+			{
+				var config = _deserializer.Deserialize<FontConfig>(File.ReadAllText(filename));
+				TrackingOffset = config.TrackingOffset;
+				WidthOverrides = config.WidthOverrides;
+			}
+
+			public override void Save(string filename)
+			{
+				File.WriteAllText(filename, _serializer.Serialize(this));
 			}
 		}
 	}

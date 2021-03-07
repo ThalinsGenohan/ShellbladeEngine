@@ -7,67 +7,24 @@ namespace Shellblade.Graphics
 {
 	public class TextParser
 	{
-		private string             _fontId = "regular";
-		public  List<List<Action>> CommandQueue;
-		public  Color              Color { get; set; } = Color.White;
-		private List<string>       FormattedText;
-		private int                _tracking;
-
 		public static Dictionary<string, string> Strings { get; } = new Dictionary<string, string>();
 		public static Dictionary<string, Font>   Fonts   { get; } = new Dictionary<string, Font>();
 
+		public  List<List<Action>> CommandQueue;
+		private string             _fontId = "regular";
+		private List<string>       FormattedText;
+		private int                _tracking;
+
+		public Color    Color       { get; set; } = Color.White;
 		public Vector2i Size        { get; set; }
 		public int      LineSpacing { get; set; }
+
+		public Font CurrentFont => Fonts[_fontId];
 
 		public int Tracking
 		{
 			get => _tracking + CurrentFont.TrackingOffset;
 			set => _tracking = value;
-		}
-
-		public Font CurrentFont => Fonts[_fontId];
-
-		private string ParseCommand(string command, int page)
-		{
-			int    splitIndex = command.IndexOf(':');
-			string comm       = splitIndex > 0 ? command.Remove(splitIndex) : command;
-			string args       = splitIndex > 0 ? command.Substring(splitIndex + 1) : "";
-
-			switch (comm)
-			{
-				case "f":
-				case "font":
-					_fontId = args;
-					CommandQueue[page].Add(() => _fontId = args);
-					return "\ufffc";
-				case "c":
-				case "color":
-					CommandQueue[page].Add(args switch
-					{
-						"black"   => () => Color = new Color(0x00, 0x00, 0x00, Color.A),
-						"red"     => () => Color = new Color(0xff, 0x00, 0x00, Color.A),
-						"green"   => () => Color = new Color(0x00, 0xff, 0x00, Color.A),
-						"blue"    => () => Color = new Color(0x00, 0x00, 0xff, Color.A),
-						"yellow"  => () => Color = new Color(0xff, 0xff, 0x00, Color.A),
-						"magenta" => () => Color = new Color(0xff, 0x00, 0xff, Color.A),
-						"cyan"    => () => Color = new Color(0x00, 0xff, 0xff, Color.A),
-						"white"   => () => Color = new Color(0xff, 0xff, 0xff, Color.A),
-						_         => () => Console.WriteLine("ERROR: [Text Command] Unrecognized color!"),
-					});
-					return "\ufffc";
-				case "alpha":
-					CommandQueue[page].Add(() => Color = new Color(Color.R, Color.G, Color.B, (byte)(255f / 100f * Convert.ToSingle(args))));
-					return "\ufffc";
-				case "reset":
-					CommandQueue[page].Add(() => { Color = Color.White; });
-					return "\ufffc";
-
-				case "player":
-				case "playername":
-					return Strings["player.name"];
-			}
-
-			return "lol not really get trolled";
 		}
 
 		public List<string> ParseText(string inString)
@@ -120,9 +77,9 @@ namespace Shellblade.Graphics
 					{
 						if (wordWidth > Size.X) throw new Exception($"\"{wordBuf}\" is too long for the textbox!");
 
-						yPos += lineHeight + LineSpacing;
-						xPos =  wordWidth;
-						lineHeight = CurrentFont.Size.Y;
+						yPos       += lineHeight + LineSpacing;
+						xPos       =  wordWidth;
+						lineHeight =  CurrentFont.Size.Y;
 						if (yPos + lineHeight > Size.Y)
 						{
 							yPos = 0;
@@ -130,7 +87,10 @@ namespace Shellblade.Graphics
 							FormattedText.Add(wordBuf);
 							CommandQueue.Add(new List<Action>());
 						}
-						else FormattedText[page] += "\n" + wordBuf;
+						else
+						{
+							FormattedText[page] += "\n" + wordBuf;
+						}
 					}
 					else
 					{
@@ -154,14 +114,17 @@ namespace Shellblade.Graphics
 							yPos       += lineHeight + LineSpacing;
 							xPos       =  0;
 							lineHeight =  CurrentFont.Size.Y;
-								if (yPos + lineHeight > Size.Y)
+							if (yPos + lineHeight > Size.Y)
 							{
 								yPos = 0;
 								page++;
 								FormattedText.Add("");
 								CommandQueue.Add(new List<Action>());
 							}
-							else FormattedText[page] += "\n";
+							else
+							{
+								FormattedText[page] += "\n";
+							}
 
 							break;
 						}
@@ -197,6 +160,49 @@ namespace Shellblade.Graphics
 			_fontId = "regular";
 
 			return FormattedText;
+		}
+
+		private string ParseCommand(string command, int page)
+		{
+			int    splitIndex = command.IndexOf(':');
+			string comm       = splitIndex > 0 ? command.Remove(splitIndex) : command;
+			string args       = splitIndex > 0 ? command.Substring(splitIndex + 1) : "";
+
+			switch (comm)
+			{
+				case "f":
+				case "font":
+					_fontId = args;
+					CommandQueue[page].Add(() => _fontId = args);
+					return "\ufffc";
+				case "c":
+				case "color":
+					CommandQueue[page].Add(args switch
+					{
+						"black"   => () => Color = new Color(0x00, 0x00, 0x00, Color.A),
+						"red"     => () => Color = new Color(0xff, 0x00, 0x00, Color.A),
+						"green"   => () => Color = new Color(0x00, 0xff, 0x00, Color.A),
+						"blue"    => () => Color = new Color(0x00, 0x00, 0xff, Color.A),
+						"yellow"  => () => Color = new Color(0xff, 0xff, 0x00, Color.A),
+						"magenta" => () => Color = new Color(0xff, 0x00, 0xff, Color.A),
+						"cyan"    => () => Color = new Color(0x00, 0xff, 0xff, Color.A),
+						"white"   => () => Color = new Color(0xff, 0xff, 0xff, Color.A),
+						_         => () => Console.WriteLine("ERROR: [Text Command] Unrecognized color!"),
+					});
+					return "\ufffc";
+				case "alpha":
+					CommandQueue[page].Add(() => Color = new Color(Color.R, Color.G, Color.B, (byte)(255f / 100f * Convert.ToSingle(args))));
+					return "\ufffc";
+				case "reset":
+					CommandQueue[page].Add(() => { Color = Color.White; });
+					return "\ufffc";
+
+				case "player":
+				case "playername":
+					return Strings["player.name"];
+			}
+
+			return "lol not really get trolled";
 		}
 	}
 }

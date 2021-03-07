@@ -7,9 +7,9 @@ namespace Shellblade.Graphics.UI
 	{
 		private readonly Sprite _sprite;
 
-		public Font     Font          { get; set; }
-		public string   DisplayedText { get; set; }
-		public Texture  Texture       { get; set; }
+		public Font    Font          { get; set; }
+		public string  DisplayedText { get; set; }
+		public Texture Texture       { get; set; }
 
 		public Color Color
 		{
@@ -26,7 +26,7 @@ namespace Shellblade.Graphics.UI
 			_sprite = new Sprite(Texture)
 			{
 				TextureRect = new IntRect(0, 0, size.X, size.Y),
-				Position = (Vector2f)pos,
+				Position    = (Vector2f)pos,
 			};
 
 			BoundingBox = new IntRect(pos, size);

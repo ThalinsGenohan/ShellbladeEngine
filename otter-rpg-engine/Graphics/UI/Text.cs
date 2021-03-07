@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Shellblade.Graphics.UI
+﻿namespace Shellblade.Graphics.UI
 {
-	class Text
-	{
-	}
+	internal class Text { }
 }

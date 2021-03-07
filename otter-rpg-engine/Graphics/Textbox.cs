@@ -11,27 +11,26 @@ namespace Shellblade.Graphics
 
 		private readonly RectangleShape _background;
 
-		private bool               _parsed     = false;
-		private List<Sprite>       _characters = new List<Sprite>();
-		private List<List<Action>> CommandQueue => _parser.CommandQueue;
-		private int                _currentCommand = 0;
-		private int                _currentIndex   = 0;
-		private Color              _color          = Color.White;
-		private ulong              _timer          = 0;
-		private List<string>       _formattedText  = new List<string>();
-		private int                _currentPage    = 0;
-
-		public Vector2f                 Position  { get; set; }
-		public Vector2f                 Size      { get; set; }
-		public string                   Text      { get; set; }
-		public uint                     TextDelay { get; set; }         = 50;
-		public bool                     PageDone  { get; private set; } = false;
-
 		private readonly TextParser _parser;
 
-		private Font CurrentFont => _parser.CurrentFont;
+		private bool         _parsed         = false;
+		private List<Sprite> _characters     = new List<Sprite>();
+		private int          _currentCommand = 0;
+		private int          _currentIndex   = 0;
+		private Color        _color          = Color.White;
+		private ulong        _timer          = 0;
+		private List<string> _formattedText  = new List<string>();
+		private int          _currentPage    = 0;
 
-		private Vector2i Inside => (Vector2i)Size - new Vector2i(16, 16);
+		public Vector2f Position  { get; set; }
+		public Vector2f Size      { get; set; }
+		public string   Text      { get; set; }
+		public uint     TextDelay { get; set; }         = 50;
+		public bool     PageDone  { get; private set; } = false;
+
+		private List<List<Action>> CommandQueue => _parser.CommandQueue;
+		private Font               CurrentFont  => _parser.CurrentFont;
+		private Vector2i           Inside       => (Vector2i)Size - new Vector2i(16, 16);
 
 		public Textbox(Vector2i pos, Vector2i size)
 		{
@@ -63,7 +62,7 @@ namespace Shellblade.Graphics
 		{
 			if (!_parsed)
 			{
-				_parsed = true;
+				_parsed        = true;
 				_formattedText = _parser.ParseText(Text);
 				PrintText();
 			}
