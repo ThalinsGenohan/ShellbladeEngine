@@ -59,11 +59,10 @@ namespace Shellblade.Graphics
 
 			var lastTime = 0f;
 
-			var debugFont = new SFML.Graphics.Font(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\CONSOLA.TTF");
-			var debugText = new Text("", debugFont, 7)
+			var debugText = new UI.Text
 			{
-				OutlineColor     = Color.Black,
-				OutlineThickness = 1f,
+				Position = new Vector2i(1, 1),
+				LineSpacing = 1,
 			};
 
 			var frameCounter = 0;
@@ -78,7 +77,7 @@ namespace Shellblade.Graphics
 				if (secs - lastTime >= 1f)
 				{
 					lastTime                  = secs;
-					debugText.DisplayedString = $"FPS: {frameCounter} ({fps:F2})\nObjects: {Drawables.Count}";
+					debugText.String = "{f:tiny}" + $"FPS: {frameCounter:F0} ({fps:F2})\nObjects: {Drawables.Count}";
 					frameCounter              = 0;
 				}
 

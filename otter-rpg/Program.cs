@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using OtterRPG.Screens;
 using Shellblade.Graphics;
+using Shellblade.Graphics.UI;
 
 namespace OtterRPG
 {
@@ -20,7 +21,7 @@ namespace OtterRPG
 			foreach (string file in fontFiles)
 			{
 				string nameDir = file.Replace(".png", "");
-				TextParser.Fonts.Add(nameDir.Replace(fontsDir, ""), new Font(nameDir));
+				Text.Fonts.Add(nameDir.Replace(fontsDir, ""), new Font(nameDir));
 			}
 
 			var game = new Game(WindowWidth, WindowHeight, ResWidth, ResHeight, "Test");

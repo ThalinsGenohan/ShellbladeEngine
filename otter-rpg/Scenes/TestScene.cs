@@ -21,7 +21,8 @@ namespace OtterRPG.Screens
 				Text = "{f:regular}Hello this is a test of the small font!\n" +
 				       "{f:tall}This is a test of the tall font {f:italic}jk it's a small one\n" +
 				       "And now a small one on its own line.\n" +
-				       "{f:bold}And one more for good measure.",
+				       "{f:bold}And one more for good measure.\f" +
+				       "And here's a second page to make sure that's still working as well.",
 				TextDelay = 25,
 			};
 
