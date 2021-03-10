@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using SFML.Graphics;
 using SFML.System;
 using Shellblade.Graphics.UI;
@@ -11,7 +12,7 @@ namespace Shellblade.Graphics
 	{
 		public static Dictionary<string, Func<string>> Strings { get; set; } = new Dictionary<string, Func<string>>();
 
-		private readonly RectangleShape _background;
+		private readonly Sprite _background;
 		private readonly Text           _text;
 
 		private ulong _timer = 0;
@@ -39,7 +40,27 @@ namespace Shellblade.Graphics
 				Instant     = false,
 			};
 
-			_background = new RectangleShape((Vector2f)Size)
+			var bg = new VertexArray(PrimitiveType.Quads, 4)
+			{
+				[0] = new Vertex(new Vector2f(0f,     0f), new Color(0x5C1AE1ff)),
+				[1] = new Vertex(new Vector2f(Size.X, 0f), new Color(0x5C1AE1ff)),
+				[2] = new Vertex((Vector2f)Size,           new Color(0x000000ff)),
+				[3] = new Vertex(new Vector2f(0f, Size.Y), new Color(0x000000ff)),
+			};
+			var texture = new RenderTexture((uint)Size.X, (uint)Size.Y)
+			{
+				Smooth = false,
+			};
+			texture.Clear(new Color(0x00000000));
+			texture.Draw(bg);
+			texture.Display();
+
+			_background = new Sprite(texture.Texture)
+			{
+				Position = (Vector2f)Position,
+			};
+
+			/*_background = new RectangleShape((Vector2f)Size)
 			{
 				Position = (Vector2f)Position,
 				Texture = new Texture(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\testbox.png")
@@ -51,7 +72,7 @@ namespace Shellblade.Graphics
 				OutlineColor     = Color.White,
 				OutlineThickness = -6f,
 				FillColor        = new Color(0xffffff55),
-			};
+			};*/
 		}
 
 		public override void Draw(RenderTarget target, RenderStates states)
