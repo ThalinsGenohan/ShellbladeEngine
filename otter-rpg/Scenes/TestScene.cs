@@ -6,7 +6,7 @@ using Shellblade;
 using Shellblade.Graphics;
 using Shellblade.Graphics.UI;
 
-namespace OtterRPG.Screens
+namespace OtterRPG.Scenes
 {
 	public class TestScene : Scene
 	{
@@ -19,10 +19,10 @@ namespace OtterRPG.Screens
 			_textbox = new Textbox(new Vector2i(8, (int)(Game.Resolution.Y - 8 - 64)), new Vector2i((int)(Game.Resolution.X - 16), 64))
 			{
 				Text = "{f:regular}Hello this is a test of the small font!\n" +
-				       "{f:tall}This is a test of the tall font {f:italic}jk it's a small one\n" +
-				       "And now a small one on its own line.\n" +
+				       "{f:tall}This is a test of the tall font {f:tiny}jk it's the tiny one\n" +
+				       "{f:italic}And now a small one on its own line.\n" +
 				       "{f:bold}And one more for good measure.\f" +
-				       "And here's a second page to make sure that's still working as well.",
+				       "{f:tiny}Little tiny baby text, look how many things I can write in this textbox, wow, are we even on the next line yet, probably, but I don't know until I run it",
 				TextDelay = 25,
 			};
 

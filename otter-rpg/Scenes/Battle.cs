@@ -7,7 +7,7 @@ using Shellblade;
 using Shellblade.Graphics;
 using Shellblade.Graphics.UI;
 
-namespace OtterRPG
+namespace OtterRPG.Scenes
 {
 	internal class Battle : Scene
 	{
