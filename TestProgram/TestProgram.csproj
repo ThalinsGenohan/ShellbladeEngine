@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\otter-rpg-engine\otter-rpg-engine.csproj" />
+    <ProjectReference Include="..\otter-rpg-engine\ShellbladeEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /e /i /y $(ProjectDir)fonts\ $(TargetDir)fonts\" />
+    <Exec Command="xcopy /e /i /y $(ProjectDir)fonts\ $(TargetDir)fonts\&#xD;&#xA;xcopy /e /i /y $(ProjectDir)assets\ $(TargetDir)assets\" />
   </Target>
 
 </Project>

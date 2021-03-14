@@ -26,7 +26,7 @@ namespace OtterRPG.Scenes
 				TextDelay = 25,
 			};
 
-			var button = new Button(new Vector2i(8, 8), new Vector2i(16, 16), @"P:\CS\otter-rpg\otter-rpg-engine\Graphics\testbox.png")
+			var button = new Button(new Vector2i(16, 16), new Texture(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\testbox.png"))
 			{
 				Color   = new Color(0xff, 0xff, 0xff, 0xff / 2),
 				OnClick = () => { Console.WriteLine("Boop! The test button has been pressed!"); },
@@ -40,6 +40,7 @@ namespace OtterRPG.Scenes
 
 			Input.Buttons.Add(new Input.ButtonInput(Keyboard.Key.Enter, 0) { OnPress = _textbox.Next });
 
+			Game.ClearColor   = Color.Blue;
 			Game.LoopFunction = Loop;
 		}
 

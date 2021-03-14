@@ -14,15 +14,16 @@ namespace Shellblade.Graphics.UI
 
 		private int _tracking = 0;
 
-		private string             _string = "";
-		private int                _pageIndex   = 0;
-		public  int                DrawIndex          { get; set; }         = 0;
-		public  bool               Instant            { get; set; }         = true;
-		public  int                LineSpacing        { get; set; }         = 0;
-		public  Color              Color              { get; set; }         = Color.White;
-		public  List<string>       FormattedText      { get; private set; } = new List<string>();
-		public  List<List<Sprite>> RenderedCharacters { get; private set; } = new List<List<Sprite>>();
-		public  List<List<Action>> CommandQueue       { get; private set; } = new List<List<Action>>();
+		private string _string    = "";
+		private int    _pageIndex = 0;
+
+		public int                DrawIndex          { get; set; }         = 0;
+		public bool               Instant            { get; set; }         = true;
+		public int                LineSpacing        { get; set; }         = 0;
+		public List<string>       FormattedText      { get; private set; } = new List<string>();
+		public List<List<Sprite>> RenderedCharacters { get; private set; } = new List<List<Sprite>>();
+		private List<List<Action>> CommandQueue       { get; set; } = new List<List<Action>>();
+		public bool               Paused             { get; set; }
 
 		public bool         PageDone    => DrawIndex >= RenderedCharacters[PageIndex].Count - 1;
 		public Font         CurrentFont => Fonts[_fontId];
@@ -35,17 +36,19 @@ namespace Shellblade.Graphics.UI
 			get => _pageIndex;
 			set
 			{
-				_pageIndex     = Math.Min(value, PageCount - 1);
-				DrawIndex = 0;
+				_pageIndex = Math.Min(value, PageCount - 1);
+				DrawIndex  = 0;
 			}
 		}
 
-		public new Vector2i Position
+		public Color Color { get; set; }
+
+		public override Vector2i GlobalPosition
 		{
-			get => base.Position;
+			get => base.GlobalPosition;
 			set
 			{
-				base.Position = value;
+				base.GlobalPosition = value;
 				RenderCharacters();
 			}
 		}
@@ -77,6 +80,8 @@ namespace Shellblade.Graphics.UI
 			else
 				for (var i = 0; i <= DrawIndex; i++)
 					target.Draw(RenderedCharacters[PageIndex][i], states);
+
+			base.Draw(target, states);
 		}
 
 		public List<List<Sprite>> RenderCharacters()
@@ -107,7 +112,7 @@ namespace Shellblade.Graphics.UI
 					}
 
 					Sprite s = CurrentFont.Characters[c].Sprite;
-					s.Position = (Vector2f)(pos + Position);
+					s.Position = (Vector2f)(pos + GlobalPosition);
 					s.Color    = Color;
 					RenderedCharacters[page].Add(s);
 

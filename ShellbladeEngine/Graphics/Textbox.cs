@@ -12,7 +12,7 @@ namespace Shellblade.Graphics
 	{
 		public static Dictionary<string, Func<string>> Strings { get; set; } = new Dictionary<string, Func<string>>();
 
-		private readonly Sprite _background;
+		private readonly Box _background;
 		private readonly Text           _text;
 
 		private ulong _timer = 0;
@@ -29,40 +29,33 @@ namespace Shellblade.Graphics
 
 		public Textbox(Vector2i pos, Vector2i size)
 		{
-			Position = pos;
+			GlobalPosition = pos;
 			Size     = size;
 
 			_text = new Text
 			{
-				Position    = Position + new Vector2i(8, 8),
-				Size        = Inside,
-				LineSpacing = 1,
-				Instant     = false,
+				GlobalPosition = GlobalPosition + new Vector2i(8, 8),
+				Size           = Inside,
+				LineSpacing    = 1,
+				Instant        = false,
 			};
 
-			var bg = new VertexArray(PrimitiveType.Quads, 4)
+			_background = new GradientBox
 			{
-				[0] = new Vertex(new Vector2f(0f,     0f), new Color(0x5C1AE1ff)),
-				[1] = new Vertex(new Vector2f(Size.X, 0f), new Color(0x5C1AE1ff)),
-				[2] = new Vertex((Vector2f)Size,           new Color(0x000000ff)),
-				[3] = new Vertex(new Vector2f(0f, Size.Y), new Color(0x000000ff)),
-			};
-			var texture = new RenderTexture((uint)Size.X, (uint)Size.Y)
-			{
-				Smooth = false,
-			};
-			texture.Clear(new Color(0x00000000));
-			texture.Draw(bg);
-			texture.Display();
-
-			_background = new Sprite(texture.Texture)
-			{
-				Position = (Vector2f)Position,
+				Colors = new[]
+				{
+					new Color(0x5C1AE1e5),
+					new Color(0x00000099),
+					new Color(0x5C1AE1e5),
+					new Color(0x00000099),
+				},
+				GlobalPosition = GlobalPosition,
+				Size = Size,
 			};
 
 			/*_background = new RectangleShape((Vector2f)Size)
 			{
-				Position = (Vector2f)Position,
+				GlobalPosition = (Vector2f)GlobalPosition,
 				Texture = new Texture(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\testbox.png")
 				{
 					Repeated = true,
@@ -83,6 +76,8 @@ namespace Shellblade.Graphics
 
 		public void Next()
 		{
+			if (_text.Paused) _text.Paused = false;
+
 			if (!_text.PageDone)
 			{
 				_text.DrawIndex = _text.CurrentPage.Count - 1;

@@ -25,7 +25,7 @@ namespace OtterRPG
 			}
 
 			var game = new Game(WindowWidth, WindowHeight, ResWidth, ResHeight, "Test");
-			game.LoadScene(new TestScene(game));
+			game.LoadScene(new Battle(game));
 
 			game.Run();
 		}

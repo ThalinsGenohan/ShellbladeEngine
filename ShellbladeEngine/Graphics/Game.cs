@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -11,15 +12,15 @@ namespace Shellblade.Graphics
 
 		public Vector2u Resolution { get; }
 
-		public   Scene        Scene        { get; set; }
-		public   Action<Time> LoopFunction { get; set; }
-		public   Color        ClearColor   { get; set; } = Color.Black;
-		internal RenderWindow Window       { get; set; }
+		public Scene Scene { get; set; }
+		public Action<Time> LoopFunction { get; set; }
+		public Color ClearColor { get; set; } = Color.Black;
+		internal RenderWindow Window { get; set; }
 
 		public Vector2u Size => Window.Size;
 
 		private DrawableList Drawables => Scene.Drawables;
-		private Input        Input     => Scene.Input;
+		private Input Input => Scene.Input;
 
 		public Game(uint sizeX, uint sizeY, uint resX, uint resY, string title) : this(new Vector2u(sizeX, sizeY), new Vector2u(resX, resY), title) { }
 
@@ -35,8 +36,8 @@ namespace Shellblade.Graphics
 
 			_view = new View(Window.GetView())
 			{
-				Size     = (Vector2f)resolution,
-				Center   = (Vector2f)resolution / 2f,
+				Size = (Vector2f)resolution,
+				Center = (Vector2f)resolution / 2f,
 				Rotation = 0f,
 			};
 			Window.SetView(_view);
@@ -61,9 +62,12 @@ namespace Shellblade.Graphics
 
 			var debugText = new UI.Text
 			{
-				Position = new Vector2i(1, 1),
+				GlobalPosition = new Vector2i(1, 1),
 				LineSpacing = 1,
+				Visible = true,
 			};
+
+			var bg = new Sprite(new Texture(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\alttp.png"));
 
 			var frameCounter = 0;
 
@@ -76,9 +80,9 @@ namespace Shellblade.Graphics
 				float secs = runClock.ElapsedTime.AsSeconds();
 				if (secs - lastTime >= 1f)
 				{
-					lastTime                  = secs;
+					lastTime = secs;
 					debugText.String = "{f:tiny}" + $"FPS: {frameCounter:F0} ({fps:F2})\nObjects: {Drawables.Count}";
-					frameCounter              = 0;
+					frameCounter = 0;
 				}
 
 				Window.DispatchEvents();
@@ -89,13 +93,19 @@ namespace Shellblade.Graphics
 
 				Window.Clear(ClearColor);
 
+				//Window.Draw(bg);
+
 				for (var i = 0; i < Drawables.Count; i++)
 					Window.Draw(Drawables[i]);
 
+				Window.Draw(Input.UI);
 				Window.Draw(debugText);
 
 				Window.Display();
 			}
+
+			var serializer = new YamlDotNet.Serialization.SerializerBuilder().Build();
+			File.WriteAllText("./ui.yaml", serializer.Serialize(Input.UI));
 		}
 	}
 }
