@@ -63,13 +63,17 @@ namespace Shellblade.Graphics
 			var debugText = new UI.Text
 			{
 				GlobalPosition = new Vector2i(1, 1),
-				LineSpacing = 1,
-				Visible = true,
+				LineSpacing    = 1,
+				Visible        = true,
+				String = "{f:tiny}FPS: -- (--.--)\n" +
+				         "Avg. Delta: --.--ms\n" +
+				         "Objects: ----\n" +
+				         "UI Objs: ----",
 			};
 
-			var bg = new Sprite(new Texture(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\alttp.png"));
-
 			var frameCounter = 0;
+			var averageFps   = 0f;
+			var averageDt    = 0f;
 
 			while (Window.IsOpen)
 			{
@@ -77,12 +81,20 @@ namespace Shellblade.Graphics
 				float fps = 1f / dt.AsSeconds();
 
 				frameCounter++;
+				averageFps += fps;
+				averageDt  += dt.AsMilliseconds();
+
 				float secs = runClock.ElapsedTime.AsSeconds();
 				if (secs - lastTime >= 1f)
 				{
-					lastTime = secs;
-					debugText.String = "{f:tiny}" + $"FPS: {frameCounter:F0} ({fps:F2})\nObjects: {Drawables.Count}";
+					lastTime         = secs;
+					debugText.String = "{f:tiny}" + $"FPS: {frameCounter:D2} ({averageFps / frameCounter:F2})\n" +
+					                   $"Avg. Delta: {averageDt / frameCounter:F2}ms\n" +
+					                   $"Objects: {Drawables.Count}\n" +
+					                   $"UI Objs: {Input.UI.ElementCount}";
 					frameCounter = 0;
+					averageFps   = 0f;
+					averageDt    = 0f;
 				}
 
 				Window.DispatchEvents();
@@ -92,8 +104,6 @@ namespace Shellblade.Graphics
 				LoopFunction(dt);
 
 				Window.Clear(ClearColor);
-
-				//Window.Draw(bg);
 
 				for (var i = 0; i < Drawables.Count; i++)
 					Window.Draw(Drawables[i]);

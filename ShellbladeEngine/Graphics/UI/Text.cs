@@ -10,20 +10,22 @@ namespace Shellblade.Graphics.UI
 		public static Dictionary<string, string> Strings { get; } = new Dictionary<string, string>();
 		public static Dictionary<string, Font>   Fonts   { get; } = new Dictionary<string, Font>();
 
-		private string _fontId = "regular";
-
-		private int _tracking = 0;
-
+		private string _fontId    = "regular";
+		private int    _tracking  = 0;
 		private string _string    = "";
 		private int    _pageIndex = 0;
 
 		public int                DrawIndex          { get; set; }         = 0;
 		public bool               Instant            { get; set; }         = true;
 		public int                LineSpacing        { get; set; }         = 0;
+		public bool               Paused             { get; set; }         = false;
+		public bool               VariableWidth      { get; set; }         = true;
+		public Color              Color              { get; set; }         = Color.White;
 		public List<string>       FormattedText      { get; private set; } = new List<string>();
 		public List<List<Sprite>> RenderedCharacters { get; private set; } = new List<List<Sprite>>();
-		private List<List<Action>> CommandQueue       { get; set; } = new List<List<Action>>();
-		public bool               Paused             { get; set; }
+		public Vector2i           FormattedSize      { get; private set; } = new Vector2i(0, 0);
+
+		private List<List<Action>> CommandQueue { get; set; } = new List<List<Action>>();
 
 		public bool         PageDone    => DrawIndex >= RenderedCharacters[PageIndex].Count - 1;
 		public Font         CurrentFont => Fonts[_fontId];
@@ -40,8 +42,6 @@ namespace Shellblade.Graphics.UI
 				DrawIndex  = 0;
 			}
 		}
-
-		public Color Color { get; set; }
 
 		public override Vector2i GlobalPosition
 		{
@@ -116,7 +116,11 @@ namespace Shellblade.Graphics.UI
 					s.Color    = Color;
 					RenderedCharacters[page].Add(s);
 
-					pos.X += CurrentFont.Characters[c].Width + Tracking;
+					if (!VariableWidth) pos.X += CurrentFont.Size.X;
+					else pos.X                += CurrentFont.Characters[c].Width + Tracking;
+
+					if (pos.X > FormattedSize.X) FormattedSize = new Vector2i(pos.X,           FormattedSize.Y);
+					if (pos.Y > FormattedSize.Y) FormattedSize = new Vector2i(FormattedSize.X, pos.Y);
 				}
 			}
 

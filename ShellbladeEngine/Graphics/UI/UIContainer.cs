@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -9,6 +8,9 @@ namespace Shellblade.Graphics.UI
 {
 	public class UIContainer : Drawable
 	{
+
+		public int ElementCount => Elements.Values.Sum(c => c.ChildCount);
+
 		public Dictionary<string, UIElement> Elements { get; set; } = new Dictionary<string, UIElement>();
 
 		public bool Visible { get; set; } = true;

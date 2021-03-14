@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SFML.Graphics;
 using SFML.System;
 
@@ -18,6 +19,8 @@ namespace Shellblade.Graphics.UI
 				GlobalPosition = LocalPosition + value.GlobalPosition;
 			}
 		}
+
+		public int ChildCount => 1 + Children.Values.Sum(c => c.ChildCount);
 
 		public Dictionary<string, UIElement> Children { get; set; } = new Dictionary<string, UIElement>();
 
