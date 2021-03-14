@@ -2,18 +2,16 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using Shellblade.Graphics;
 using YamlDotNet.Serialization;
-using Text = Shellblade.Graphics.UI.Text;
 
-namespace Shellblade.Graphics
+namespace Shellblade
 {
 	public class Game
 	{
-		private readonly View _view;
-
-#if DEBUG
-		private readonly DebugWindow _debug;
-#endif
+		private readonly View        _view;
+		private readonly DebugWindow _debugWindow;
+		private readonly bool        _debug;
 
 		public Scene Scene      { get; set; }
 		public Color ClearColor { get; set; } = Color.Black;
@@ -25,9 +23,9 @@ namespace Shellblade.Graphics
 		private DrawableList Drawables  => Scene.Drawables;
 		private Input        Input      => Scene.Input;
 
-		public Game(uint sizeX, uint sizeY, uint resX, uint resY, string title) : this(new Vector2u(sizeX, sizeY), new Vector2u(resX, resY), title) { }
+		public Game(uint sizeX, uint sizeY, uint resX, uint resY, string title, bool debug = false) : this(new Vector2u(sizeX, sizeY), new Vector2u(resX, resY), title, debug) { }
 
-		public Game(Vector2u windowSize, Vector2u resolution, string title)
+		public Game(Vector2u windowSize, Vector2u resolution, string title, bool debug = false)
 		{
 			Window = new RenderWindow(new VideoMode(windowSize.X, windowSize.Y), title, Styles.Close | Styles.Titlebar);
 			Window.SetFramerateLimit(60);
@@ -45,9 +43,12 @@ namespace Shellblade.Graphics
 
 			Joystick.Update();
 
-#if DEBUG
-			_debug = new DebugWindow();
-#endif
+			_debug = debug;
+			if (_debug)
+			{
+				_debugWindow  =  new DebugWindow();
+				Window.Closed += (sender, args) => _debugWindow.Stop();
+			}
 		}
 
 		public void LoadScene(Scene scene)
@@ -63,25 +64,11 @@ namespace Shellblade.Graphics
 			var deltaClock = new Clock();
 			var runClock   = new Clock();
 
-			var debugText = new Text
-			{
-				GlobalPosition = new Vector2i(1, 1),
-				LineSpacing    = 1,
-				Visible        = true,
-				String = "{f:tiny}FPS: -- (--.--)\n" +
-				         "Avg. Delta: --.--ms\n" +
-				         "Objects: ----\n" +
-				         "UI Objs: ----\n" +
-				         "Key Inputs:",
-			};
-
 			while (Window.IsOpen)
 			{
 				Time dt = deltaClock.Restart();
 
-#if DEBUG
-				_debug.Tick(dt, Drawables.Count, Input.UI.ElementCount);
-#endif
+				if (_debug) _debugWindow.Tick(dt, Drawables.Count, Input.UI.ElementCount);
 
 				Window.DispatchEvents();
 
@@ -98,10 +85,6 @@ namespace Shellblade.Graphics
 
 				Window.Display();
 			}
-
-#if DEBUG
-			_debug.Stop();
-#endif
 
 			ISerializer serializer = new SerializerBuilder().Build();
 			File.WriteAllText("./ui.yaml", serializer.Serialize(Input.UI));

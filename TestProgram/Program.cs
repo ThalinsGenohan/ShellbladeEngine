@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using OtterRPG.Scenes;
+using Shellblade;
 using Shellblade.Graphics;
 using Shellblade.Graphics.UI;
 
@@ -7,6 +8,12 @@ namespace OtterRPG
 {
 	internal class Program
 	{
+#if DEBUG
+		public const bool Debug = true;
+#else
+		public const bool Debug = false;
+#endif
+
 		private const uint   ResWidth    = 320;
 		private const uint   ResHeight   = 240;
 		private const uint   WindowScale = 4;
@@ -24,7 +31,8 @@ namespace OtterRPG
 				Text.Fonts.Add(nameDir.Replace(fontsDir, ""), new Font(nameDir));
 			}
 
-			var game = new Game(WindowWidth, WindowHeight, ResWidth, ResHeight, "Test");
+
+			var game = new Game(WindowWidth, WindowHeight, ResWidth, ResHeight, "Test", Debug);
 			game.LoadScene(new Battle(game));
 
 			game.Run();
