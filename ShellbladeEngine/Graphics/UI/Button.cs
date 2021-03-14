@@ -15,6 +15,12 @@ namespace Shellblade.Graphics.UI
 			set => _sprite.Color = value;
 		}
 
+		public float Opacity
+		{
+			get => Color.A / 255f;
+			set => Color = new Color(Color.R, Color.G, Color.B, (byte)(value * 255f));
+		}
+
 		public override Vector2i GlobalPosition
 		{
 			get => base.GlobalPosition;

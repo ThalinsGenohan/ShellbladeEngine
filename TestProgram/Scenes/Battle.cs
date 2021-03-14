@@ -35,8 +35,8 @@ namespace OtterRPG.Scenes
 				OnClick       = () => { Console.WriteLine("Attack button clicked!"); },
 				LocalPosition = new Vector2i(1, 1),
 			};
-			AttackButton.OnMouseOver = () => { AttackButton.Color = Color.White; };
-			AttackButton.OnMouseOff  = () => { AttackButton.Color = new Color(0xffffff7f); };
+			AttackButton.OnMouseOver = () => { AttackButton.Opacity = 1f; };
+			AttackButton.OnMouseOff  = () => { AttackButton.Opacity = 0.5f; };
 
 			SkillsButton = new Button(new Vector2i(16, 16), new Texture(@"assets\temp-icons.png", new IntRect(16, 0, 16, 16)))
 			{
@@ -44,8 +44,8 @@ namespace OtterRPG.Scenes
 				OnClick       = () => { Console.WriteLine("Skills button clicked!"); },
 				LocalPosition = new Vector2i(1, 18),
 			};
-			SkillsButton.OnMouseOver = () => { SkillsButton.Color = Color.White; };
-			SkillsButton.OnMouseOff  = () => { SkillsButton.Color = new Color(0xffffff7f); };
+			SkillsButton.OnMouseOver = () => { SkillsButton.Opacity = 1f; };
+			SkillsButton.OnMouseOff  = () => { SkillsButton.Opacity = 0.5f; };
 
 			MagicButton = new Button(new Vector2i(16, 16), new Texture(@"assets\temp-icons.png", new IntRect(32, 0, 16, 16)))
 			{
@@ -53,8 +53,8 @@ namespace OtterRPG.Scenes
 				OnClick       = () => { Console.WriteLine("Magic button clicked!"); },
 				LocalPosition = new Vector2i(1, 35),
 			};
-			MagicButton.OnMouseOver = () => { MagicButton.Color = Color.White; };
-			MagicButton.OnMouseOff  = () => { MagicButton.Color = new Color(0xffffff7f); };
+			MagicButton.OnMouseOver = () => { MagicButton.Opacity = 1f; };
+			MagicButton.OnMouseOff  = () => { MagicButton.Opacity = 0.5f; };
 
 			ItemButton = new Button(new Vector2i(16, 16), new Texture(@"assets\temp-icons.png", new IntRect(48, 0, 16, 16)))
 			{
@@ -62,8 +62,8 @@ namespace OtterRPG.Scenes
 				OnClick       = () => { Console.WriteLine("Item button clicked!"); },
 				LocalPosition = new Vector2i(1, 52),
 			};
-			ItemButton.OnMouseOver = () => { ItemButton.Color = Color.White; };
-			ItemButton.OnMouseOff  = () => { ItemButton.Color = new Color(0xffffff7f); };
+			ItemButton.OnMouseOver = () => { ItemButton.Opacity = 1f; };
+			ItemButton.OnMouseOff  = () => { ItemButton.Opacity = 0.5f; };
 
 			Box = new FilledBox
 			{
