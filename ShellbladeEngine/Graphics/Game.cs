@@ -3,6 +3,8 @@ using System.IO;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using YamlDotNet.Serialization;
+using Text = Shellblade.Graphics.UI.Text;
 
 namespace Shellblade.Graphics
 {
@@ -12,15 +14,14 @@ namespace Shellblade.Graphics
 
 		public Vector2u Resolution { get; }
 
-		public Scene Scene { get; set; }
-		public Action<Time> LoopFunction { get; set; }
-		public Color ClearColor { get; set; } = Color.Black;
-		internal RenderWindow Window { get; set; }
+		public   Scene        Scene      { get; set; }
+		public   Color        ClearColor { get; set; } = Color.Black;
+		internal RenderWindow Window     { get; set; }
 
-		public Vector2u Size => Window.Size;
-
-		private DrawableList Drawables => Scene.Drawables;
-		private Input Input => Scene.Input;
+		public  Action<Time> LoopFunction => Scene.Loop;
+		public  Vector2u     Size         => Window.Size;
+		private DrawableList Drawables    => Scene.Drawables;
+		private Input        Input        => Scene.Input;
 
 		public Game(uint sizeX, uint sizeY, uint resX, uint resY, string title) : this(new Vector2u(sizeX, sizeY), new Vector2u(resX, resY), title) { }
 
@@ -36,8 +37,8 @@ namespace Shellblade.Graphics
 
 			_view = new View(Window.GetView())
 			{
-				Size = (Vector2f)resolution,
-				Center = (Vector2f)resolution / 2f,
+				Size     = (Vector2f)resolution,
+				Center   = (Vector2f)resolution / 2f,
 				Rotation = 0f,
 			};
 			Window.SetView(_view);
@@ -60,7 +61,7 @@ namespace Shellblade.Graphics
 
 			var lastTime = 0f;
 
-			var debugText = new UI.Text
+			var debugText = new Text
 			{
 				GlobalPosition = new Vector2i(1, 1),
 				LineSpacing    = 1,
@@ -87,7 +88,7 @@ namespace Shellblade.Graphics
 				float secs = runClock.ElapsedTime.AsSeconds();
 				if (secs - lastTime >= 1f)
 				{
-					lastTime         = secs;
+					lastTime = secs;
 					debugText.String = "{f:tiny}" + $"FPS: {frameCounter:D2} ({averageFps / frameCounter:F2})\n" +
 					                   $"Avg. Delta: {averageDt / frameCounter:F2}ms\n" +
 					                   $"Objects: {Drawables.Count}\n" +
@@ -114,7 +115,7 @@ namespace Shellblade.Graphics
 				Window.Display();
 			}
 
-			var serializer = new YamlDotNet.Serialization.SerializerBuilder().Build();
+			ISerializer serializer = new SerializerBuilder().Build();
 			File.WriteAllText("./ui.yaml", serializer.Serialize(Input.UI));
 		}
 	}

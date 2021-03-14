@@ -111,23 +111,18 @@ namespace OtterRPG.Scenes
 			MagicButton.AddChild("text", magicText);
 			ItemButton.AddChild("text", itemText);
 
-			Input = new Input
+			Input.Buttons = new List<Input.ButtonInput>
 			{
-				Buttons = new List<Input.ButtonInput>
+				new Input.ButtonInput(Keyboard.Key.Enter,  0) { OnPress = Confirm },
+				new Input.ButtonInput(Keyboard.Key.RShift, 1) { OnPress = Cancel },
+			};
+			Input.UI = new UIContainer
+			{
+				Elements = new Dictionary<string, UIElement>
 				{
-					new Input.ButtonInput(Keyboard.Key.Enter,  0) { OnPress = Confirm },
-					new Input.ButtonInput(Keyboard.Key.RShift, 1) { OnPress = Cancel },
-				},
-				UI = new UIContainer
-				{
-					Elements = new Dictionary<string, UIElement>
-					{
-						{ "box", Box },
-					},
+					{ "box", Box },
 				},
 			};
-
-			game.LoopFunction = Loop;
 		}
 
 		public void Start(Player[] players)
@@ -161,7 +156,7 @@ namespace OtterRPG.Scenes
 			while (CheckPlayersAlive() && CheckEnemiesAlive()) TurnCounter++;
 		}
 
-		protected override void Loop(Time dt)
+		public override void Loop(Time dt)
 		{
 
 		}

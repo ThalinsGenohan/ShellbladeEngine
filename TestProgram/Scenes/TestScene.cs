@@ -41,10 +41,9 @@ namespace OtterRPG.Scenes
 			Input.Buttons.Add(new Input.ButtonInput(Keyboard.Key.Enter, 0) { OnPress = _textbox.Next });
 
 			Game.ClearColor   = Color.Blue;
-			Game.LoopFunction = Loop;
 		}
 
-		protected override void Loop(Time dt)
+		public override void Loop(Time dt)
 		{
 			_textbox.UpdateScroll(dt.AsMilliseconds());
 		}
