@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -12,23 +11,24 @@ namespace Shellblade.Graphics
 	{
 		private readonly View _view;
 
-		public Vector2u Resolution { get; }
+#if DEBUG
+		private readonly DebugWindow _debug;
+#endif
 
-		public   Scene        Scene      { get; set; }
-		public   Color        ClearColor { get; set; } = Color.Black;
-		internal RenderWindow Window     { get; set; }
+		public Scene Scene      { get; set; }
+		public Color ClearColor { get; set; } = Color.Black;
 
-		public  Action<Time> LoopFunction => Scene.Loop;
-		public  Vector2u     Size         => Window.Size;
-		private DrawableList Drawables    => Scene.Drawables;
-		private Input        Input        => Scene.Input;
+		internal RenderWindow Window { get; }
+
+		public  Vector2u     Resolution => (Vector2u)_view.Size;
+		public  Vector2u     WindowSize => Window.Size;
+		private DrawableList Drawables  => Scene.Drawables;
+		private Input        Input      => Scene.Input;
 
 		public Game(uint sizeX, uint sizeY, uint resX, uint resY, string title) : this(new Vector2u(sizeX, sizeY), new Vector2u(resX, resY), title) { }
 
 		public Game(Vector2u windowSize, Vector2u resolution, string title)
 		{
-			Resolution = resolution;
-
 			Window = new RenderWindow(new VideoMode(windowSize.X, windowSize.Y), title, Styles.Close | Styles.Titlebar);
 			Window.SetFramerateLimit(60);
 			Window.SetKeyRepeatEnabled(false);
@@ -44,6 +44,10 @@ namespace Shellblade.Graphics
 			Window.SetView(_view);
 
 			Joystick.Update();
+
+#if DEBUG
+			_debug = new DebugWindow();
+#endif
 		}
 
 		public void LoadScene(Scene scene)
@@ -59,8 +63,6 @@ namespace Shellblade.Graphics
 			var deltaClock = new Clock();
 			var runClock   = new Clock();
 
-			var lastTime = 0f;
-
 			var debugText = new Text
 			{
 				GlobalPosition = new Vector2i(1, 1),
@@ -69,40 +71,23 @@ namespace Shellblade.Graphics
 				String = "{f:tiny}FPS: -- (--.--)\n" +
 				         "Avg. Delta: --.--ms\n" +
 				         "Objects: ----\n" +
-				         "UI Objs: ----",
+				         "UI Objs: ----\n" +
+				         "Key Inputs:",
 			};
-
-			var frameCounter = 0;
-			var averageFps   = 0f;
-			var averageDt    = 0f;
 
 			while (Window.IsOpen)
 			{
-				Time  dt  = deltaClock.Restart();
-				float fps = 1f / dt.AsSeconds();
+				Time dt = deltaClock.Restart();
 
-				frameCounter++;
-				averageFps += fps;
-				averageDt  += dt.AsMilliseconds();
-
-				float secs = runClock.ElapsedTime.AsSeconds();
-				if (secs - lastTime >= 1f)
-				{
-					lastTime = secs;
-					debugText.String = "{f:tiny}" + $"FPS: {frameCounter:D2} ({averageFps / frameCounter:F2})\n" +
-					                   $"Avg. Delta: {averageDt / frameCounter:F2}ms\n" +
-					                   $"Objects: {Drawables.Count}\n" +
-					                   $"UI Objs: {Input.UI.ElementCount}";
-					frameCounter = 0;
-					averageFps   = 0f;
-					averageDt    = 0f;
-				}
+#if DEBUG
+				_debug.Tick(dt, Drawables.Count, Input.UI.ElementCount);
+#endif
 
 				Window.DispatchEvents();
 
 				Input.DoHoldInputs();
 
-				LoopFunction(dt);
+				Scene.Loop(dt);
 
 				Window.Clear(ClearColor);
 
@@ -110,10 +95,13 @@ namespace Shellblade.Graphics
 					Window.Draw(Drawables[i]);
 
 				Window.Draw(Input.UI);
-				Window.Draw(debugText);
 
 				Window.Display();
 			}
+
+#if DEBUG
+			_debug.Stop();
+#endif
 
 			ISerializer serializer = new SerializerBuilder().Build();
 			File.WriteAllText("./ui.yaml", serializer.Serialize(Input.UI));
