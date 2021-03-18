@@ -16,4 +16,8 @@
     </None>
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="python post_build.py $(ProjectDir) $(TargetDir)" />
+  </Target>
+
 </Project>
