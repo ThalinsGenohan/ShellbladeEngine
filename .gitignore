@@ -338,3 +338,9 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+#Mac Stuff
+.DS_Store
+
+#Crash Logs
+mono_crash*
