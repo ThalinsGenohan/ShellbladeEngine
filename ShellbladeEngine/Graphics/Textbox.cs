@@ -52,20 +52,6 @@ namespace Shellblade.Graphics
 				GlobalPosition = GlobalPosition,
 				Size = Size,
 			};
-
-			/*_background = new RectangleShape((Vector2f)Size)
-			{
-				GlobalPosition = (Vector2f)GlobalPosition,
-				Texture = new Texture(@"P:\CS\otter-rpg\otter-rpg-engine\Graphics\testbox.png")
-				{
-					Repeated = true,
-					Smooth   = false,
-				},
-				TextureRect      = new IntRect(0, 0, size.X, size.Y),
-				OutlineColor     = Color.White,
-				OutlineThickness = -6f,
-				FillColor        = new Color(0xffffff55),
-			};*/
 		}
 
 		public override void Draw(RenderTarget target, RenderStates states)

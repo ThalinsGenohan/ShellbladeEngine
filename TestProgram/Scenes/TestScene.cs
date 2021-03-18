@@ -26,7 +26,7 @@ namespace OtterRPG.Scenes
 				TextDelay = 25,
 			};
 
-			var button = new Button(new Vector2i(16, 16), new Texture(@"P:\CS\otter-rpg\ShellbladeEngine\Graphics\testbox.png"))
+			var button = new Button(new Vector2i(16, 16), new Texture(@"assets\testbox.png"))
 			{
 				Color   = new Color(0xff, 0xff, 0xff, 0xff / 2),
 				OnClick = () => { Console.WriteLine("Boop! The test button has been pressed!"); },

@@ -9,7 +9,7 @@ namespace Shellblade
 		private const float RefreshRate = 1f;
 		private const float Margin      = 0.01f;
 
-		private readonly Font         _font = new Font(@"P:\CS\otter-rpg\ShellbladeEngine\Graphics\CONSOLA.TTF");
+		private readonly Font         _font = new Font(@"assets\CONSOLA.TTF");
 		private readonly RenderWindow _window;
 		private readonly Text         _fpsText;
 		private readonly Text         _refreshText;
