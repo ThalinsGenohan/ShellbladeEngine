@@ -17,7 +17,7 @@ namespace OtterRPG
 		private const uint   ResWidth    = 320;
 		private const uint   ResHeight   = 240;
 		private const uint   WindowScale = 4;
-		private const string FontsDir    = "fonts/";
+		private const string FontsDir    = "assets/fonts/";
 
 		private static uint WindowWidth  => ResWidth * WindowScale;
 		private static uint WindowHeight => ResHeight * WindowScale;
