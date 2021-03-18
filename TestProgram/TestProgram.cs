@@ -6,7 +6,7 @@ using Shellblade.Graphics.UI;
 
 namespace OtterRPG
 {
-	internal class Program
+	internal class TestProgram
 	{
 #if DEBUG
 		public const bool Debug = true;
@@ -17,18 +17,18 @@ namespace OtterRPG
 		private const uint   ResWidth    = 320;
 		private const uint   ResHeight   = 240;
 		private const uint   WindowScale = 4;
-		private const string fontsDir    = "fonts/";
+		private const string FontsDir    = "fonts/";
 
 		private static uint WindowWidth  => ResWidth * WindowScale;
 		private static uint WindowHeight => ResHeight * WindowScale;
 
 		private static void Main(string[] args)
 		{
-			string[] fontFiles = Directory.GetFiles(fontsDir, "*.png");
+			string[] fontFiles = Directory.GetFiles(FontsDir, "*.png");
 			foreach (string file in fontFiles)
 			{
 				string nameDir = file.Replace(".png", "");
-				Text.Fonts.Add(nameDir.Replace(fontsDir, ""), new Font(nameDir));
+				Text.Fonts.Add(nameDir.Replace(FontsDir, ""), new Font(nameDir));
 			}
 
 
