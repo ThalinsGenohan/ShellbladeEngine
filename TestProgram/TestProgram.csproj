@@ -16,8 +16,4 @@
     </None>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /e /i /y $(ProjectDir)fonts\ $(TargetDir)fonts\&#xD;&#xA;xcopy /e /i /y $(ProjectDir)assets\ $(TargetDir)assets\" />
-  </Target>
-
 </Project>
