@@ -16,7 +16,7 @@ namespace Shellblade
 		public Scene Scene      { get; set; }
 		public Color ClearColor { get; set; } = Color.Black;
 
-		internal RenderWindow Window { get; }
+		public RenderWindow Window { get; }
 
 		public  Vector2u     Resolution => (Vector2u)_view.Size;
 		public  Vector2u     WindowSize => Window.Size;
