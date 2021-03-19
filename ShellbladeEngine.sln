@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProgram", "TestProgram\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShellbladeEngine", "ShellbladeEngine\ShellbladeEngine.csproj", "{FD6780A1-94D2-4EAF-B8CE-133C297D111B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIBuilder", "UIBuilder\UIBuilder.csproj", "{210726C9-373A-44E6-A395-ED5A2CC4CB38}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIBuilder", "UIBuilder\UIBuilder.csproj", "{BACC5280-6C99-4EFC-B41E-E4355CD00608}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{FD6780A1-94D2-4EAF-B8CE-133C297D111B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD6780A1-94D2-4EAF-B8CE-133C297D111B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD6780A1-94D2-4EAF-B8CE-133C297D111B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{210726C9-373A-44E6-A395-ED5A2CC4CB38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{210726C9-373A-44E6-A395-ED5A2CC4CB38}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{210726C9-373A-44E6-A395-ED5A2CC4CB38}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{210726C9-373A-44E6-A395-ED5A2CC4CB38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BACC5280-6C99-4EFC-B41E-E4355CD00608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BACC5280-6C99-4EFC-B41E-E4355CD00608}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BACC5280-6C99-4EFC-B41E-E4355CD00608}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BACC5280-6C99-4EFC-B41E-E4355CD00608}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
