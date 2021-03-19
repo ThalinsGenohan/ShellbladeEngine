@@ -9,6 +9,9 @@
     <ProjectReference Include="..\ShellbladeEngine\ShellbladeEngine.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Scenes\" />
+  </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="python ../post_build.py $(ProjectDir) $(TargetDir)" />
   </Target>
