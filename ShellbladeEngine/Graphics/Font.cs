@@ -128,21 +128,16 @@ namespace Shellblade.Graphics
 			}
 		}
 
-		private class FontConfig : Config
+		private class FontConfig : Yaml
 		{
 			public int                   TrackingOffset;
 			public Dictionary<char, int> WidthOverrides;
 
-			public override void Load(string filename)
+			public override void Load(string filepath)
 			{
-				var config = _deserializer.Deserialize<FontConfig>(File.ReadAllText(filename));
+				var config = Deserializer.Deserialize<FontConfig>(File.ReadAllText(filepath));
 				TrackingOffset = config.TrackingOffset;
 				WidthOverrides = config.WidthOverrides;
-			}
-
-			public override void Save(string filename)
-			{
-				File.WriteAllText(filename, _serializer.Serialize(this));
 			}
 		}
 	}
