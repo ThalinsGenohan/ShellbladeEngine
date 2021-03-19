@@ -16,7 +16,7 @@ namespace Shellblade
 		public Scene Scene      { get; set; }
 		public Color ClearColor { get; set; } = Color.Black;
 
-		public RenderWindow Window { get; }
+		internal RenderWindow Window { get; }
 
 		public  Vector2u     Resolution => (Vector2u)_view.Size;
 		public  Vector2u     WindowSize => Window.Size;
@@ -89,5 +89,10 @@ namespace Shellblade
 			ISerializer serializer = new SerializerBuilder().Build();
 			File.WriteAllText("./ui.yaml", serializer.Serialize(Input.UI));
 		}
+
+		public void UpdateCursor(Cursor cursor)
+        {
+			Window.SetMouseCursor(cursor);
+        }
 	}
 }
