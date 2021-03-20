@@ -15,9 +15,18 @@ namespace UIBuilder.Scenes
         }
 
 
-        public void SetCursor(string imagePath, uint hotspotX, uint hotspotY, Game window)
+        public int SetCursor(string imagePath, uint hotspotX, uint hotspotY, Game window)
         {
-            Bitmap image = new Bitmap(imagePath);
+            Bitmap image;
+            try
+            {
+                image = new Bitmap(imagePath);
+            }
+            catch
+            {
+                return 1;
+            }
+
             uint width = (uint)image.Width;
             uint height = (uint)image.Height;
 
@@ -25,15 +34,15 @@ namespace UIBuilder.Scenes
             Vector2u size = new Vector2u(width, height);
             Vector2u hotspot = new Vector2u(hotspotX, hotspotY);
 
-            for(int y = 0; y < height; y++)
+            for (int y = 0; y < height; y++)
             {
-                for(int x = 0; x < width; x++)
+                for (int x = 0; x < width; x++)
                 {
                     int index = 4 * (x + image.Width * y);
 
                     Color pixel = image.GetPixel(x, y);
 
-                    pixels[index]     = pixel.R;
+                    pixels[index] = pixel.R;
                     pixels[index + 1] = pixel.G;
                     pixels[index + 2] = pixel.B;
                     pixels[index + 3] = pixel.A;
@@ -43,6 +52,8 @@ namespace UIBuilder.Scenes
             Cursor cursor = new Cursor(pixels, size, hotspot);
 
             window.UpdateCursor(cursor);
+
+            return 0;
         }
 
 
