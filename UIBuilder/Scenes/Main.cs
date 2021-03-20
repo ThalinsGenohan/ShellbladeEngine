@@ -11,13 +11,13 @@ namespace UIBuilder.Scenes
         public Main(Game window) : base(window)
         {
             //Set default cursor
-            Bitmap cursorTexture = new Bitmap(@"assets/arrow_cursor.png");
-            SetCursor(cursorTexture, 0, 0, window);
+            SetCursor(@"assets/arrow_cursor.png", 0, 0, window);
         }
 
 
-        public void SetCursor(Bitmap image, uint hotspotX, uint hotspotY, Game window)
+        public void SetCursor(string imagePath, uint hotspotX, uint hotspotY, Game window)
         {
+            Bitmap image = new Bitmap(imagePath);
             uint width = (uint)image.Width;
             uint height = (uint)image.Height;
 
