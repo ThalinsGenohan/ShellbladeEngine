@@ -18,8 +18,9 @@ namespace UIBuilder
         private static void Main(string[] args)
         {
             var window = new Game(_windowX, _windowY, _resX, _resY, "UI Builder");
-            window.LoadScene(new Main(window));
+            var main = new Main(window);
 
+            window.LoadScene(main);
             window.Run();
         }
     }
