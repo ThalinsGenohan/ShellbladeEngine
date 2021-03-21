@@ -18,18 +18,19 @@ namespace UIBuilder.Scenes
         public Main(Game window) : base(window)
         {
             //Set default cursor
-            SetCursor(@"assets/cursor_arrow.png", 0, 0, window);
+            window.SetCursor(@"assets/cursor_arrow.png", 0, 0, window);
 
             testButton = new Button(new Vector2i(16, 16),
                                     new Texture(@"assets/testbox.png",
-                                    new IntRect(0, 0, 16, 16)))
+                                    new IntRect(0, 0, 16, 16)),
+                                    window,
+                                    () => { Console.WriteLine("Clicked!"); },
+                                    () => { Console.WriteLine("Hovered On!"); },
+                                    () => { Console.WriteLine("Hovered Off!"); })
             {
                 Color          = new SFML.Graphics.Color(0xffffffff),
-                OnClick        = () => {},
                 GlobalPosition = new Vector2i(64, 64)
             };
-            testButton.OnMouseOver = () => { SetCursor(@"assets/cursor_hand.png", 4, 1, window); };
-            testButton.OnMouseOff  = () => { SetCursor(@"assets/cursor_arrow.png", 0, 0, window); };
 
             Input.UI = new UIContainer
             {
@@ -39,49 +40,6 @@ namespace UIBuilder.Scenes
                 }
             };
         }
-
-
-        public int SetCursor(string imagePath, uint hotspotX, uint hotspotY, Game window)
-        {
-            Bitmap image;
-            try
-            {
-                image = new Bitmap(imagePath);
-            }
-            catch
-            {
-                return 1;
-            }
-
-            uint width = (uint)image.Width;
-            uint height = (uint)image.Height;
-
-            byte[] pixels = new byte[width * height * 4];
-            Vector2u size = new Vector2u(width, height);
-            Vector2u hotspot = new Vector2u(hotspotX, hotspotY);
-
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    int index = 4 * (x + image.Width * y);
-
-                    System.Drawing.Color pixel = image.GetPixel(x, y);
-
-                    pixels[index] = pixel.R;
-                    pixels[index + 1] = pixel.G;
-                    pixels[index + 2] = pixel.B;
-                    pixels[index + 3] = pixel.A;
-                }
-            }
-
-            Cursor cursor = new Cursor(pixels, size, hotspot);
-
-            window.UpdateCursor(cursor);
-
-            return 0;
-        }
-
 
         public override void Loop(Time dt)
         {

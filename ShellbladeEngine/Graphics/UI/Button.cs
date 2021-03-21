@@ -1,5 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using System;
 
 namespace Shellblade.Graphics.UI
 {
@@ -60,15 +61,22 @@ namespace Shellblade.Graphics.UI
 			SetSpriteScale();
         }
 
-		public Button(Vector2i size, Texture texture)
+		public Button(Vector2i size, Texture texture, Game window) :
+			this(size, texture, window, () => { }, () => { }, () => { }) { }
+
+		public Button(Vector2i size, Texture texture, Game window, Action customOnClick, Action customOnMouseOver, Action customOnMouseOff)
 		{
 			Texture = texture;
 			_sprite = new Sprite(Texture)
 			{
 				TextureRect = new IntRect(0, 0, (int)texture.Size.X, (int)texture.Size.Y),
-				Position    = new Vector2f(0f, 0f),
+				Position = new Vector2f(0f, 0f),
 			};
 			Size = size;
+
+			OnClick     = () => { customOnClick(); };
+			OnMouseOver = () => { window.SetCursor(@"assets/cursor_hand.png", 4, 1, window); customOnMouseOver(); };
+			OnMouseOff = () => { window.SetCursor(@"assets/cursor_arrow.png", 0, 0, window); customOnMouseOff(); };
 
 			SetSpriteScale();
 		}

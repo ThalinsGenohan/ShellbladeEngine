@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Drawing;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -14,7 +15,7 @@ namespace Shellblade
 		private readonly bool        _debug;
 
 		public Scene Scene      { get; set; }
-		public Color ClearColor { get; set; } = Color.Black;
+		public SFML.Graphics.Color ClearColor { get; set; } = SFML.Graphics.Color.Black;
 
 		internal RenderWindow Window { get; }
 
@@ -90,9 +91,45 @@ namespace Shellblade
 			File.WriteAllText("./ui.yaml", serializer.Serialize(Input.UI));
 		}
 
-		public void UpdateCursor(Cursor cursor)
+		public int SetCursor(string imagePath, uint hotspotX, uint hotspotY, Game window)
         {
+            Bitmap image;
+            try
+            {
+                image = new Bitmap(imagePath);
+            }
+            catch
+            {
+                return 1;
+            }
+
+            uint width = (uint)image.Width;
+            uint height = (uint)image.Height;
+
+            byte[] pixels = new byte[width * height * 4];
+            Vector2u size = new Vector2u(width, height);
+            Vector2u hotspot = new Vector2u(hotspotX, hotspotY);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int index = 4 * (x + image.Width * y);
+
+                    System.Drawing.Color pixel = image.GetPixel(x, y);
+
+                    pixels[index] = pixel.R;
+                    pixels[index + 1] = pixel.G;
+                    pixels[index + 2] = pixel.B;
+                    pixels[index + 3] = pixel.A;
+                }
+            }
+
+            Cursor cursor = new Cursor(pixels, size, hotspot);
+
 			Window.SetMouseCursor(cursor);
+
+            return 0;
         }
 	}
 }

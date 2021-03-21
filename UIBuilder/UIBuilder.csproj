@@ -12,9 +12,6 @@
   <ItemGroup>
     <Folder Include="Scenes\" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-  </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="python ../post_build.py $(ProjectDir) $(TargetDir)" />
   </Target>
