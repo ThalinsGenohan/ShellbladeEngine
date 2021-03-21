@@ -25,10 +25,7 @@ namespace UIBuilder.Scenes
                                     new IntRect(0, 0, 16, 16)))
             {
                 Color          = new SFML.Graphics.Color(0xffffffff),
-                OnClick        = () =>
-                {
-                    testButton.SetSize(new Vector2i(160, 120));
-                },
+                OnClick        = () => {},
                 GlobalPosition = new Vector2i(64, 64)
             };
             testButton.OnMouseOver = () => { Console.WriteLine("Moused over"); };
