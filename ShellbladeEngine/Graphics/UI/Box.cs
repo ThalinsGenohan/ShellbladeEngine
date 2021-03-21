@@ -41,8 +41,7 @@ namespace Shellblade.Graphics.UI
 
 		public override void Draw(RenderTarget target, RenderStates states)
 		{
-			target.Draw(rectangle, states);
-			base.Draw(target, states);
+			//THIS CLASS IS FOR TRANSPARENT BUT FUNCTIONAL "WRAPPERS", AND WONT BE DRAWN
 		}
 	}
 }

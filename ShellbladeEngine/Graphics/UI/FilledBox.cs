@@ -15,5 +15,11 @@ namespace Shellblade.Graphics.UI
 		{
 			rectangle.FillColor = Color.White;
 		}
+
+		public override void Draw(RenderTarget target, RenderStates states)
+		{
+			target.Draw(rectangle, states);
+			base.Draw(target, states);
+		}
 	}
 }
