@@ -18,7 +18,7 @@ namespace UIBuilder.Scenes
         public Main(Game window) : base(window)
         {
             //Set default cursor
-            SetCursor(@"assets/arrow_cursor.png", 0, 0, window);
+            SetCursor(@"assets/cursor_arrow.png", 0, 0, window);
 
             testButton = new Button(new Vector2i(16, 16),
                                     new Texture(@"assets/testbox.png",
@@ -28,8 +28,8 @@ namespace UIBuilder.Scenes
                 OnClick        = () => {},
                 GlobalPosition = new Vector2i(64, 64)
             };
-            testButton.OnMouseOver = () => { Console.WriteLine("Moused over"); };
-            testButton.OnMouseOff  = () => { Console.WriteLine("Moused off"); };
+            testButton.OnMouseOver = () => { SetCursor(@"assets/cursor_hand.png", 4, 1, window); };
+            testButton.OnMouseOff  = () => { SetCursor(@"assets/cursor_arrow.png", 0, 0, window); };
 
             Input.UI = new UIContainer
             {
