@@ -5,7 +5,7 @@ namespace Shellblade.Graphics.UI
 {
 	public class Button : UIElement
 	{
-		private readonly Sprite _sprite;
+		private Sprite _sprite;
 
 		public Texture Texture { get; set; }
 
@@ -41,15 +41,36 @@ namespace Shellblade.Graphics.UI
 			}
 		}
 
+		public Vector2f GetSpriteScale()
+        {
+			return _sprite.Scale;
+        }
+
+		public void SetSpriteScale()
+        {
+			var buttonSize = Size;
+			var textureSize = Texture.Size;
+			var newScale = new Vector2f((float)buttonSize.X / textureSize.X, (float)buttonSize.Y / textureSize.Y);
+			_sprite.Scale = newScale;
+		}
+
+		public void SetSize(Vector2i size)
+        {
+			Size = size;
+			SetSpriteScale();
+        }
+
 		public Button(Vector2i size, Texture texture)
 		{
 			Texture = texture;
 			_sprite = new Sprite(Texture)
 			{
-				TextureRect = new IntRect(0, 0, size.X, size.Y),
+				TextureRect = new IntRect(0, 0, (int)texture.Size.X, (int)texture.Size.Y),
 				Position    = new Vector2f(0f, 0f),
 			};
 			Size = size;
+
+			SetSpriteScale();
 		}
 
 		public override void Draw(RenderTarget target, RenderStates states)

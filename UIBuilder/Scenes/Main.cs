@@ -1,17 +1,46 @@
 ﻿using System;
 using System.Drawing;
+using System.Collections.Generic;
 using SFML.System;
 using SFML.Window;
+using SFML.Graphics;
 using Shellblade;
+using Shellblade.Graphics;
+using Shellblade.Graphics.UI;
 
 namespace UIBuilder.Scenes
 {
     internal class Main : Scene
     {
+        private Button testButton { get; }
+
+
         public Main(Game window) : base(window)
         {
             //Set default cursor
             SetCursor(@"assets/arrow_cursor.png", 0, 0, window);
+
+            testButton = new Button(new Vector2i(16, 16),
+                                    new Texture(@"assets/testbox.png",
+                                    new IntRect(0, 0, 16, 16)))
+            {
+                Color          = new SFML.Graphics.Color(0xffffffff),
+                OnClick        = () =>
+                {
+                    testButton.SetSize(new Vector2i(160, 120));
+                },
+                GlobalPosition = new Vector2i(64, 64)
+            };
+            testButton.OnMouseOver = () => { Console.WriteLine("Moused over"); };
+            testButton.OnMouseOff  = () => { Console.WriteLine("Moused off"); };
+
+            Input.UI = new UIContainer
+            {
+                Elements = new Dictionary<string, UIElement>
+                {
+                    {"testButton", testButton }
+                }
+            };
         }
 
 
@@ -40,7 +69,7 @@ namespace UIBuilder.Scenes
                 {
                     int index = 4 * (x + image.Width * y);
 
-                    Color pixel = image.GetPixel(x, y);
+                    System.Drawing.Color pixel = image.GetPixel(x, y);
 
                     pixels[index] = pixel.R;
                     pixels[index + 1] = pixel.G;
