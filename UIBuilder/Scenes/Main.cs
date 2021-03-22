@@ -36,9 +36,7 @@ namespace UIBuilder.Scenes
             Input.UI = new UIContainer
             {
                 Elements = new Dictionary<string, UIElement>
-                {
-                    {"wrapper", wrapper }
-                }
+                {}
             };
         }
 
