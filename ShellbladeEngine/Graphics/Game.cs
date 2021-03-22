@@ -91,6 +91,11 @@ namespace Shellblade
 			File.WriteAllText("./ui.yaml", serializer.Serialize(Input.UI));
 		}
 
+		public Window GetWindow()
+        {
+			return Window;
+        }
+
 		public int SetCursor(string imagePath, uint hotspotX, uint hotspotY, Game window)
         {
             Bitmap image;
