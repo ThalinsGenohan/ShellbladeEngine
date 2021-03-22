@@ -6,7 +6,7 @@ using SFML.System;
 
 namespace Shellblade.Graphics.UI
 {
-	public class Box : UIElement
+	public abstract class Box : UIElement
 	{
 		internal RectangleShape rectangle;
 
@@ -41,7 +41,7 @@ namespace Shellblade.Graphics.UI
 
 		public override void Draw(RenderTarget target, RenderStates states)
 		{
-			//THIS CLASS IS FOR TRANSPARENT BUT FUNCTIONAL "WRAPPERS", AND WONT BE DRAWN
+			
 		}
 	}
 }
