@@ -7,8 +7,9 @@ namespace Shellblade.Graphics.UI
 	public class Button : UIElement
 	{
 		private Sprite _sprite;
-
 		public Texture Texture { get; set; }
+
+		public bool covered { get; set; }
 
 		public Color Color
 		{
@@ -74,9 +75,9 @@ namespace Shellblade.Graphics.UI
 			};
 			Size = size;
 
-			OnClick     = () => { customOnClick(); };
-			OnMouseOver = () => { window.SetCursor(@"assets/cursor_hand.png", 4, 1, window); customOnMouseOver(); };
-			OnMouseOff = () => { window.SetCursor(@"assets/cursor_arrow.png", 0, 0, window); customOnMouseOff(); };
+			OnClick     = () => { if (covered) return; customOnClick(); };
+			OnMouseOver = () => { if (covered) return; window.SetCursor(@"assets/cursor_hand.png", 4, 1, window); customOnMouseOver(); };
+			OnMouseOff  = () => { if (covered) return; window.SetCursor(@"assets/cursor_arrow.png", 0, 0, window); customOnMouseOff(); };
 
 			SetSpriteScale();
 		}
