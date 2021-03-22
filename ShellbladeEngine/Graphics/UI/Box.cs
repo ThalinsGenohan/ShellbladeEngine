@@ -41,7 +41,8 @@ namespace Shellblade.Graphics.UI
 
 		public override void Draw(RenderTarget target, RenderStates states)
 		{
-			
+			target.Draw(rectangle, states);
+			base.Draw(target, states);
 		}
 	}
 }
