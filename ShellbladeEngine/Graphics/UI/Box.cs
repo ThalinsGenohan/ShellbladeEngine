@@ -35,7 +35,8 @@ namespace Shellblade.Graphics.UI
 			rectangle = new RectangleShape(new Vector2f(0f, 0f))
 			{
 				Position = (Vector2f)GlobalPosition,
-				Size = (Vector2f)Size
+				Size = (Vector2f)Size,
+				FillColor = new Color(0xffffff00)
 			};
         }
 
