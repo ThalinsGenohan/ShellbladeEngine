@@ -80,6 +80,7 @@ namespace UIBuilder.Scenes
                     if (element is Button) _game.SetCursor("assets/cursor_hand.png", 0, 0, _game);
                     break;
                 }
+                mousedElement = null;
             }
 
             //If RMB is pressed, try to close menu for reopening at other position
@@ -104,10 +105,10 @@ namespace UIBuilder.Scenes
                 Input.UI.Elements.Remove("menu");
 
                 //Trigger OnMouseOver if mouse is on button
-                if (delta_menu != _menu)
+                if (delta_menu != _menu && !(mousedElement is null))
                 {
                     ((Button)mousedElement).covered = false;
-                    mousedElement?.OnMouseOver();
+                    mousedElement.OnMouseOver();
                 }
             }
 
