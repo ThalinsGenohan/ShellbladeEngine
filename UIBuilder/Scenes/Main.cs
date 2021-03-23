@@ -77,7 +77,8 @@ namespace UIBuilder.Scenes
                 {
                     _menuOpenable = false;
                     mousedElement = element;
-                    if (element is Button) _game.SetCursor("assets/cursor_hand.png", 0, 0, _game);
+                    //Leaving this here commented out for now, but I think safe to remove
+                    //if (element is Button) _game.SetCursor("assets/cursor_hand.png", 0, 0, _game);
                     break;
                 }
                 mousedElement = null;
@@ -107,8 +108,11 @@ namespace UIBuilder.Scenes
                 //Trigger OnMouseOver if mouse is on button
                 if (delta_menu != _menu && !(mousedElement is null))
                 {
-                    ((Button)mousedElement).covered = false;
-                    mousedElement.OnMouseOver();
+                    if (((Button)mousedElement).covered)
+                    {
+                        ((Button)mousedElement).covered = false;
+                        mousedElement.OnMouseOver();
+                    }
                 }
             }
 
