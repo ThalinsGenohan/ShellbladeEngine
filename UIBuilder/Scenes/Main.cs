@@ -67,8 +67,10 @@ namespace UIBuilder.Scenes
         public override void Loop(Time dt)  //[Bug] IMPORTANT! Mouse events OUTSIDE OF WINDOW need to be IGNORED!
         {
             var mousePos = Mouse.GetPosition(_window) / _scale;
+
+            //[MENU HANDLING]//
             UIElement mousedElement = null;
-            //Menu handling
+
             //If cursor is above a UI Element, prevent menu from opening
             _menuOpenable = true;
             foreach (UIElement element in Input.UI.Elements.Values)
@@ -77,7 +79,7 @@ namespace UIBuilder.Scenes
                 {
                     _menuOpenable = false;
                     mousedElement = element;
-                    //Leaving this here commented out for now, but I think safe to remove
+                    //Leaving this here commented out for now, but I think safe to remove, also hotspot is wrong
                     //if (element is Button) _game.SetCursor("assets/cursor_hand.png", 0, 0, _game);
                     break;
                 }
