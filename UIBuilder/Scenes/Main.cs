@@ -22,6 +22,9 @@ namespace UIBuilder.Scenes
         private Vector2i _menuPos;
         private int _scale;
         private static bool _mouseInMenu = false;
+        private bool _selectorRect;
+        private bool _lMouseDown;
+        private Vector2i _selectorPosition = new Vector2i();
 
         private OutlinedBox menu = new OutlinedBox
         {
@@ -29,6 +32,13 @@ namespace UIBuilder.Scenes
             Color = new Color(0x5C1AE1ff),
             OutlineThickness = 2f,
             Size = new Vector2i(60, 100)
+        };
+
+        private OutlinedBox selectorRect = new OutlinedBox
+        {
+            Color = new Color(0xD54CEDe5),
+            OutlineThickness = 2f,
+            Size = new Vector2i(1, 1)
         };
 
 
@@ -67,6 +77,7 @@ namespace UIBuilder.Scenes
         public override void Loop(Time dt)  //[Bug] IMPORTANT! Mouse events OUTSIDE OF WINDOW need to be IGNORED!
         {
             var mousePos = Mouse.GetPosition(_window) / _scale;
+
 
             //[MENU HANDLING]//
             UIElement mousedElement = null;
@@ -110,10 +121,13 @@ namespace UIBuilder.Scenes
                 //Trigger OnMouseOver if mouse is on button
                 if (delta_menu != _menu && !(mousedElement is null))
                 {
-                    if (((Button)mousedElement).covered)
+                    if (mousedElement is Button)
                     {
-                        ((Button)mousedElement).covered = false;
-                        mousedElement.OnMouseOver();
+                        if (((Button)mousedElement).covered)
+                        {
+                            ((Button)mousedElement).covered = false;
+                            mousedElement.OnMouseOver();
+                        }
                     }
                 }
             }
@@ -140,8 +154,9 @@ namespace UIBuilder.Scenes
             if (_mouseInMenu) _game.SetCursor("assets/cursor_arrow.png", 0, 0, _game);
 
             //If a button is covered by the menu, tell it it's covered (maybe do this with all UIElements [add covered to class?])
-            //Also, trigger events that might not be detected through covering timing
-            foreach(UIElement element in Input.UI.Elements.Values)
+            //Trigger events that might not be detected through covering timing
+            //Also, if selector rect is active, set all elements to covered
+            foreach (UIElement element in Input.UI.Elements.Values)
             {
                 if(element is Button)
                 {
@@ -151,12 +166,69 @@ namespace UIBuilder.Scenes
                         _mouseInMenu = false;
                     }
 
-                    var trigger = (delta_mouseInMenu != _mouseInMenu) && element.Contains(mousePos);
+                    if (_selectorRect)
+                    {
+                        ((Button)element).covered = true;
+                    }
+                    else
+                    {
+                        ((Button)element).covered = false;
+                        var trigger = (delta_mouseInMenu != _mouseInMenu) && element.Contains(mousePos);
 
-                    if (_mouseInMenu && trigger) element.OnMouseOff();
-                    ((Button)element).covered = _mouseInMenu;
-                    if (!_mouseInMenu && trigger) element.OnMouseOver();
+                        if (_mouseInMenu && trigger) element.OnMouseOff();
+                        ((Button)element).covered = _mouseInMenu;
+                        if (!_mouseInMenu && trigger) element.OnMouseOver();
+                    }
                 }
+            }
+
+
+            //[SELECTOR HANDLING]//
+            //Set up selector rectangle
+            var delta_lMouseDown = _lMouseDown;
+            _lMouseDown = Mouse.IsButtonPressed(Mouse.Button.Left);
+
+            if (_lMouseDown)
+            {
+                //_mouseInMenu here because once UI in menu, i dont want selector to open on click in menu
+                var _selectorRectOpenable = _menuOpenable && !_selectorRect && (_lMouseDown != delta_lMouseDown) && !_mouseInMenu;
+                if (_selectorRectOpenable && !_menu)
+                {
+                    _selectorRect = true;
+                }
+            }
+            else
+            {
+                _selectorRect = false;
+
+                //The "is Button" IS the null check! Careful when opening this to other UIElements
+                if (mousedElement is Button && mousedElement.Contains(mousePos) && !_menu)
+                {
+                    if (((Button)mousedElement).covered == true)
+                    {
+                        ((Button)mousedElement).covered = false;
+                        mousedElement.OnMouseOver();
+                    }
+                }
+            }
+
+            //Open selector rectangle and adjust size
+            if (_selectorRect)
+            {
+                if (!Input.UI.Elements.ContainsKey("selector_rect"))
+                {
+                    selectorRect.GlobalPosition = mousePos;
+                    _selectorPosition = selectorRect.GlobalPosition;
+                    Input.UI.Elements.Add("selector_rect", selectorRect);
+                }
+
+                selectorRect.Size = mousePos - _selectorPosition;
+            }
+
+            //Close selector rectangle
+            if (!_selectorRect)
+            {
+                Input.UI.Elements.Remove("selector_rect");
             }
         }
     }
