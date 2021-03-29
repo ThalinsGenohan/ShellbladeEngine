@@ -344,3 +344,6 @@ healthchecksdb
 
 #Crash Logs
 mono_crash*
+
+#UI Yaml file
+ui.yaml
