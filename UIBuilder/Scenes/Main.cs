@@ -51,7 +51,7 @@ namespace UIBuilder.Scenes
             _game = window;
             _scale = (int)(window.WindowSize.X / window.Resolution.X);
 
-            
+
             testButton = new Button(new Vector2i(16, 16),
                                     new Texture(@"assets/testbox.png",
                                     new IntRect(0, 0, 16, 16)),
@@ -63,7 +63,7 @@ namespace UIBuilder.Scenes
                 Color          = new Color(0xffffffff),
                 GlobalPosition = new Vector2i(64, 64)
             };
-            
+
 
             Input.UI = new UIContainer
             {
@@ -77,6 +77,7 @@ namespace UIBuilder.Scenes
         public override void Loop(Time dt)  //[Bug] IMPORTANT! Mouse events OUTSIDE OF WINDOW need to be IGNORED!
         {
             var mousePos = Mouse.GetPosition(_window) / _scale;
+            var start_mouseInMenu = _mouseInMenu;
 
 
             //[MENU HANDLING]//
@@ -190,8 +191,8 @@ namespace UIBuilder.Scenes
 
             if (_lMouseDown)
             {
-                //_mouseInMenu here because once UI in menu, i dont want selector to open on click in menu
-                var _selectorRectOpenable = _menuOpenable && !_selectorRect && (_lMouseDown != delta_lMouseDown) && !_mouseInMenu;
+                //start_mouseInMenu here because once UI in menu, i dont want selector to open on click in menu
+                var _selectorRectOpenable = _menuOpenable && !_selectorRect && (_lMouseDown != delta_lMouseDown) && !start_mouseInMenu;
                 if (_selectorRectOpenable && !_menu)
                 {
                     _selectorRect = true;
