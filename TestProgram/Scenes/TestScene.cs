@@ -20,8 +20,9 @@ namespace OtterRPG.Scenes
 			{
 				Text = "{f:regular}Hello this is a test of the small font!\n" +
 				       "{f:tall}This is a test of the tall font {f:tiny}jk it's the tiny one\n" +
-				       "{f:italic}And now a small one on its own line.\n" +
-				       "{f:bold}And one more for good measure.\f" +
+				       "{f:italic}And now a small one on its own line\n" +
+				       "{f:bold}And one more for good measure\n" +
+				       "{f:regular}Wow, pretty cool that all of that works\f" +
 				       "{f:tiny}Little tiny baby text, look how many things I can write in this textbox, wow, are we even on the next line yet, probably, but I don't know until I run it",
 				TextDelay = 25,
 			};
