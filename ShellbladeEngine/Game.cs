@@ -23,7 +23,11 @@ namespace Shellblade
 		private DrawableList Drawables  => Scene.Drawables;
 		private Input        Input      => Scene.Input;
 
-		public Game(uint sizeX, uint sizeY, uint resX, uint resY, string title, bool debug = false) : this(new Vector2u(sizeX, sizeY), new Vector2u(resX, resY), title, debug) { }
+		public Game(uint sizeX, uint sizeY, uint resX, uint resY, string title, bool debug = false) : this(
+			new Vector2u(sizeX, sizeY),
+			new Vector2u(resX,  resY),
+			title,
+			debug) { }
 
 		public Game(Vector2u windowSize, Vector2u resolution, string title, bool debug = false)
 		{
@@ -91,8 +95,8 @@ namespace Shellblade
 		}
 
 		public void UpdateCursor(Cursor cursor)
-        {
+		{
 			Window.SetMouseCursor(cursor);
-        }
+		}
 	}
 }
