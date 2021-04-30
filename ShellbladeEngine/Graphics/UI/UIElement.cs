@@ -10,7 +10,9 @@ namespace Shellblade.Graphics.UI
 	{
 		private UIElement _parent;
 
-		public Dictionary<string, UIElement> Children { get; set; } = new Dictionary<string, UIElement>();
+		public List<UIElement> Children { get; set; } = new List<UIElement>();
+
+		public string ID { get; set; }
 
 		public bool Hovered { get; internal set; } = false;
 		public bool Visible { get; set; }          = true;
@@ -20,10 +22,11 @@ namespace Shellblade.Graphics.UI
 		public Action OnMouseOff  { get; set; } = () => { };
 
 		public virtual Vector2i LocalPosition { get; set; }
+		public virtual Vector2i Size          { get; set; }
 
-		public virtual Vector2i Size { get; set; }
+		internal bool HoveredNow { get; set; } = false;
 
-		public int ChildCount => 1 + Children.Values.Sum(c => c.ChildCount);
+		public int TreeSize => 1 + Children.Sum(c => c.TreeSize);
 
 		public IntRect BoundingBox => new IntRect(GlobalPosition, Size);
 
@@ -43,19 +46,33 @@ namespace Shellblade.Graphics.UI
 			set => LocalPosition = value - (Parent?.GlobalPosition ?? new Vector2i(0, 0));
 		}
 
+		public UIElement GetChild(string id)
+		{
+			for (var i = 0; i < Children.Count; i++)
+			{
+				if (Children[i].ID == id)
+					return Children[i];
+			}
+
+			return null;
+		}
+
 		public bool Contains(int x, int y) => BoundingBox.Contains(x,     y);
 		public bool Contains(Vector2i vec) => BoundingBox.Contains(vec.X, vec.Y);
 
 		public void AddChild(string id, UIElement child)
 		{
-			Children.Add(id, child);
+			Children.Add(child);
 			child.Parent = this;
+			child.ID     = id;
 		}
 
 		public virtual void Draw(RenderTarget target, RenderStates states)
 		{
-			foreach (UIElement e in Children.Values)
-				target.Draw(e, states);
+			if (!Visible) return;
+
+			for (var i = 0; i < Children.Count; i++)
+				target.Draw(Children[i], states);
 		}
 	}
 }

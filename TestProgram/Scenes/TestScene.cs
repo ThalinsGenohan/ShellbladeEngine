@@ -16,32 +16,39 @@ namespace OtterRPG.Scenes
 		{
 			Game = game;
 
-			_textbox = new Textbox(new Vector2i(8, (int)(Game.Resolution.Y - 8 - 64)), new Vector2i((int)(Game.Resolution.X - 16), 64))
+			_textbox = new Textbox(new Vector2i(8,                             (int)(Game.Resolution.Y - 8 - 64)),
+			                       new Vector2i((int)(Game.Resolution.X - 16), 64))
 			{
-				Text = "{f:regular}Hello this is a test of the small font!\n" +
-				       "{f:tall}This is a test of the tall font {f:tiny}jk it's the tiny one\n" +
-				       "{f:italic}And now a small one on its own line\n" +
-				       "{f:bold}And one more for good measure\n" +
-				       "{f:regular}Wow, pretty cool that all of that works\f" +
-				       "{f:tiny}Little tiny baby text, look how many things I can write in this textbox, wow, are we even on the next line yet, probably, but I don't know until I run it",
+				Text      = "{f:regular}Don't mind me, just testing UI things...",
 				TextDelay = 25,
 			};
 
 			var button = new Button(new Vector2i(16, 16), new Texture(@"assets\testbox.png"))
 			{
-				Color   = new Color(0xff, 0xff, 0xff, 0xff / 2),
-				OnClick = () => { Console.WriteLine("Boop! The test button has been pressed!"); },
+				Color          = new Color(0xff, 0xff, 0xff, 0xff / 2),
+				OnClick        = () => { Console.WriteLine("Boop! The test button has been pressed!"); },
+				GlobalPosition = new Vector2i(8, 8),
 			};
 			button.OnMouseOver = () => { button.Color = new Color(0xff, 0xff, 0xff, 0xff); };
 			button.OnMouseOff  = () => { button.Color = new Color(0xff, 0xff, 0xff, 0xff / 2); };
-			Input.UI.Elements.Add("testButton", button);
+
+			var button2 = new Button(new Vector2i(16, 16), new Texture(@"assets\testbox2.png"))
+			{
+				Color          = new Color(0xff, 0xff, 0xff, 0xff / 2),
+				OnClick        = () => { Console.WriteLine("Beep! The second test button has been pressed!"); },
+				GlobalPosition = new Vector2i(12, 12),
+			};
+			button2.OnMouseOver = () => { button2.Color = new Color(0xff, 0xff, 0xff, 0xff); };
+			button2.OnMouseOff  = () => { button2.Color = new Color(0xff, 0xff, 0xff, 0xff / 2); };
+
+			Input.UI.AddElement("testButton",  button);
+			Input.UI.AddElement("testButton2", button2);
 
 			Drawables.Add("textbox", _textbox, 10);
-			Drawables.Add("button",  button,   10);
 
 			Input.Buttons.Add(new Input.ButtonInput(Keyboard.Key.Enter, 0) { OnPress = _textbox.Next });
 
-			Game.ClearColor   = Color.Blue;
+			Game.ClearColor = Color.Blue;
 		}
 
 		public override void Loop(Time dt)

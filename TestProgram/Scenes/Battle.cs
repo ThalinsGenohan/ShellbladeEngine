@@ -5,14 +5,14 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using Shellblade;
-using Shellblade.Graphics;
 using Shellblade.Graphics.UI;
+using Text = Shellblade.Graphics.UI.Text;
 
 namespace OtterRPG.Scenes
 {
 	internal class Battle : Scene
 	{
-		private uint TurnCounter;
+		private uint _turnCounter;
 
 		public Player[]    Players       { get; set; }
 		public Character[] Enemies       { get; set; }
@@ -22,14 +22,15 @@ namespace OtterRPG.Scenes
 		private Button AttackButton { get; }
 		private Button SkillsButton { get; }
 		private Button MagicButton  { get; }
-		private Button ItemButton  { get; }
+		private Button ItemButton   { get; }
 
 		private Box Box { get; }
 
 
 		public Battle(Game game) : base(game)
 		{
-			AttackButton = new Button(new Vector2i(16, 16), new Texture(@"assets/temp-icons.png", new IntRect(0, 0, 16, 16)))
+			AttackButton = new Button(new Vector2i(16, 16),
+			                          new Texture(@"assets/temp-icons.png", new IntRect(0, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
 				OnClick       = () => { Console.WriteLine("Attack button clicked!"); },
@@ -38,7 +39,8 @@ namespace OtterRPG.Scenes
 			AttackButton.OnMouseOver = () => { AttackButton.Opacity = 1f; };
 			AttackButton.OnMouseOff  = () => { AttackButton.Opacity = 0.5f; };
 
-			SkillsButton = new Button(new Vector2i(16, 16), new Texture(@"assets/temp-icons.png", new IntRect(16, 0, 16, 16)))
+			SkillsButton = new Button(new Vector2i(16, 16),
+			                          new Texture(@"assets/temp-icons.png", new IntRect(16, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
 				OnClick       = () => { Console.WriteLine("Skills button clicked!"); },
@@ -47,7 +49,8 @@ namespace OtterRPG.Scenes
 			SkillsButton.OnMouseOver = () => { SkillsButton.Opacity = 1f; };
 			SkillsButton.OnMouseOff  = () => { SkillsButton.Opacity = 0.5f; };
 
-			MagicButton = new Button(new Vector2i(16, 16), new Texture(@"assets/temp-icons.png", new IntRect(32, 0, 16, 16)))
+			MagicButton = new Button(new Vector2i(16, 16),
+			                         new Texture(@"assets/temp-icons.png", new IntRect(32, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
 				OnClick       = () => { Console.WriteLine("Magic button clicked!"); },
@@ -56,7 +59,8 @@ namespace OtterRPG.Scenes
 			MagicButton.OnMouseOver = () => { MagicButton.Opacity = 1f; };
 			MagicButton.OnMouseOff  = () => { MagicButton.Opacity = 0.5f; };
 
-			ItemButton = new Button(new Vector2i(16, 16), new Texture(@"assets/temp-icons.png", new IntRect(48, 0, 16, 16)))
+			ItemButton = new Button(new Vector2i(16, 16),
+			                        new Texture(@"assets/temp-icons.png", new IntRect(48, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
 				OnClick       = () => { Console.WriteLine("Item button clicked!"); },
@@ -74,31 +78,31 @@ namespace OtterRPG.Scenes
 
 			Box.AddChild("attack", AttackButton);
 			Box.AddChild("skills", SkillsButton);
-			Box.AddChild("magic", MagicButton);
-			Box.AddChild("item", ItemButton);
+			Box.AddChild("magic",  MagicButton);
+			Box.AddChild("item",   ItemButton);
 
-			var attackText = new Shellblade.Graphics.UI.Text
+			var attackText = new Text
 			{
 				Color         = Color.White,
 				LocalPosition = new Vector2i(18, 0),
 				Instant       = true,
-				String = "{f:tall}Attack",
+				String        = "{f:tall}Attack",
 			};
-			var skillsText = new Shellblade.Graphics.UI.Text
+			var skillsText = new Text
 			{
 				Color         = Color.White,
 				LocalPosition = new Vector2i(18, 0),
 				Instant       = true,
 				String        = "{f:tall}Skills",
 			};
-			var magicText = new Shellblade.Graphics.UI.Text
+			var magicText = new Text
 			{
 				Color         = Color.White,
 				LocalPosition = new Vector2i(18, 0),
 				Instant       = true,
 				String        = "{f:tall}Magic",
 			};
-			var itemText = new Shellblade.Graphics.UI.Text
+			var itemText = new Text
 			{
 				Color         = Color.White,
 				LocalPosition = new Vector2i(18, 0),
@@ -116,13 +120,8 @@ namespace OtterRPG.Scenes
 				new Input.ButtonInput(Keyboard.Key.Enter,  0) { OnPress = Confirm },
 				new Input.ButtonInput(Keyboard.Key.RShift, 1) { OnPress = Cancel },
 			};
-			Input.UI = new UIContainer
-			{
-				Elements = new Dictionary<string, UIElement>
-				{
-					{ "box", Box },
-				},
-			};
+			Input.UI = new UIContainer();
+			Input.UI.AddElement("box", Box);
 		}
 
 		public void Start(Player[] players)
@@ -149,17 +148,14 @@ namespace OtterRPG.Scenes
 				character.Fortitude.Buffs = 1f;
 			}
 
-			TurnCounter   = 0;
+			_turnCounter  = 0;
 			CurrentTurn   = Players[0];
 			CurrentAttack = new Attack();
 
-			while (CheckPlayersAlive() && CheckEnemiesAlive()) TurnCounter++;
+			while (CheckPlayersAlive() && CheckEnemiesAlive()) _turnCounter++;
 		}
 
-		public override void Loop(Time dt)
-		{
-
-		}
+		public override void Loop(Time dt) { }
 
 		private void Confirm() { }
 

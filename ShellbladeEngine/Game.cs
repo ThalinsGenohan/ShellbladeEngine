@@ -72,7 +72,7 @@ namespace Shellblade
 			{
 				Time dt = deltaClock.Restart();
 
-				if (_debug) _debugWindow.Tick(dt, Drawables.Count, Input.UI.ElementCount);
+				if (_debug) _debugWindow.Tick(dt, Drawables.Count, Input.UI.TotalElementCount);
 
 				Window.DispatchEvents();
 
