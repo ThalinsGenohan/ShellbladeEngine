@@ -22,7 +22,7 @@ namespace OtterRPG
 		private static uint WindowWidth  => ResWidth * WindowScale;
 		private static uint WindowHeight => ResHeight * WindowScale;
 
-		private static void Main(string[] args)
+		private static void Main()
 		{
 			string[] fontFiles = Directory.GetFiles(FontsDir, "*.png");
 			foreach (string file in fontFiles)

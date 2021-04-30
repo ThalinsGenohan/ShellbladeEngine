@@ -153,7 +153,7 @@ namespace Shellblade.Graphics
 
 		public class Matrix
 		{
-			private readonly double[][] _numbers = { new double[3], new double[3], new double[3] };
+			private readonly double[][] _numbers;
 
 			public double A
 			{
@@ -212,7 +212,15 @@ namespace Shellblade.Graphics
 				};
 			}
 
-			public Matrix(double x0, double x1, double x2, double y0, double y1, double y2, double z0, double z1, double z2)
+			public Matrix(double x0,
+			              double x1,
+			              double x2,
+			              double y0,
+			              double y1,
+			              double y2,
+			              double z0,
+			              double z1,
+			              double z2)
 			{
 				_numbers = new[]
 				{
@@ -270,7 +278,8 @@ namespace Shellblade.Graphics
 				return new Vector3f((float)c[0], (float)c[1], (float)c[2]);
 			}
 
-			public override string ToString() => $"{this[0][0]},{this[0][1]},{this[0][2]}\n{this[1][0]},{this[1][1]},{this[1][2]}\n{this[2][0]},{this[2][1]},{this[2][2]}";
+			public override string ToString() =>
+				$"{this[0][0]},{this[0][1]},{this[0][2]}\n{this[1][0]},{this[1][1]},{this[1][2]}\n{this[2][0]},{this[2][1]},{this[2][2]}";
 		}
 
 		public class Transform

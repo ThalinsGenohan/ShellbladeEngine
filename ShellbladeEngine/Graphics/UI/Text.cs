@@ -190,13 +190,11 @@ namespace Shellblade.Graphics.UI
 							page++;
 							FormattedText.Add(wordBuf);
 							CommandQueue.Add(new List<Action>());
-						}
-						else
+						} else
 						{
 							FormattedText[page] += "\n" + wordBuf;
 						}
-					}
-					else
+					} else
 					{
 						if (xPos > 0)
 						{
@@ -224,8 +222,7 @@ namespace Shellblade.Graphics.UI
 								page++;
 								FormattedText.Add("");
 								CommandQueue.Add(new List<Action>());
-							}
-							else
+							} else
 							{
 								FormattedText[page] += "\n";
 							}
@@ -295,7 +292,11 @@ namespace Shellblade.Graphics.UI
 					});
 					return "\ufffc";
 				case "alpha":
-					CommandQueue[page].Add(() => Color = new Color(Color.R, Color.G, Color.B, (byte)(255f / 100f * Convert.ToSingle(args))));
+					CommandQueue[page]
+						.Add(() => Color = new Color(Color.R,
+						                             Color.G,
+						                             Color.B,
+						                             (byte)(255f / 100f * Convert.ToSingle(args))));
 					return "\ufffc";
 				case "reset":
 					CommandQueue[page].Add(() => { Color = Color.White; });

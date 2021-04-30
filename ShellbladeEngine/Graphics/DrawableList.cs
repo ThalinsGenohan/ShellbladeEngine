@@ -32,7 +32,8 @@ namespace Shellblade.Graphics
 			this[item.Id] = item;
 		}
 
-		public void Add(string id, Drawable item, int priority = 0, bool background = false) => Add(new DrawableItem(id, item, priority, background));
+		public void Add(string id, Drawable item, int priority = 0, bool background = false) =>
+			Add(new DrawableItem(id, item, priority, background));
 
 		public void Remove(string id)
 		{

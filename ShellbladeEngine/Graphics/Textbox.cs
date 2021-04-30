@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 using SFML.Graphics;
 using SFML.System;
 using Shellblade.Graphics.UI;
@@ -12,8 +11,8 @@ namespace Shellblade.Graphics
 	{
 		public static Dictionary<string, Func<string>> Strings { get; set; } = new Dictionary<string, Func<string>>();
 
-		private readonly Box _background;
-		private readonly Text           _text;
+		private readonly Box  _background;
+		private readonly Text _text;
 
 		private ulong _timer = 0;
 
@@ -30,7 +29,7 @@ namespace Shellblade.Graphics
 		public Textbox(Vector2i pos, Vector2i size)
 		{
 			GlobalPosition = pos;
-			Size     = size;
+			Size           = size;
 
 			_text = new Text
 			{
@@ -50,7 +49,7 @@ namespace Shellblade.Graphics
 					new Color(0x00000099),
 				},
 				GlobalPosition = GlobalPosition,
-				Size = Size,
+				Size           = Size,
 			};
 		}
 

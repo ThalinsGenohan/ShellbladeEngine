@@ -27,8 +27,9 @@ namespace Shellblade
 
 			_window.Closed += (sender, args) => _window.Close();
 
-			_refreshText          = new Text($"Refresh rate: {RefreshRate}s", _font, 12);
-			_refreshText.Position = new Vector2f(_window.Size.X * (1 - Margin) - _refreshText.GetGlobalBounds().Width, _window.Size.Y * Margin);
+			_refreshText = new Text($"Refresh rate: {RefreshRate}s", _font, 12);
+			_refreshText.Position = new Vector2f(_window.Size.X * (1 - Margin) - _refreshText.GetGlobalBounds().Width,
+			                                     _window.Size.Y * Margin);
 
 			_fpsText = new Text("FPS: --.-- [--]", _font, 12)
 			{

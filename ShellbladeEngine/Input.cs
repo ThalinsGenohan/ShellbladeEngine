@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using SFML.Graphics;
 using SFML.Window;
-using Shellblade.Graphics;
 using Shellblade.Graphics.UI;
 
 namespace Shellblade
@@ -77,7 +76,8 @@ namespace Shellblade
 			if (args.JoystickId != JoystickId) return;
 
 			ButtonInput button;
-			if ((button = Buttons.FirstOrDefault(b => b.JoystickButton == args.Button)) == default || button.IsPressed) return;
+			if ((button = Buttons.FirstOrDefault(b => b.JoystickButton == args.Button)) == default ||
+			    button.IsPressed) return;
 
 			button.IsPressed = true;
 			button.OnPress();
