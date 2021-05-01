@@ -3,7 +3,7 @@ using SFML.System;
 
 namespace Shellblade.Graphics.UI
 {
-	public class Button : UIElement
+	public class Image : UIElement
 	{
 		private readonly Sprite _sprite;
 
@@ -41,7 +41,7 @@ namespace Shellblade.Graphics.UI
 			}
 		}
 
-		public Button(Vector2i size, Texture texture)
+		public Image(Vector2i size, Texture texture)
 		{
 			Texture = texture;
 			_sprite = new Sprite(Texture)

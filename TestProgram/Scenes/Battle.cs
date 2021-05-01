@@ -6,6 +6,7 @@ using SFML.System;
 using SFML.Window;
 using Shellblade;
 using Shellblade.Graphics.UI;
+using Image = Shellblade.Graphics.UI.Image;
 using Text = Shellblade.Graphics.UI.Text;
 
 namespace OtterRPG.Scenes
@@ -19,17 +20,17 @@ namespace OtterRPG.Scenes
 		public Character   CurrentTurn   { get; set; }
 		public Attack      CurrentAttack { get; set; }
 
-		private Button AttackButton { get; }
-		private Button SkillsButton { get; }
-		private Button MagicButton  { get; }
-		private Button ItemButton   { get; }
+		private Image AttackButton { get; }
+		private Image SkillsButton { get; }
+		private Image MagicButton  { get; }
+		private Image ItemButton   { get; }
 
 		private Box Box { get; }
 
 
 		public Battle(Game game) : base(game)
 		{
-			AttackButton = new Button(new Vector2i(16, 16),
+			AttackButton = new Image(new Vector2i(16, 16),
 			                          new Texture(@"assets/temp-icons.png", new IntRect(0, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
@@ -39,7 +40,7 @@ namespace OtterRPG.Scenes
 			AttackButton.OnMouseOver = () => { AttackButton.Opacity = 1f; };
 			AttackButton.OnMouseOff  = () => { AttackButton.Opacity = 0.5f; };
 
-			SkillsButton = new Button(new Vector2i(16, 16),
+			SkillsButton = new Image(new Vector2i(16, 16),
 			                          new Texture(@"assets/temp-icons.png", new IntRect(16, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
@@ -49,7 +50,7 @@ namespace OtterRPG.Scenes
 			SkillsButton.OnMouseOver = () => { SkillsButton.Opacity = 1f; };
 			SkillsButton.OnMouseOff  = () => { SkillsButton.Opacity = 0.5f; };
 
-			MagicButton = new Button(new Vector2i(16, 16),
+			MagicButton = new Image(new Vector2i(16, 16),
 			                         new Texture(@"assets/temp-icons.png", new IntRect(32, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
@@ -59,7 +60,7 @@ namespace OtterRPG.Scenes
 			MagicButton.OnMouseOver = () => { MagicButton.Opacity = 1f; };
 			MagicButton.OnMouseOff  = () => { MagicButton.Opacity = 0.5f; };
 
-			ItemButton = new Button(new Vector2i(16, 16),
+			ItemButton = new Image(new Vector2i(16, 16),
 			                        new Texture(@"assets/temp-icons.png", new IntRect(48, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
