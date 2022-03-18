@@ -9,11 +9,11 @@ namespace Shellblade
 		private const float RefreshRate = 1f;
 		private const float Margin      = 0.01f;
 
-		private readonly Font         _font = new Font(@"assets/CONSOLA.TTF");
+		private readonly Font         _font = new(@"assets/CONSOLA.TTF");
 		private readonly RenderWindow _window;
 		private readonly Text         _fpsText;
 		private readonly Text         _refreshText;
-		private readonly Clock        _clock = new Clock();
+		private readonly Clock        _clock = new();
 
 		private float _deltaTime     = 0f;
 		private float _deltaCounter  = 0f;
@@ -25,7 +25,7 @@ namespace Shellblade
 		{
 			_window = new RenderWindow(new VideoMode(400, 300), "Shellblade Debug", Styles.Close | Styles.Titlebar);
 
-			_window.Closed += (sender, args) => _window.Close();
+			_window.Closed += (_, _) => _window.Close();
 
 			_refreshText = new Text($"Refresh rate: {RefreshRate}s", _font, 12);
 			_refreshText.Position = new Vector2f(_window.Size.X * (1 - Margin) - _refreshText.GetGlobalBounds().Width,

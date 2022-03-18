@@ -12,8 +12,8 @@ namespace Shellblade
 		private Game _game;
 
 		public uint              JoystickId { get; set; } = 0;
-		public UIContainer       UI         { get; set; } = new UIContainer();
-		public List<ButtonInput> Buttons    { get; set; } = new List<ButtonInput>();
+		public UIContainer       UI         { get; set; } = new();
+		public List<ButtonInput> Buttons    { get; set; } = new();
 
 		public void DoHoldInputs()
 		{
@@ -56,7 +56,9 @@ namespace Shellblade
 		private void OnKeyPressed(object sender, KeyEventArgs args)
 		{
 			ButtonInput button;
-			if ((button = Buttons.FirstOrDefault(b => b.Key == args.Code)) == default || button.IsPressed) return;
+			if ((button = Buttons.FirstOrDefault(b => b.Key == args.Code)) == default
+			|| button.IsPressed)
+			return;
 
 			button.IsPressed = true;
 			button.OnPress();

@@ -35,7 +35,7 @@ namespace Shellblade
 			Window.SetFramerateLimit(60);
 			Window.SetKeyRepeatEnabled(false);
 
-			Window.Closed += (sender, args) => Window.Close();
+			Window.Closed += (_, _) => Window.Close();
 
 			_view = new View(Window.GetView())
 			{
@@ -48,11 +48,10 @@ namespace Shellblade
 			Joystick.Update();
 
 			_debug = debug;
-			if (_debug)
-			{
-				_debugWindow  =  new DebugWindow();
-				Window.Closed += (sender, args) => _debugWindow.Stop();
-			}
+			if (!_debug) return;
+
+			_debugWindow  =  new DebugWindow();
+			Window.Closed += (_, _) => _debugWindow.Stop();
 		}
 
 		public void LoadScene(Scene scene)

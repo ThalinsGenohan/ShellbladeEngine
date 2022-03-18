@@ -9,10 +9,10 @@ namespace Shellblade
 		protected Game Game;
 
 		/// <summary> List of Drawable objects in the scene </summary>
-		public DrawableList Drawables { get; } = new DrawableList();
+		public DrawableList Drawables { get; } = new();
 
 		/// <summary> Input handler for the scene </summary>
-		public Input Input { get; } = new Input();
+		public Input Input { get; } = new();
 
 		protected Scene(Game game)
 		{

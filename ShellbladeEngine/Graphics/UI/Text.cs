@@ -7,8 +7,8 @@ namespace Shellblade.Graphics.UI
 {
 	public class Text : UIElement
 	{
-		public static Dictionary<string, string> Strings { get; } = new Dictionary<string, string>();
-		public static Dictionary<string, Font>   Fonts   { get; } = new Dictionary<string, Font>();
+		public static Dictionary<string, string> Strings { get; } = new();
+		public static Dictionary<string, Font>   Fonts   { get; } = new();
 
 		private string _fontId    = "regular";
 		private int    _tracking  = 0;
@@ -21,11 +21,11 @@ namespace Shellblade.Graphics.UI
 		public bool               Paused             { get; set; }         = false;
 		public bool               VariableWidth      { get; set; }         = true;
 		public Color              Color              { get; set; }         = Color.White;
-		public List<string>       FormattedText      { get; private set; } = new List<string>();
-		public List<List<Sprite>> RenderedCharacters { get; private set; } = new List<List<Sprite>>();
-		public Vector2i           FormattedSize      { get; private set; } = new Vector2i(0, 0);
+		public List<string>       FormattedText      { get; private set; } = new();
+		public List<List<Sprite>> RenderedCharacters { get; private set; } = new();
+		public Vector2i           FormattedSize      { get; private set; } = new(0, 0);
 
-		private List<List<Action>> CommandQueue { get; set; } = new List<List<Action>>();
+		private List<List<Action>> CommandQueue { get; set; } = new();
 
 		public bool         PageDone    => DrawIndex >= RenderedCharacters[PageIndex].Count - 1;
 		public Font         CurrentFont => Fonts[_fontId];
@@ -132,7 +132,7 @@ namespace Shellblade.Graphics.UI
 			string text = inString + " ";
 
 			FormattedText = new List<string> { "" };
-			CommandQueue  = new List<List<Action>> { new List<Action>() };
+			CommandQueue  = new List<List<Action>> { new() };
 
 			Vector2i size           = Size;
 			if (size.X <= 0) size.X = int.MaxValue;
@@ -267,7 +267,7 @@ namespace Shellblade.Graphics.UI
 		{
 			int    splitIndex = command.IndexOf(':');
 			string comm       = splitIndex > 0 ? command.Remove(splitIndex) : command;
-			string args       = splitIndex > 0 ? command.Substring(splitIndex + 1) : "";
+			string args       = splitIndex > 0 ? command[(splitIndex + 1)..] : "";
 
 			switch (comm)
 			{

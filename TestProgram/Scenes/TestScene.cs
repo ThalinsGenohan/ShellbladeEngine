@@ -4,9 +4,7 @@ using SFML.System;
 using SFML.Window;
 using Shellblade;
 using Shellblade.Graphics;
-using Shellblade.Graphics.UI;
 using Image = Shellblade.Graphics.UI.Image;
-using Text = Shellblade.Graphics.UI.Text;
 
 namespace OtterRPG.Scenes
 {
@@ -18,15 +16,11 @@ namespace OtterRPG.Scenes
 		{
 			Game = game;
 
-			/*_textbox = new Textbox(new Vector2i(8,                             (int)(Game.Resolution.Y - 8 - 64)),
+			_textbox = new Textbox(new Vector2i(8,                             (int)(Game.Resolution.Y - 8 - 64)),
 			                       new Vector2i((int)(Game.Resolution.X - 16), 64))
 			{
 				Text      = "{f:regular}Don't mind me, just testing UI things...",
 				TextDelay = 25,
-			};*/
-			_textbox = new Textbox(new Vector2i(8, (int)(Game.Resolution.Y - 8 - 64)), new Vector2i((int)(Game.Resolution.X - 16), 64))
-			{
-				Text = "{f:regular}Hope this works now...",
 			};
 
 			var button = new Image(new Vector2i(16, 16), new Texture(@"assets\testbox.png"))

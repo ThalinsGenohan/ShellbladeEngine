@@ -13,10 +13,10 @@ namespace Shellblade.Graphics
 
 		private int _spaceSize;
 
-		public Dictionary<char, Character> Characters { get; } = new Dictionary<char, Character>();
+		public Dictionary<char, Character> Characters { get; } = new();
 
 		public int      TrackingOffset { get; set; }
-		public Vector2i Size           { get; set; } = new Vector2i(8, 8);
+		public Vector2i Size           { get; set; } = new(8, 8);
 
 		public int SpaceSize
 		{
@@ -118,7 +118,7 @@ namespace Shellblade.Graphics
 
 			public int Width { get; set; }
 
-			public Sprite Sprite => new Sprite(_texture, _rect);
+			public Sprite Sprite => new(_texture, _rect);
 
 			public Character(Texture texture, IntRect rect, int width)
 			{

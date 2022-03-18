@@ -118,8 +118,8 @@ namespace OtterRPG.Scenes
 
 			Input.Buttons = new List<Input.ButtonInput>
 			{
-				new Input.ButtonInput(Keyboard.Key.Enter,  0) { OnPress = Confirm },
-				new Input.ButtonInput(Keyboard.Key.RShift, 1) { OnPress = Cancel },
+				new(Keyboard.Key.Enter,  0) { OnPress = Confirm },
+				new(Keyboard.Key.RShift, 1) { OnPress = Cancel },
 			};
 			Input.UI = new UIContainer();
 			Input.UI.AddElement("box", Box);

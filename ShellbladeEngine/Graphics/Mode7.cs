@@ -5,9 +5,9 @@ namespace Shellblade.Graphics
 {
 	public class Mode7 : Drawable
 	{
-		private readonly Sprite _sprite = new Sprite();
+		private readonly Sprite _sprite = new();
 
-		private readonly Transform _trans = new Transform();
+		private readonly Transform _trans = new();
 
 		private Image    _toImage;
 		private Image    _fromImage;
@@ -284,9 +284,9 @@ namespace Shellblade.Graphics
 
 		public class Transform
 		{
-			public static readonly Matrix Identity = new Matrix(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+			public static readonly Matrix Identity = new(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
 
-			public Matrix Matrix { get; set; } = new Matrix(Identity);
+			public Matrix Matrix { get; set; } = new(Identity);
 
 			public void Translate(int x, int y)
 			{

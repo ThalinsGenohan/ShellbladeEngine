@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Shellblade.Graphics.UI
+﻿namespace Shellblade.Graphics.UI
 {
 	public class InputBox : UIElement
 	{
-		private Text _text = new Text();
+		private Text _text = new();
 
 		public InputBox()
 		{

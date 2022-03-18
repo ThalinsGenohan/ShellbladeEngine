@@ -6,7 +6,7 @@ namespace Shellblade.Graphics
 {
 	public class DrawableList
 	{
-		internal List<DrawableItem> List { get; } = new List<DrawableItem>();
+		internal List<DrawableItem> List { get; } = new();
 
 		public int Count => List.Count;
 

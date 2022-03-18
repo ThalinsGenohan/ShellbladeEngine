@@ -8,7 +8,7 @@ namespace Shellblade.Graphics.UI
 {
 	public class UIContainer : Drawable
 	{
-		public List<UIElement> Elements { get; set; } = new List<UIElement>();
+		public List<UIElement> Elements { get; set; } = new();
 
 		public bool Visible { get; set; } = true;
 
@@ -119,8 +119,8 @@ namespace Shellblade.Graphics.UI
 		{
 			if (!Visible) return;
 
-			for (var i = 0; i < Elements.Count; i++)
-				target.Draw(Elements[i]);
+			foreach (UIElement element in Elements)
+				target.Draw(element);
 		}
 	}
 }

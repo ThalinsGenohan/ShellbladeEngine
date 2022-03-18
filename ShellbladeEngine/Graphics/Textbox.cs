@@ -9,7 +9,7 @@ namespace Shellblade.Graphics
 {
 	public class Textbox : UIElement
 	{
-		public static Dictionary<string, Func<string>> Strings { get; set; } = new Dictionary<string, Func<string>>();
+		public static Dictionary<string, Func<string>> Strings { get; set; } = new();
 
 		private readonly Box  _background;
 		private readonly Text _text;

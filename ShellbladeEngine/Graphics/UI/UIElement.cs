@@ -10,7 +10,7 @@ namespace Shellblade.Graphics.UI
 	{
 		private UIElement _parent;
 
-		public List<UIElement> Children { get; set; } = new List<UIElement>();
+		public List<UIElement> Children { get; set; } = new();
 
 		public string ID { get; set; }
 
@@ -28,7 +28,7 @@ namespace Shellblade.Graphics.UI
 
 		public int TreeSize => 1 + Children.Sum(c => c.TreeSize);
 
-		public IntRect BoundingBox => new IntRect(GlobalPosition, Size);
+		public IntRect BoundingBox => new(GlobalPosition, Size);
 
 		public UIElement Parent
 		{
@@ -48,13 +48,7 @@ namespace Shellblade.Graphics.UI
 
 		public UIElement GetChild(string id)
 		{
-			for (var i = 0; i < Children.Count; i++)
-			{
-				if (Children[i].ID == id)
-					return Children[i];
-			}
-
-			return null;
+			return Children.FirstOrDefault(t => t.ID == id);
 		}
 
 		public bool Contains(int x, int y) => BoundingBox.Contains(x,     y);
@@ -71,8 +65,8 @@ namespace Shellblade.Graphics.UI
 		{
 			if (!Visible) return;
 
-			for (var i = 0; i < Children.Count; i++)
-				target.Draw(Children[i], states);
+			foreach (UIElement child in Children)
+				target.Draw(child, states);
 		}
 	}
 }
