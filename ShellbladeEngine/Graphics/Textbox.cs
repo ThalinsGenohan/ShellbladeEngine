@@ -74,7 +74,7 @@ namespace Shellblade.Graphics
 			_text.PageIndex++;
 		}
 
-		public void UpdateScroll(int ms)
+		/*public void UpdateScroll(int ms)
 		{
 			if (_text.PageDone) return;
 
@@ -84,6 +84,6 @@ namespace Shellblade.Graphics
 				_timer -= TextDelay;
 				_text.DrawIndex++;
 			}
-		}
+		}*/
 	}
 }

@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using SFML.Graphics;
 using SFML.System;
+using Shellblade.Graphics.UI;
+using Image = SFML.Graphics.Image;
 
 namespace Shellblade.Graphics
 {
@@ -118,7 +120,7 @@ namespace Shellblade.Graphics
 
 			public int Width { get; set; }
 
-			public Sprite Sprite => new(_texture, _rect);
+			public CharSprite Sprite => new(_texture, _rect);
 
 			public Character(Texture texture, IntRect rect, int width)
 			{

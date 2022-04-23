@@ -28,7 +28,7 @@ namespace OtterRPG.Scenes
 		private Box Box { get; }
 
 
-		public Battle(Game game) : base(game)
+		public Battle()
 		{
 			AttackButton = new Image(new Vector2i(16, 16),
 			                          new Texture(@"assets/temp-icons.png", new IntRect(0, 0, 16, 16)))

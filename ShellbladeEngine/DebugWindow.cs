@@ -59,7 +59,8 @@ namespace Shellblade
 			_fpsText.DisplayedString = $"FPS: {1f / _averageDelta:F2} [{_framesLastSec:D2}]\n" +
 			                           $"Avg. Δ: {_averageDelta * 1000f:F2}ms\n" +
 			                           $"Objects: {objects}\n" +
-			                           $"UI Objs: {uiObjects}";
+			                           $"UI Objs: {uiObjects}\n" +
+			                           $"Timer: {Game.Timer.ElapsedTime.AsMilliseconds()}";
 
 			_window.DispatchEvents();
 

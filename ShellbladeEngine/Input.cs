@@ -9,8 +9,6 @@ namespace Shellblade
 {
 	public class Input
 	{
-		private Game _game;
-
 		public uint              JoystickId { get; set; } = 0;
 		public UIContainer       UI         { get; set; } = new();
 		public List<ButtonInput> Buttons    { get; set; } = new();
@@ -24,10 +22,9 @@ namespace Shellblade
 				kbEvent.OnHold();
 		}
 
-		internal void Install(Game game)
+		internal void Install()
 		{
-			_game = game;
-			RenderWindow rw = _game.Window;
+			RenderWindow rw = Game.Window;
 
 			rw.KeyPressed  += OnKeyPressed;
 			rw.KeyReleased += OnKeyReleased;
@@ -41,7 +38,7 @@ namespace Shellblade
 
 		internal void Uninstall()
 		{
-			RenderWindow rw = _game.Window;
+			RenderWindow rw = Game.Window;
 
 			rw.KeyPressed  -= OnKeyPressed;
 			rw.KeyReleased -= OnKeyReleased;

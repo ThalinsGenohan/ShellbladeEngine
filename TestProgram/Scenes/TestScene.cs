@@ -12,14 +12,13 @@ namespace OtterRPG.Scenes
 	{
 		private readonly Textbox _textbox;
 
-		public TestScene(Game game) : base(game)
+		public TestScene()
 		{
-			Game = game;
-
 			_textbox = new Textbox(new Vector2i(8,                             (int)(Game.Resolution.Y - 8 - 64)),
 			                       new Vector2i((int)(Game.Resolution.X - 16), 64))
 			{
-				Text      = "{f:regular}Don't mind me, just testing UI things...",
+				Text      = "Help I can't stop playing around with this textbox feature\n" +
+				            "{wave}It's just {f:italic}so {f:bold}fancy~",
 				TextDelay = 25,
 			};
 
@@ -53,7 +52,7 @@ namespace OtterRPG.Scenes
 
 		public override void Loop(Time dt)
 		{
-			_textbox.UpdateScroll(dt.AsMilliseconds());
+			//_textbox.UpdateScroll(dt.AsMilliseconds());
 		}
 	}
 }

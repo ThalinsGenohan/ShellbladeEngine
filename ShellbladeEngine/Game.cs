@@ -7,29 +7,25 @@ using YamlDotNet.Serialization;
 
 namespace Shellblade
 {
-	public class Game
+	public static class Game
 	{
-		private readonly View        _view;
-		private readonly DebugWindow _debugWindow;
-		private readonly bool        _debug;
+		private static View        _view;
+		private static DebugWindow _debugWindow;
+		private static bool        _debug;
 
-		public Scene Scene      { get; set; }
-		public Color ClearColor { get; set; } = Color.Black;
+		public static Scene Scene      { get; set; }
+		public static Color ClearColor { get; set; } = Color.Black;
 
-		internal RenderWindow Window { get; }
+		internal static RenderWindow Window { get; private set; }
 
-		public  Vector2u     Resolution => (Vector2u)_view.Size;
-		public  Vector2u     WindowSize => Window.Size;
-		private DrawableList Drawables  => Scene.Drawables;
-		private Input        Input      => Scene.Input;
+		public static Vector2u Resolution => (Vector2u)_view.Size;
+		public static Vector2u WindowSize => Window.Size;
+		public static Clock    Timer      { get; private set; }
 
-		public Game(uint sizeX, uint sizeY, uint resX, uint resY, string title, bool debug = false) : this(
-			new Vector2u(sizeX, sizeY),
-			new Vector2u(resX,  resY),
-			title,
-			debug) { }
+		private static DrawableList Drawables  => Scene.Drawables;
+		private static Input        Input      => Scene.Input;
 
-		public Game(Vector2u windowSize, Vector2u resolution, string title, bool debug = false)
+		public static void Initialize(Vector2u windowSize, Vector2u resolution, string title, bool debug = false)
 		{
 			Window = new RenderWindow(new VideoMode(windowSize.X, windowSize.Y), title, Styles.Close | Styles.Titlebar);
 			Window.SetFramerateLimit(60);
@@ -52,32 +48,34 @@ namespace Shellblade
 
 			_debugWindow  =  new DebugWindow();
 			Window.Closed += (_, _) => _debugWindow.Stop();
+
+			Timer = new Clock();
 		}
 
-		public void LoadScene(Scene scene)
+		public static void LoadScene(Scene scene)
 		{
 			if (Scene != null) Input.Uninstall();
 
 			Scene = scene;
-			Scene.Input.Install(this);
+			Scene.Input.Install();
 		}
 
-		public void Run()
+		public static void Run()
 		{
 			var deltaClock = new Clock();
 			var runClock   = new Clock();
 
 			while (Window.IsOpen)
 			{
-				Time dt = deltaClock.Restart();
+				DeltaTime = deltaClock.Restart();
 
-				if (_debug) _debugWindow.Tick(dt, Drawables.Count, Input.UI.TotalElementCount);
+				if (_debug) _debugWindow.Tick(DeltaTime, Drawables.Count, Input.UI.TotalElementCount);
 
 				Window.DispatchEvents();
 
 				Input.DoHoldInputs();
 
-				Scene.Loop(dt);
+				Scene.Loop(DeltaTime);
 
 				Window.Clear(ClearColor);
 
@@ -93,7 +91,9 @@ namespace Shellblade
 			File.WriteAllText("./ui.yaml", serializer.Serialize(Input.UI));
 		}
 
-		public void UpdateCursor(Cursor cursor)
+		public static Time DeltaTime { get; private set; }
+
+		public static void UpdateCursor(Cursor cursor)
 		{
 			Window.SetMouseCursor(cursor);
 		}

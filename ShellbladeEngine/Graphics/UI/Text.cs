@@ -14,24 +14,29 @@ namespace Shellblade.Graphics.UI
 		private int    _tracking  = 0;
 		private string _string    = "";
 		private int    _pageIndex = 0;
+		private ulong  _delayTimer = 0;
 
-		public int                DrawIndex          { get; set; }         = 0;
-		public bool               Instant            { get; set; }         = true;
-		public int                LineSpacing        { get; set; }         = 0;
-		public bool               Paused             { get; set; }         = false;
-		public bool               VariableWidth      { get; set; }         = true;
-		public Color              Color              { get; set; }         = Color.White;
-		public List<string>       FormattedText      { get; private set; } = new();
-		public List<List<Sprite>> RenderedCharacters { get; private set; } = new();
-		public Vector2i           FormattedSize      { get; private set; } = new(0, 0);
+		public uint                   Speed              { get; set; }         = 50;
+		public uint                   Delay              { get; set; }         = 0;
+		public int                    DrawIndex          { get; set; }         = 0;
+		public bool                   Instant            { get; set; }         = true;
+		public int                    LineSpacing        { get; set; }         = 0;
+		public bool                   Paused             { get; set; }         = false;
+		public bool                   VariableWidth      { get; set; }         = true;
+		public Color                  Color              { get; set; }         = Color.White;
+		public bool                   Shakey             { get; set; }         = false;
+		public bool                   Wavey              { get; set; }         = false;
+		public List<string>           FormattedText      { get; private set; } = new();
+		public List<List<CharSprite>> RenderedCharacters { get; private set; } = new();
+		public Vector2i               FormattedSize      { get; private set; } = new(0, 0);
 
 		private List<List<Action>> CommandQueue { get; set; } = new();
 
-		public bool         PageDone    => DrawIndex >= RenderedCharacters[PageIndex].Count - 1;
-		public Font         CurrentFont => Fonts[_fontId];
-		public int          PageCount   => RenderedCharacters.Count;
-		public bool         LastPage    => PageIndex >= PageCount - 1;
-		public List<Sprite> CurrentPage => RenderedCharacters[PageIndex];
+		public bool             PageDone    => DrawIndex >= RenderedCharacters[PageIndex].Count - 1;
+		public Font             CurrentFont => Fonts[_fontId];
+		public int              PageCount   => RenderedCharacters.Count;
+		public bool             LastPage    => PageIndex >= PageCount - 1;
+		public List<CharSprite> CurrentPage => RenderedCharacters[PageIndex];
 
 		public int PageIndex
 		{
@@ -74,23 +79,31 @@ namespace Shellblade.Graphics.UI
 		{
 			if (RenderedCharacters.Count == 0) return;
 
-			if (Instant)
-				for (var i = 0; i < RenderedCharacters[PageIndex].Count; i++)
-					target.Draw(RenderedCharacters[PageIndex][i], states);
-			else
-				for (var i = 0; i <= DrawIndex; i++)
-					target.Draw(RenderedCharacters[PageIndex][i], states);
+			if (!PageDone)
+			{
+				_delayTimer += (ulong)Game.DeltaTime.AsMilliseconds();
+				while (!PageDone && _delayTimer >= Speed + RenderedCharacters[PageIndex][DrawIndex + 1].Delay)
+				{
+					_delayTimer -= Speed + RenderedCharacters[PageIndex][DrawIndex + 1].Delay;
+					DrawIndex++;
+				}
+			}
+
+			int index = Instant ? RenderedCharacters[PageIndex].Count - 1 : DrawIndex;
+
+			for (var i = 0; i <= index; i++)
+				RenderedCharacters[PageIndex][i].Draw(target, states);
 
 			base.Draw(target, states);
 		}
 
-		public List<List<Sprite>> RenderCharacters()
+		public List<List<CharSprite>> RenderCharacters()
 		{
-			RenderedCharacters = new List<List<Sprite>>();
+			RenderedCharacters = new List<List<CharSprite>>();
 
 			for (var page = 0; page < FormattedText.Count; page++)
 			{
-				RenderedCharacters.Add(new List<Sprite>());
+				RenderedCharacters.Add(new List<CharSprite>());
 				var pos        = new Vector2i(0, 0);
 				int lineHeight = CurrentFont.Size.Y;
 				var command    = 0;
@@ -111,9 +124,13 @@ namespace Shellblade.Graphics.UI
 							continue;
 					}
 
-					Sprite s = CurrentFont.Characters[c].Sprite;
+					CharSprite s = CurrentFont.Characters[c].Sprite;
 					s.Position = (Vector2f)(pos + GlobalPosition);
 					s.Color    = Color;
+					s.IsShaky  = Shakey;
+					s.IsWavy   = Wavey;
+					s.Delay    = Delay;
+					if (Delay > 0) Delay = 0;
 					RenderedCharacters[page].Add(s);
 
 					if (!VariableWidth) pos.X += CurrentFont.Size.X;
@@ -131,8 +148,8 @@ namespace Shellblade.Graphics.UI
 		{
 			string text = inString + " ";
 
-			FormattedText = new List<string> { "" };
-			CommandQueue  = new List<List<Action>> { new() };
+			FormattedText       = new List<string> { "" };
+			CommandQueue        = new List<List<Action>> { new() };
 
 			Vector2i size           = Size;
 			if (size.X <= 0) size.X = int.MaxValue;
@@ -158,7 +175,7 @@ namespace Shellblade.Graphics.UI
 				{
 					if (c == '}')
 					{
-						string parsed = ParseCommand(commandBuf, page);
+						string parsed = ParseCommand(commandBuf, page, commandEnter);
 
 						text = text.Remove(commandEnter, i - commandEnter + 1).Insert(commandEnter, parsed);
 
@@ -263,10 +280,10 @@ namespace Shellblade.Graphics.UI
 			return FormattedText;
 		}
 
-		private string ParseCommand(string command, int page)
+		private string ParseCommand(string command, int page, int index)
 		{
 			int    splitIndex = command.IndexOf(':');
-			string comm       = splitIndex > 0 ? command.Remove(splitIndex) : command;
+			string comm       = splitIndex > 0 ? command[..splitIndex] : command;
 			string args       = splitIndex > 0 ? command[(splitIndex + 1)..] : "";
 
 			switch (comm)
@@ -298,6 +315,25 @@ namespace Shellblade.Graphics.UI
 						                             Color.B,
 						                             (byte)(255f / 100f * Convert.ToSingle(args))));
 					return "\ufffc";
+				case "shake":
+					CommandQueue[page].Add(() => Shakey = true);
+					return "\ufffc";
+				case "noshake":
+					CommandQueue[page].Add(() => Shakey = false);
+					return "\ufffc";
+				case "wave":
+					CommandQueue[page].Add(() => Wavey = true);
+					return "\ufffc";
+				case "nowave":
+					CommandQueue[page].Add(() => Wavey = false);
+					return "\ufffc";
+				case "d":
+				case "delay":
+					CommandQueue[page].Add(() => Delay = uint.Parse(args));
+					return "\ufffc";
+				/*case "speed":
+					CommandQueue[page].Add(() => Speed = uint.Parse(args));
+					return "\ufffc";*/
 				case "reset":
 					CommandQueue[page].Add(() => { Color = Color.White; });
 					return "\ufffc";
@@ -307,7 +343,7 @@ namespace Shellblade.Graphics.UI
 					return Strings["player.name"];
 			}
 
-			return "lol not really get trolled";
+			return "[Unknown Command]";
 		}
 	}
 }

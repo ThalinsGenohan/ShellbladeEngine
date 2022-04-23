@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using OtterRPG.Scenes;
+using SFML.System;
 using Shellblade;
 using Shellblade.Graphics;
 using Shellblade.Graphics.UI;
@@ -14,7 +15,7 @@ namespace OtterRPG
 		public const bool Debug = false;
 #endif
 
-		private const uint   ResWidth    = 320;
+		private const uint   ResWidth    = 432;
 		private const uint   ResHeight   = 240;
 		private const uint   WindowScale = 4;
 		private const string FontsDir    = "assets/fonts/";
@@ -32,10 +33,9 @@ namespace OtterRPG
 			}
 
 
-			var game = new Game(WindowWidth, WindowHeight, ResWidth, ResHeight, "Test", Debug);
-			game.LoadScene(new TestScene(game));
-
-			game.Run();
+			Game.Initialize(new Vector2u(WindowWidth, WindowHeight), new Vector2u(ResWidth, ResHeight), "Test", Debug);
+			Game.LoadScene(new TestScene());
+			Game.Run();
 		}
 	}
 }
