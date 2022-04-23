@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
 
 namespace Shellblade.Graphics3D.GPU;
 
-internal class VertexArrayObject<TVertexType> : IDisposable
-where TVertexType : unmanaged
+internal class VertexArrayObject : IDisposable
 {
 	private readonly int _handle;
 
-	public VertexArrayObject(BufferObject<TVertexType> vbo)
+	public VertexArrayObject(BufferObject vbo)
 	{
 		_handle = GL.GenVertexArray();
 		Bind();
@@ -19,19 +17,7 @@ where TVertexType : unmanaged
 	public void VertexAttribPointer(int index, int count, VertexAttribPointerType type, int vertexSize, int offset)
 	{
 		Bind();
-
-		int tVertexSize = Marshal.SizeOf<TVertexType>();
-		unsafe
-		{
-			GL.VertexAttribPointer(
-				index,
-				count,
-				type,
-				false,
-				vertexSize * tVertexSize,
-				new IntPtr((void*)(offset * tVertexSize))
-			);
-		}
+		GL.VertexAttribPointer(index, count, type, false, vertexSize, offset);
 		GL.EnableVertexAttribArray(index);
 	}
 

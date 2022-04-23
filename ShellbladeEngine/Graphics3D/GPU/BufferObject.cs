@@ -3,8 +3,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Shellblade.Graphics3D.GPU;
 
-internal class BufferObject<TDataType> : IDisposable
-	where TDataType : unmanaged
+internal class BufferObject : IDisposable
 {
 	private readonly int          _handle;
 	private readonly BufferTarget _bufferType;
