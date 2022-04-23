@@ -3,7 +3,7 @@ using System.IO;
 using System.Numerics;
 using OpenTK.Graphics.OpenGL;
 
-namespace Shellblade.Graphics3D;
+namespace Shellblade.Graphics3D.GPU;
 
 internal class ShaderProgram : IDisposable
 {

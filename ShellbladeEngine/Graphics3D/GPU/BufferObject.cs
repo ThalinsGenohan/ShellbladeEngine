@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL;
 
-namespace Shellblade.Graphics3D;
+namespace Shellblade.Graphics3D.GPU;
 
 internal class BufferObject<TDataType> : IDisposable
 	where TDataType : unmanaged

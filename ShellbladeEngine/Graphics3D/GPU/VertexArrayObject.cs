@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
 
-namespace Shellblade.Graphics3D;
+namespace Shellblade.Graphics3D.GPU;
 
 internal class VertexArrayObject<TVertexType> : IDisposable
 where TVertexType : unmanaged

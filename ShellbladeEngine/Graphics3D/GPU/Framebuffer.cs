@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
 
-namespace Shellblade.Graphics3D;
+namespace Shellblade.Graphics3D.GPU;
 
 internal class Framebuffer : IDisposable
 {
