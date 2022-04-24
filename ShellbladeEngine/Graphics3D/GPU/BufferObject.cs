@@ -5,20 +5,28 @@ namespace Shellblade.Graphics3D.GPU;
 
 internal class BufferObject : IDisposable
 {
-	private readonly int          _handle;
-	private readonly BufferTarget _bufferType;
+	private readonly int             _handle;
+	private readonly BufferTarget    _bufferTarget;
+	private readonly BufferUsageHint _usageHint;
 
-	public BufferObject(IntPtr data, int size, BufferTarget bufferType)
+	public BufferObject(BufferTarget bufferTarget, BufferUsageHint usageHint)
 	{
-		_bufferType = bufferType;
-		_handle     = GL.GenBuffer();
-		Bind();
-		GL.BufferData(bufferType, size, data, BufferUsageHint.StaticDraw);
+		_bufferTarget = bufferTarget;
+		_usageHint    = usageHint;
+		_handle       = GL.GenBuffer();
+	}
+
+	public BufferObject(BufferTarget bufferTarget, BufferUsageHint usageHint, byte[] data)
+	{
+		_bufferTarget = bufferTarget;
+		_usageHint    = usageHint;
+		_handle       = GL.GenBuffer();
+		SetData(data);
 	}
 
 	public void Bind()
 	{
-		GL.BindBuffer(_bufferType, _handle);
+		GL.BindBuffer(_bufferTarget, _handle);
 	}
 
 	public void Draw(int count, PrimitiveType type = PrimitiveType.Triangles)
@@ -29,5 +37,11 @@ internal class BufferObject : IDisposable
 	public void Dispose()
 	{
 		GL.DeleteBuffer(_handle);
+	}
+
+	public void SetData(byte[] data)
+	{
+		Bind();
+		GL.BufferData(_bufferTarget, data.Length, data, _usageHint);
 	}
 }
