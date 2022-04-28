@@ -8,9 +8,30 @@ namespace Shellblade.Graphics3D
 {
 	internal class Vertex
 	{
-		public Vector3 Position  { get; set; } = Vector3.Zero;
-		public Vector2 TexCoords { get; set; } = Vector2.Zero;
-		public Color   Color     { get; set; } = Color.White;
+		public Vector3 Position  { get; set; }
+		public Vector2 TexCoords { get; set; }
+		public Color   Color     { get; set; }
+
+		public Vertex()
+		{
+			Position = Vector3.Zero;
+			TexCoords = Vector2.Zero;
+			Color = Color.White;
+		}
+
+		public Vertex(Vector3 position, Vector2 texCoords)
+		{
+			Position  = position;
+			TexCoords = texCoords;
+			Color = Color.White;
+		}
+
+		public Vertex(Vector3 position, Vector2 texCoords, Color color)
+		{
+			Position  = position;
+			TexCoords = texCoords;
+			Color     = color;
+		}
 
 		public byte[] GetGPUData()
 		{

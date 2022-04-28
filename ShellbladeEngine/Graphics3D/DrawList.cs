@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using OpenTK.Graphics.OpenGL;
 using Shellblade.Graphics3D.GPU;
@@ -9,6 +10,7 @@ namespace Shellblade.Graphics3D;
 internal class DrawList
 {
 	public List<Model> Models { get; }
+	public Camera      Camera { get; }
 
 	private BufferObject  _vbo;
 	private BufferObject  _uniform;
@@ -18,16 +20,16 @@ internal class DrawList
 	{
 		_vbo     = new BufferObject(BufferTarget.ArrayBuffer,   BufferUsageHint.DynamicDraw);
 		_uniform = new BufferObject(BufferTarget.UniformBuffer, BufferUsageHint.DynamicDraw);
-		_shader  = new ShaderProgram();
+		_shader  = new ShaderProgram("shaders/drawList.vert", "shaders/drawList.frag");
 	}
 
 	internal void UpdateBuffers()
 	{
 		var vboList     = new List<byte>();
 		var uniformList = new List<byte>();
-		for (ushort i = 0; i < Models.Count; i++)
+		for (uint i = 0; i < Models.Count; i++)
 		{
-			Model model = Models[i];
+			Model model = Models[(int)i];
 			foreach (Vertex vert in model.Vertices)
 			{
 				vboList.AddRange(vert.GetGPUData());
@@ -38,5 +40,39 @@ internal class DrawList
 
 		_vbo.SetData(vboList.ToArray());
 		_uniform.SetData(uniformList.ToArray());
+	}
+
+	internal void CreateArrayTexture()
+	{
+		var texels = new byte[255 * 255 * 255];
+		for (var i = 0; i < 255 * 255 * 255; i++)
+		{
+			texels[i] = 0xFF;
+		}
+
+		GL.TexStorage3D(TextureTarget3d.Texture2DArray, 1, SizedInternalFormat.Rgba8, 255, 255, 255);
+		GL.TexSubImage3D(TextureTarget.Texture2DArray,
+		                 0,
+		                 0,
+		                 0,
+		                 0,
+		                 255,
+		                 255,
+		                 255,
+		                 PixelFormat.Rgba,
+		                 PixelType.UnsignedByte,
+		                 texels
+		);
+	}
+
+	internal void Render()
+	{
+		Matrix4x4[] modelTransforms = Models.Select(model => model.Transform.ViewMatrix).ToArray();
+		_shader.SetUniform("uModels",     modelTransforms);
+		_shader.SetUniform("uView",       Camera.ViewMatrix);
+		_shader.SetUniform("uProjection", Camera.ProjectionMatrix);
+		_shader.SetUniform("uViewPos",    Camera.Position);
+
+		GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
 	}
 }

@@ -100,6 +100,21 @@ internal class ShaderProgram : IDisposable
 		}
 	}
 
+	public void SetUniform(string name, Matrix4x4[] value)
+	{
+		int location = GL.GetUniformLocation(_handle, name);
+		if (location == -1)
+		{
+			throw new Exception($"{name} uniform not found on shader.");
+		}
+
+		unsafe
+		{
+			fixed (Matrix4x4* addr = &value[0])
+				GL.UniformMatrix4(location, value.Length, false, (float*)addr);
+		}
+	}
+
 	public void Dispose()
 	{
 		GL.DeleteProgram(_handle);
