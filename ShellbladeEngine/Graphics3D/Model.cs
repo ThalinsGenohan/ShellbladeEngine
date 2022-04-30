@@ -6,5 +6,11 @@ namespace Shellblade.Graphics3D
 	{
 		public Transform    Transform { get; set; }
 		public List<Vertex> Vertices  { get; set; }
+
+		public Model()
+		{
+			Transform = new Transform();
+			Vertices  = new List<Vertex>();
+		}
 	}
 }
