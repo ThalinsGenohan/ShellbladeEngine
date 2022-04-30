@@ -21,6 +21,9 @@ internal class DrawList
 		_vbo     = new BufferObject(BufferTarget.ArrayBuffer,   BufferUsageHint.DynamicDraw);
 		_uniform = new BufferObject(BufferTarget.UniformBuffer, BufferUsageHint.DynamicDraw);
 		_shader  = new ShaderProgram("shaders/drawList.vert", "shaders/drawList.frag");
+
+		Models = new List<Model>();
+		Camera = new Camera(Vector3.Zero, 800, 600);
 	}
 
 	internal void UpdateBuffers()
@@ -67,12 +70,13 @@ internal class DrawList
 
 	internal void Render()
 	{
-		Matrix4x4[] modelTransforms = Models.Select(model => model.Transform.ViewMatrix).ToArray();
-		_shader.SetUniform("uModels",     modelTransforms);
 		_shader.SetUniform("uView",       Camera.ViewMatrix);
 		_shader.SetUniform("uProjection", Camera.ProjectionMatrix);
-		_shader.SetUniform("uViewPos",    Camera.Position);
-
-		GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+		//_shader.SetUniform("uViewPos",    Camera.Position);
+		foreach (Model model in Models)
+		{
+			_shader.SetUniform("uModelPos", model.Transform.ViewMatrix);
+			GL.DrawArrays(PrimitiveType.Triangles, 0, model.Vertices.Count);
+		}
 	}
 }

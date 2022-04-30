@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 
@@ -23,7 +22,7 @@ namespace Shellblade.Graphics3D
 		{
 			Position  = position;
 			TexCoords = texCoords;
-			Color = Color.White;
+			Color     = Color.Magenta;
 		}
 
 		public Vertex(Vector3 position, Vector2 texCoords, Color color)
