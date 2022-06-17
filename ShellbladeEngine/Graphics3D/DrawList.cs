@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using OpenTK.Graphics.OpenGL;
 using Shellblade.Graphics3D.GPU;
 
 namespace Shellblade.Graphics3D;
 
-internal class DrawList
+public class DrawList
 {
 	public List<Model> Models { get; }
 	public Camera      Camera { get; }
@@ -70,6 +69,7 @@ internal class DrawList
 
 	internal void Render()
 	{
+		UpdateBuffers();
 		_shader.SetUniform("uView",       Camera.ViewMatrix);
 		_shader.SetUniform("uProjection", Camera.ProjectionMatrix);
 		//_shader.SetUniform("uViewPos",    Camera.Position);

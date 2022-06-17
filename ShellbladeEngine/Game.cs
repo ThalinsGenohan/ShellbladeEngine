@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using OpenTK.Windowing.Desktop;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -27,6 +28,14 @@ namespace Shellblade
 
 		public static void Initialize(Vector2u windowSize, Vector2u resolution, string title, bool debug = false)
 		{
+			var openTKWindow = new GameWindow(new GameWindowSettings(),
+			                                  new NativeWindowSettings
+			                                  {
+				                                  Size         = new OpenTK.Mathematics.Vector2i(1, 1),
+				                                  StartVisible = false,
+			                                  }
+			);
+
 			Window = new RenderWindow(new VideoMode(windowSize.X, windowSize.Y), title, Styles.Close | Styles.Titlebar);
 			Window.SetFramerateLimit(60);
 			Window.SetKeyRepeatEnabled(false);

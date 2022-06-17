@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace Shellblade.Graphics3D
 {
-	internal class Transform
+	public class Transform
 	{
 		public Vector3    Position { get; set; } = Vector3.Zero;
 		public float      Scale    { get; set; } = 1f;

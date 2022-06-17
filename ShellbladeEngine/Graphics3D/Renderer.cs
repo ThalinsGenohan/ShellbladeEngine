@@ -3,6 +3,8 @@ using System.Numerics;
 using OpenTK.Graphics.OpenGL;
 using SFML.Graphics;
 using SFML.Window;
+using Color = System.Drawing.Color;
+using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 namespace Shellblade.Graphics3D
 {
@@ -14,7 +16,16 @@ namespace Shellblade.Graphics3D
 
 		public Renderer()
 		{
-			_texture  = new RenderTexture(800, 600);
+			_texture  = new RenderTexture(Game.WindowSize.X, Game.WindowSize.Y);
+
+			_texture.SetActive(true);
+
+			GL.Enable(EnableCap.DepthTest);
+			GL.DepthMask(true);
+			GL.ClearDepth(1f);
+
+			GL.Viewport(0, 0, (int)_texture.Size.X, (int)_texture.Size.Y);
+
 			_drawList = new DrawList();
 			var cube = new Model
 			{
@@ -71,9 +82,13 @@ namespace Shellblade.Graphics3D
 		public void Draw(RenderTarget target, RenderStates states)
 		{
 			_texture.SetActive(true);
+			GL.ClearColor(Color.Red);
+			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-			GL.Clear(ClearBufferMask.DepthBufferBit);
+			GL.Begin(PrimitiveType.TriangleStrip);
 			_drawList.Render();
+			GL.End();
+
 			_texture.Display();
 
 			var sprite = new Sprite(_texture.Texture);
