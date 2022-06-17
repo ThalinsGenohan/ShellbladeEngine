@@ -4,7 +4,6 @@ using SFML.System;
 using SFML.Window;
 using Shellblade;
 using Shellblade.Graphics;
-using Shellblade.Graphics3D;
 using Image = Shellblade.Graphics.UI.Image;
 
 namespace OtterRPG.Scenes
@@ -45,9 +44,6 @@ namespace OtterRPG.Scenes
 			Input.UI.AddElement("testButton2", button2);
 
 			Drawables.Add("textbox", _textbox, 10);
-
-			var render3d = new Renderer();
-			Drawables.Add("3D", render3d);
 
 			Input.Buttons.Add(new Input.ButtonInput(Keyboard.Key.Enter, 0) { OnPress = _textbox.Next });
 
