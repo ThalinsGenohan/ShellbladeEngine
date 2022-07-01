@@ -17,8 +17,9 @@ namespace OtterRPG.Scenes
 			_textbox = new Textbox(new Vector2i(8,                             (int)(Game.Resolution.Y - 8 - 64)),
 			                       new Vector2i((int)(Game.Resolution.X - 16), 64))
 			{
-				Text      = "{v:default}Help I can't stop playing around with this textbox feature.\n" +
-				            "{d:500}{wave}It's just {f:italic}so {f:bold}fancy~",
+				Text      = "{v:default}This text should be in the default voice.\n{d:500}" +
+				            "{v:high}This one should be in the high voice.\n{d:500}" +
+				            "{v:low}And finally it should be low here.",
 				TextDelay = 25,
 			};
 

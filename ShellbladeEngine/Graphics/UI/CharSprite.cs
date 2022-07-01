@@ -17,9 +17,10 @@ public class CharSprite : Sprite
 
 	public char Character { get; }
 
-	public bool IsShaky { get; set; } = false;
-	public bool IsWavy  { get; set; } = false;
-	public uint Delay   { get; set; } = 0;
+	public bool   IsShaky { get; set; } = false;
+	public bool   IsWavy  { get; set; } = false;
+	public uint   Delay   { get; set; } = 0;
+	public string VoiceId { get; set; } = "default";
 
 	public new void Draw(RenderTarget target, RenderStates states)
 	{

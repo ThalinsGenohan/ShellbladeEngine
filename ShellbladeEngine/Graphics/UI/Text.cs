@@ -34,10 +34,10 @@ namespace Shellblade.Graphics.UI
 		private string _string     = "";
 		private int    _pageIndex  = 0;
 		private ulong  _delayTimer = 0;
-		private string _voiceId    = "";
 
 		public uint                   Speed              { get; set; }         = 50;
 		public uint                   Delay              { get; set; }         = 0;
+		public string                 VoiceId            { get; set; }         = "silent";
 		public int                    DrawIndex          { get; set; }         = 0;
 		public bool                   Instant            { get; set; }         = true;
 		public int                    LineSpacing        { get; set; }         = 0;
@@ -53,22 +53,11 @@ namespace Shellblade.Graphics.UI
 		private List<List<Action>> CommandQueue { get; set; } = new();
 		private Sound              VoicePlayer  { get; } = new();
 
-		private string VoiceId
-		{
-			get => _voiceId;
-			set
-			{
-				_voiceId                = value;
-				VoicePlayer.SoundBuffer = CurrentVoice;
-			}
-		}
-
 		public bool             PageDone     => DrawIndex >= RenderedCharacters[PageIndex].Count - 1;
 		public Font             CurrentFont  => Fonts[_fontId];
 		public int              PageCount    => RenderedCharacters.Count;
 		public bool             LastPage     => PageIndex >= PageCount - 1;
 		public List<CharSprite> CurrentPage  => RenderedCharacters[PageIndex];
-		public SoundBuffer      CurrentVoice => Voices[VoiceId];
 
 		public int PageIndex
 		{
@@ -116,14 +105,15 @@ namespace Shellblade.Graphics.UI
 				_delayTimer += (ulong)Game.DeltaTime.AsMilliseconds();
 				while (!PageDone && _delayTimer >= Speed + RenderedCharacters[PageIndex][DrawIndex + 1].Delay)
 				{
-					_delayTimer -= Speed + RenderedCharacters[PageIndex][DrawIndex + 1].Delay;
 					DrawIndex++;
+					CharSprite currentChar = RenderedCharacters[PageIndex][DrawIndex];
 
-					Console.Write(RenderedCharacters[PageIndex][DrawIndex].Character);
+					_delayTimer -= Speed + currentChar.Delay;
 
 					VoicePlayer.Stop();
-					if (VoiceId != "silent" && !SilentChars.Contains(RenderedCharacters[PageIndex][DrawIndex].Character))
+					if (currentChar.VoiceId != "silent" && !SilentChars.Contains(currentChar.Character))
 					{
+						VoicePlayer.SoundBuffer = Voices[currentChar.VoiceId];
 						VoicePlayer.Play();
 					}
 				}
@@ -170,6 +160,7 @@ namespace Shellblade.Graphics.UI
 					s.IsShaky  = Shakey;
 					s.IsWavy   = Wavey;
 					s.Delay    = Delay;
+					s.VoiceId  = VoiceId;
 					if (Delay > 0) Delay = 0;
 					RenderedCharacters[page].Add(s);
 
