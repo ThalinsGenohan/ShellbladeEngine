@@ -64,7 +64,7 @@ namespace Shellblade.Graphics
 				int left = Size.X * ((c - ' ') % 16);
 				int top  = Size.Y * ((c - ' ') / 16);
 
-				Characters.Add(c, new Character(_texture, new IntRect(left, top, Size.X, Size.Y), w));
+				Characters.Add(c, new Character(c, _texture, new IntRect(left, top, Size.X, Size.Y), w));
 			}
 
 			SpaceSize = Characters[' '].Width;
@@ -115,15 +115,17 @@ namespace Shellblade.Graphics
 
 		public class Character
 		{
+			private readonly char    _character;
 			private readonly Texture _texture;
 			private readonly IntRect _rect;
 
 			public int Width { get; set; }
 
-			public CharSprite Sprite => new(_texture, _rect);
+			public CharSprite Sprite => new(_character, _texture, _rect);
 
-			public Character(Texture texture, IntRect rect, int width)
+			public Character(char character, Texture texture, IntRect rect, int width)
 			{
+				_character = character;
 				_texture = texture;
 				_rect    = rect;
 				Width    = width;

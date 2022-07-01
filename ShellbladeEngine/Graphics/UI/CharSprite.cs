@@ -6,11 +6,16 @@ namespace Shellblade.Graphics.UI;
 
 public class CharSprite : Sprite
 {
-	public CharSprite(Texture texture, IntRect rect) : base(texture, rect) { }
+	public CharSprite(char character, Texture texture, IntRect rect) : base(texture, rect)
+	{
+		Character = character;
+	}
 
 	private const float SineA = 10f;
 	private const float SineB = 1f;
 	private const float TwoPi = 2f * MathF.PI;
+
+	public char Character { get; }
 
 	public bool IsShaky { get; set; } = false;
 	public bool IsWavy  { get; set; } = false;

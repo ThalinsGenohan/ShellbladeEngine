@@ -17,8 +17,8 @@ namespace OtterRPG.Scenes
 			_textbox = new Textbox(new Vector2i(8,                             (int)(Game.Resolution.Y - 8 - 64)),
 			                       new Vector2i((int)(Game.Resolution.X - 16), 64))
 			{
-				Text      = "Help I can't stop playing around with this textbox feature\n" +
-				            "{wave}It's just {f:italic}so {f:bold}fancy~",
+				Text      = "{v:default}Help I can't stop playing around with this textbox feature.\n" +
+				            "{d:500}{wave}It's just {f:italic}so {f:bold}fancy~",
 				TextDelay = 25,
 			};
 
@@ -48,6 +48,10 @@ namespace OtterRPG.Scenes
 			Input.Buttons.Add(new Input.ButtonInput(Keyboard.Key.Enter, 0) { OnPress = _textbox.Next });
 
 			Game.ClearColor = Color.Blue;
+
+
+			Tileset tileset = Tileset.LoadFromFile("assets/tilesets/tileset.tsj");
+			Console.WriteLine(tileset);
 		}
 
 		public override void Loop(Time dt)

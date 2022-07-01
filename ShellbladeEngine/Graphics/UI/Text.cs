@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
 
@@ -9,12 +10,31 @@ namespace Shellblade.Graphics.UI
 	{
 		public static Dictionary<string, string> Strings { get; } = new();
 		public static Dictionary<string, Font>   Fonts   { get; } = new();
+		public static Dictionary<string, SoundBuffer>  Voices  { get; } = new();
 
-		private string _fontId    = "regular";
-		private int    _tracking  = 0;
-		private string _string    = "";
-		private int    _pageIndex = 0;
+		public static List<char> SilentChars { get; } = new()
+		{
+			' ',
+			',',
+			'.',
+			'!',
+			'?',
+			'\'',
+			'\"',
+			':',
+			';',
+			'~',
+			'(',
+			')',
+			'-',
+		};
+
+		private string _fontId     = "regular";
+		private int    _tracking   = 0;
+		private string _string     = "";
+		private int    _pageIndex  = 0;
 		private ulong  _delayTimer = 0;
+		private string _voiceId    = "";
 
 		public uint                   Speed              { get; set; }         = 50;
 		public uint                   Delay              { get; set; }         = 0;
@@ -31,12 +51,24 @@ namespace Shellblade.Graphics.UI
 		public Vector2i               FormattedSize      { get; private set; } = new(0, 0);
 
 		private List<List<Action>> CommandQueue { get; set; } = new();
+		private Sound              VoicePlayer  { get; } = new();
 
-		public bool             PageDone    => DrawIndex >= RenderedCharacters[PageIndex].Count - 1;
-		public Font             CurrentFont => Fonts[_fontId];
-		public int              PageCount   => RenderedCharacters.Count;
-		public bool             LastPage    => PageIndex >= PageCount - 1;
-		public List<CharSprite> CurrentPage => RenderedCharacters[PageIndex];
+		private string VoiceId
+		{
+			get => _voiceId;
+			set
+			{
+				_voiceId                = value;
+				VoicePlayer.SoundBuffer = CurrentVoice;
+			}
+		}
+
+		public bool             PageDone     => DrawIndex >= RenderedCharacters[PageIndex].Count - 1;
+		public Font             CurrentFont  => Fonts[_fontId];
+		public int              PageCount    => RenderedCharacters.Count;
+		public bool             LastPage     => PageIndex >= PageCount - 1;
+		public List<CharSprite> CurrentPage  => RenderedCharacters[PageIndex];
+		public SoundBuffer      CurrentVoice => Voices[VoiceId];
 
 		public int PageIndex
 		{
@@ -86,6 +118,14 @@ namespace Shellblade.Graphics.UI
 				{
 					_delayTimer -= Speed + RenderedCharacters[PageIndex][DrawIndex + 1].Delay;
 					DrawIndex++;
+
+					Console.Write(RenderedCharacters[PageIndex][DrawIndex].Character);
+
+					VoicePlayer.Stop();
+					if (VoiceId != "silent" && !SilentChars.Contains(RenderedCharacters[PageIndex][DrawIndex].Character))
+					{
+						VoicePlayer.Play();
+					}
 				}
 			}
 
@@ -331,11 +371,19 @@ namespace Shellblade.Graphics.UI
 				case "delay":
 					CommandQueue[page].Add(() => Delay = uint.Parse(args));
 					return "\ufffc";
-				/*case "speed":
+				 case "s":
+				 case "speed":
 					CommandQueue[page].Add(() => Speed = uint.Parse(args));
-					return "\ufffc";*/
+					return "\ufffc";
+				case "v":
+				case "voice":
+					CommandQueue[page].Add(() => VoiceId = args);
+					return "\ufffc";
 				case "reset":
-					CommandQueue[page].Add(() => { Color = Color.White; });
+					CommandQueue[page].Add(() =>
+					{
+						Color = Color.White;
+					});
 					return "\ufffc";
 
 				case "player":

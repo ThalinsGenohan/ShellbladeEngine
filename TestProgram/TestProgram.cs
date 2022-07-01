@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using OtterRPG.Scenes;
+using SFML.Audio;
 using SFML.System;
 using Shellblade;
 using Shellblade.Graphics;
@@ -19,6 +20,7 @@ namespace OtterRPG
 		private const uint   ResHeight   = 240;
 		private const uint   WindowScale = 4;
 		private const string FontsDir    = "assets/fonts/";
+		private const string VoicesDir    = "assets/sound/voice/";
 
 		private static uint WindowWidth  => ResWidth * WindowScale;
 		private static uint WindowHeight => ResHeight * WindowScale;
@@ -30,6 +32,14 @@ namespace OtterRPG
 			{
 				string nameDir = file.Replace(".png", "");
 				Text.Fonts.Add(nameDir.Replace(FontsDir, ""), new Font(nameDir));
+			}
+
+			Text.Voices.Add("silent", null);
+			string[] voiceFiles = Directory.GetFiles(VoicesDir, "*.ogg");
+			foreach (string file in voiceFiles)
+			{
+				string nameDir = file.Replace(".ogg", "");
+				Text.Voices.Add(nameDir.Replace(VoicesDir, ""), new SoundBuffer(file));
 			}
 
 
