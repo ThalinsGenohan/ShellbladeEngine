@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
@@ -12,22 +13,7 @@ namespace Shellblade.Graphics.UI
 		public static Dictionary<string, Font>   Fonts   { get; } = new();
 		public static Dictionary<string, SoundBuffer>  Voices  { get; } = new();
 
-		public static List<char> SilentChars { get; } = new()
-		{
-			' ',
-			',',
-			'.',
-			'!',
-			'?',
-			'\'',
-			'\"',
-			':',
-			';',
-			'~',
-			'(',
-			')',
-			'-',
-		};
+		public static string VoicedChars => "[\\w#$%&]";
 
 		private string _fontId     = "regular";
 		private int    _tracking   = 0;
@@ -111,7 +97,7 @@ namespace Shellblade.Graphics.UI
 					_delayTimer -= Speed + currentChar.Delay;
 
 					VoicePlayer.Stop();
-					if (currentChar.VoiceId != "silent" && !SilentChars.Contains(currentChar.Character))
+					if (currentChar.VoiceId != "silent" && Regex.IsMatch(currentChar.Character.ToString(), VoicedChars))
 					{
 						VoicePlayer.SoundBuffer = Voices[currentChar.VoiceId];
 						VoicePlayer.Play();
