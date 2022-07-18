@@ -89,19 +89,20 @@ namespace Shellblade.Graphics.UI
 			if (!PageDone)
 			{
 				_delayTimer += (ulong)Game.DeltaTime.AsMilliseconds();
-				while (!PageDone && _delayTimer >= Speed + RenderedCharacters[PageIndex][DrawIndex + 1].Delay)
+				while (!PageDone && _delayTimer >= RenderedCharacters[PageIndex][DrawIndex + 1].Delay)
 				{
 					DrawIndex++;
 					CharSprite currentChar = RenderedCharacters[PageIndex][DrawIndex];
 
-					_delayTimer -= Speed + currentChar.Delay;
+					_delayTimer -= currentChar.Delay;
 
-					VoicePlayer.Stop();
-					if (currentChar.VoiceId != "silent" && Regex.IsMatch(currentChar.Character.ToString(), VoicedChars))
-					{
-						VoicePlayer.SoundBuffer = Voices[currentChar.VoiceId];
-						VoicePlayer.Play();
-					}
+					if (VoicePlayer.Status == SoundStatus.Playing ||
+					    currentChar.VoiceId == "silent" ||
+					    !Regex.IsMatch(currentChar.Character.ToString(), VoicedChars))
+						continue;
+
+					VoicePlayer.SoundBuffer = Voices[currentChar.VoiceId];
+					VoicePlayer.Play();
 				}
 			}
 
@@ -145,9 +146,9 @@ namespace Shellblade.Graphics.UI
 					s.Color    = Color;
 					s.IsShaky  = Shakey;
 					s.IsWavy   = Wavey;
-					s.Delay    = Delay;
+					s.Delay    = Delay + Speed;
 					s.VoiceId  = VoiceId;
-					if (Delay > 0) Delay = 0;
+					if (Delay + Speed > 0) Delay = 0;
 					RenderedCharacters[page].Add(s);
 
 					if (!VariableWidth) pos.X += CurrentFont.Size.X;

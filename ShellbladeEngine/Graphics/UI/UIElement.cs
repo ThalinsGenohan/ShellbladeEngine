@@ -8,35 +8,29 @@ namespace Shellblade.Graphics.UI
 {
 	public abstract class UIElement : Drawable
 	{
-		private UIElement _parent;
+		private UIElement? _parent = null;
 
 		public List<UIElement> Children { get; set; } = new();
 
 		public string ID { get; set; }
-
-		public bool Hovered { get; internal set; } = false;
+		
 		public bool Visible { get; set; }          = true;
-
-		public Action OnClick     { get; set; } = () => { };
-		public Action OnMouseOver { get; set; } = () => { };
-		public Action OnMouseOff  { get; set; } = () => { };
 
 		public virtual Vector2i LocalPosition { get; set; }
 		public virtual Vector2i Size          { get; set; }
-
-		internal bool HoveredNow { get; set; } = false;
 
 		public int TreeSize => 1 + Children.Sum(c => c.TreeSize);
 
 		public IntRect BoundingBox => new(GlobalPosition, Size);
 
-		public UIElement Parent
+		public UIElement? Parent
 		{
 			get => _parent;
 			set
 			{
 				_parent        = value;
-				GlobalPosition = LocalPosition + value.GlobalPosition;
+				if (_parent != null)
+					GlobalPosition = LocalPosition + _parent.GlobalPosition;
 			}
 		}
 
@@ -46,7 +40,7 @@ namespace Shellblade.Graphics.UI
 			set => LocalPosition = value - (Parent?.GlobalPosition ?? new Vector2i(0, 0));
 		}
 
-		public UIElement GetChild(string id)
+		public UIElement? GetChild(string id)
 		{
 			return Children.FirstOrDefault(t => t.ID == id);
 		}

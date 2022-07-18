@@ -10,7 +10,7 @@ namespace Shellblade
 	public class Input
 	{
 		public uint              JoystickId { get; set; } = 0;
-		public UIContainer       UI         { get; set; } = new();
+		public UIState       UI         { get; set; } = new();
 		public List<ButtonInput> Buttons    { get; set; } = new();
 
 		public void DoHoldInputs()
@@ -31,9 +31,6 @@ namespace Shellblade
 
 			rw.JoystickButtonPressed  += OnJoystickButtonPressed;
 			rw.JoystickButtonReleased += OnJoystickButtonReleased;
-
-			rw.MouseButtonPressed += UI.OnMouseButtonPressed;
-			rw.MouseMoved         += UI.OnMouseMoved;
 		}
 
 		internal void Uninstall()
@@ -45,9 +42,6 @@ namespace Shellblade
 
 			rw.JoystickButtonPressed  -= OnJoystickButtonPressed;
 			rw.JoystickButtonReleased -= OnJoystickButtonReleased;
-
-			rw.MouseButtonPressed -= UI.OnMouseButtonPressed;
-			rw.MouseMoved         -= UI.OnMouseMoved;
 		}
 
 		private void OnKeyPressed(object sender, KeyEventArgs args)

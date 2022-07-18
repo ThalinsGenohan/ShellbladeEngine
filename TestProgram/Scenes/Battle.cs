@@ -34,41 +34,29 @@ namespace OtterRPG.Scenes
 			                          new Texture(@"assets/temp-icons.png", new IntRect(0, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
-				OnClick       = () => { Console.WriteLine("Attack button clicked!"); },
 				LocalPosition = new Vector2i(1, 1),
 			};
-			AttackButton.OnMouseOver = () => { AttackButton.Opacity = 1f; };
-			AttackButton.OnMouseOff  = () => { AttackButton.Opacity = 0.5f; };
 
 			SkillsButton = new Image(new Vector2i(16, 16),
 			                          new Texture(@"assets/temp-icons.png", new IntRect(16, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
-				OnClick       = () => { Console.WriteLine("Skills button clicked!"); },
 				LocalPosition = new Vector2i(1, 18),
 			};
-			SkillsButton.OnMouseOver = () => { SkillsButton.Opacity = 1f; };
-			SkillsButton.OnMouseOff  = () => { SkillsButton.Opacity = 0.5f; };
 
 			MagicButton = new Image(new Vector2i(16, 16),
 			                         new Texture(@"assets/temp-icons.png", new IntRect(32, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
-				OnClick       = () => { Console.WriteLine("Magic button clicked!"); },
 				LocalPosition = new Vector2i(1, 35),
 			};
-			MagicButton.OnMouseOver = () => { MagicButton.Opacity = 1f; };
-			MagicButton.OnMouseOff  = () => { MagicButton.Opacity = 0.5f; };
 
 			ItemButton = new Image(new Vector2i(16, 16),
 			                        new Texture(@"assets/temp-icons.png", new IntRect(48, 0, 16, 16)))
 			{
 				Color         = new Color(0xffffff7f),
-				OnClick       = () => { Console.WriteLine("Item button clicked!"); },
 				LocalPosition = new Vector2i(1, 52),
 			};
-			ItemButton.OnMouseOver = () => { ItemButton.Opacity = 1f; };
-			ItemButton.OnMouseOff  = () => { ItemButton.Opacity = 0.5f; };
 
 			Box = new FilledBox
 			{
@@ -121,7 +109,7 @@ namespace OtterRPG.Scenes
 				new(Keyboard.Key.Enter,  0) { OnPress = Confirm },
 				new(Keyboard.Key.RShift, 1) { OnPress = Cancel },
 			};
-			Input.UI = new UIContainer();
+			Input.UI = new UIState();
 			Input.UI.AddElement("box", Box);
 		}
 

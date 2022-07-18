@@ -23,27 +23,6 @@ namespace OtterRPG.Scenes
 				TextDelay = 25,
 			};
 
-			var button = new Image(new Vector2i(16, 16), new Texture(@"assets\testbox.png"))
-			{
-				Color          = new Color(0xff, 0xff, 0xff, 0xff / 2),
-				OnClick        = () => { Console.WriteLine("Boop! The test button has been pressed!"); },
-				GlobalPosition = new Vector2i(8, 8),
-			};
-			button.OnMouseOver = () => { button.Color = new Color(0xff, 0xff, 0xff, 0xff); };
-			button.OnMouseOff  = () => { button.Color = new Color(0xff, 0xff, 0xff, 0xff / 2); };
-
-			var button2 = new Image(new Vector2i(16, 16), new Texture(@"assets\testbox2.png"))
-			{
-				Color          = new Color(0xff, 0xff, 0xff, 0xff / 2),
-				OnClick        = () => { Console.WriteLine("Beep! The second test button has been pressed!"); },
-				GlobalPosition = new Vector2i(12, 12),
-			};
-			button2.OnMouseOver = () => { button2.Color = new Color(0xff, 0xff, 0xff, 0xff); };
-			button2.OnMouseOff  = () => { button2.Color = new Color(0xff, 0xff, 0xff, 0xff / 2); };
-
-			Input.UI.AddElement("testButton",  button);
-			Input.UI.AddElement("testButton2", button2);
-
 			Drawables.Add("textbox", _textbox, 10);
 
 			Input.Buttons.Add(new Input.ButtonInput(Keyboard.Key.Enter, 0) { OnPress = _textbox.Next });
